@@ -1,0 +1,38 @@
+{
+    "name": "DataGen",
+    "world": "Rooms",
+    "main_agent": "turtle0",
+    "lcm_provider": "",
+    "agents":[
+        {
+            "agent_name": "turtle0",
+            "agent_type": "TurtleAgent",
+            "sensors": [
+                {
+                    "sensor_type": "LocationSensor",
+                    "lcm_channel": "POSITION"
+                },
+                {
+                    "sensor_type": "RotationSensor",
+                    "lcm_channel": "ROTATION"
+                },
+                {
+                    "sensor_type": "RangeFinderSensor",
+                    "lcm_channel": "LIDAR",
+                    "configuration": {
+                        "LaserCount": 64,
+                        "LaserMaxDistance": 20,
+                        "LaserAngle": 0,
+                        "LaserDebug": true
+                    }
+                }
+            ],
+            "control_scheme": 0,
+            "location": [-1.5, 10, 1.0],
+            "rotation": [0, 0.0, 0.0]
+        }
+    ],
+
+    "window_width":  1280,
+    "window_height": 720
+}

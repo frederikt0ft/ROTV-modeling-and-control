@@ -1,0 +1,1167 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<FGenericCrashContext>
+<RuntimeProperties>
+<CrashVersion>3</CrashVersion>
+<ExecutionGuid>09D1D9D84EBB90DF10E442B70F11830B</ExecutionGuid>
+<CrashGUID>UE4CC-Windows-C91E63F7480324AE0C1711B6418CDE69_0000</CrashGUID>
+<IsEnsure>false</IsEnsure>
+<IsAssert>true</IsAssert>
+<CrashType>Assert</CrashType>
+<ErrorMessage>Assertion failed: Child [File:D:/Build/++UE4/Sync/Engine/Source/Runtime/CoreUObject/Private/UObject/UObjectGlobals.cpp] [Line: 3168] 
+NewObject called with a nullptr class object
+</ErrorMessage>
+<CrashReporterMessage></CrashReporterMessage>
+<ProcessId>14536</ProcessId>
+<SecondsSinceStart>0</SecondsSinceStart>
+<IsInternalBuild>false</IsInternalBuild>
+<IsPerforceBuild>false</IsPerforceBuild>
+<IsSourceDistribution>false</IsSourceDistribution>
+<GameName>UE4-Holodeck</GameName>
+<ExecutableName>Holodeck</ExecutableName>
+<BuildConfiguration>Development</BuildConfiguration>
+<GameSessionID></GameSessionID>
+<Symbols>**UE4*Release-4.27-CL-18319896-Win64-Development</Symbols>
+<PlatformName>WindowsNoEditor</PlatformName>
+<PlatformNameIni>Windows</PlatformNameIni>
+<EngineMode>Game</EngineMode>
+<EngineModeEx>Unset</EngineModeEx>
+<DeploymentName></DeploymentName>
+<EngineVersion>4.27.2-18319896+++UE4+Release-4.27</EngineVersion>
+<CommandLine> SimpleUnderwater -HolodeckOn -LOG=HolodeckLog.txt -ForceRes -ResX=1280 -ResY=720 --HolodeckUUID=c37d2bfd-c369-45ec-9b49-9e9c3ce8303b -TicksPerSec=30 -FramesPerSec=30 -EnvMinX=-70.0 -EnvMinY=-70.0 -EnvMinZ=-50.0 -EnvMaxX=70.0 -EnvMaxY=70.0 -EnvMaxZ=10.0 -OctreeMin=0.02 -OctreeMax=5</CommandLine>
+<LanguageLCID>0</LanguageLCID>
+<AppDefaultLocale>da-DK</AppDefaultLocale>
+<BuildVersion>++UE4+Release-4.27-CL-18319896</BuildVersion>
+<IsUE4Release>false</IsUE4Release>
+<IsRequestingExit>false</IsRequestingExit>
+<UserName></UserName>
+<BaseDir>C:/Users/frede/AppData/Local/holoocean/0.5.0/worlds/Ocean/WindowsNoEditor/Holodeck/Binaries/Win64/</BaseDir>
+<RootDir>C:/Users/frede/AppData/Local/holoocean/0.5.0/worlds/Ocean/WindowsNoEditor/</RootDir>
+<MachineId>93392B084F7137CE5F08D1A70074C930</MachineId>
+<LoginId>93392b084f7137ce5f08d1a70074c930</LoginId>
+<EpicAccountId>e0f3dbd7cb524423b3369de30553d2ae</EpicAccountId>
+<SourceContext></SourceContext>
+<UserDescription></UserDescription>
+<UserActivityHint></UserActivityHint>
+<CrashDumpMode>0</CrashDumpMode>
+<GameStateName>GameState</GameStateName>
+<Misc.NumberOfCores>6</Misc.NumberOfCores>
+<Misc.NumberOfCoresIncludingHyperthreads>12</Misc.NumberOfCoresIncludingHyperthreads>
+<Misc.Is64bitOperatingSystem>1</Misc.Is64bitOperatingSystem>
+<Misc.CPUVendor>GenuineIntel</Misc.CPUVendor>
+<Misc.CPUBrand>Intel(R) Core(TM) i7-10750H CPU @ 2.60GHz</Misc.CPUBrand>
+<Misc.PrimaryGPUBrand>NVIDIA GeForce RTX 2070 Super with Max-Q Design</Misc.PrimaryGPUBrand>
+<Misc.OSVersionMajor>Windows 10 (Release 2009)</Misc.OSVersionMajor>
+<Misc.OSVersionMinor></Misc.OSVersionMinor>
+<MemoryStats.TotalPhysical>17047408640</MemoryStats.TotalPhysical>
+<MemoryStats.TotalVirtual>140737488224256</MemoryStats.TotalVirtual>
+<MemoryStats.PageSize>4096</MemoryStats.PageSize>
+<MemoryStats.TotalPhysicalGB>16</MemoryStats.TotalPhysicalGB>
+<MemoryStats.AvailablePhysical>3326218240</MemoryStats.AvailablePhysical>
+<MemoryStats.AvailableVirtual>9368997888</MemoryStats.AvailableVirtual>
+<MemoryStats.UsedPhysical>471527424</MemoryStats.UsedPhysical>
+<MemoryStats.PeakUsedPhysical>765800448</MemoryStats.PeakUsedPhysical>
+<MemoryStats.UsedVirtual>1137360896</MemoryStats.UsedVirtual>
+<MemoryStats.PeakUsedVirtual>1324675072</MemoryStats.PeakUsedVirtual>
+<MemoryStats.bIsOOM>0</MemoryStats.bIsOOM>
+<MemoryStats.OOMAllocationSize>0</MemoryStats.OOMAllocationSize>
+<MemoryStats.OOMAllocationAlignment>0</MemoryStats.OOMAllocationAlignment>
+<NumMinidumpFramesToIgnore>4</NumMinidumpFramesToIgnore>
+<CallStack></CallStack>
+<PCallStack>
+Holodeck  0x00007ff63bdb0000 + 1cbd745         
+Holodeck  0x00007ff63bdb0000 + 1cbeeb0         
+Holodeck  0x00007ff63bdb0000 + 23ecde1         
+Holodeck  0x00007ff63bdb0000 + 1a6e9b7         
+Holodeck  0x00007ff63bdb0000 + 1a92c1b         
+Holodeck  0x00007ff63bdb0000 + 1a9233c         
+Holodeck  0x00007ff63bdb0000 + 528afae         
+Holodeck  0x00007ff63bdb0000 + 526792e         
+Holodeck  0x00007ff63bdb0000 + 60304eb         
+Holodeck  0x00007ff63bdb0000 + 6038024         
+Holodeck  0x00007ff63bdb0000 + 1b0073b         
+Holodeck  0x00007ff63bdb0000 + 1b00b9e         
+Holodeck  0x00007ff63bdb0000 + 1b0fde6         
+Holodeck  0x00007ff63bdb0000 + 604cb8c         
+Holodeck  0x00007ff63bdb0000 + 6052014         
+Holodeck  0x00007ff63bdb0000 + 5933c6f         
+Holodeck  0x00007ff63bdb0000 + 593ecf1         
+Holodeck  0x00007ff63bdb0000 + 578cfee         
+Holodeck  0x00007ff63bdb0000 + 9a8814          
+Holodeck  0x00007ff63bdb0000 + 9bf08f          
+Holodeck  0x00007ff63bdb0000 + 9bf15a          
+Holodeck  0x00007ff63bdb0000 + 9c155c          
+Holodeck  0x00007ff63bdb0000 + 9d2da4          
+Holodeck  0x00007ff63bdb0000 + 72b5002         
+KERNEL32  0x00007ffe5c2c0000 + 17614           
+ntdll     0x00007ffe5c4f0000 + 526a1           
+</PCallStack>
+<PCallStackHash>507744A07CB810E79AB8D7E040B6903EAAC131F0</PCallStackHash>
+<Threads><Thread><CallStack>ntdll         0x00007ffe5c4f0000 + 9d144           
+KERNELBASE    0x00007ffe59d30000 + 2306e           
+Holodeck      0x00007ff63bdb0000 + 1fffc7d         
+Holodeck      0x00007ff63bdb0000 + 72bf4ce         
+VCRUNTIME140  0x00007ffe40460000 + efc0            
+ntdll         0x00007ffe5c4f0000 + a241f           
+ntdll         0x00007ffe5c4f0000 + 514a4           
+ntdll         0x00007ffe5c4f0000 + 511f5           
+KERNELBASE    0x00007ffe59d30000 + 2cd29           
+Holodeck      0x00007ff63bdb0000 + 1fffbc6         
+Holodeck      0x00007ff63bdb0000 + 2003a98         
+Holodeck      0x00007ff63bdb0000 + 1d5a78d         
+Holodeck      0x00007ff63bdb0000 + 1cbd745         
+Holodeck      0x00007ff63bdb0000 + 1cbeeb0         
+Holodeck      0x00007ff63bdb0000 + 23ecde1         
+Holodeck      0x00007ff63bdb0000 + 1a6e9b7         
+Holodeck      0x00007ff63bdb0000 + 1a92c1b         
+Holodeck      0x00007ff63bdb0000 + 1a9233c         
+Holodeck      0x00007ff63bdb0000 + 528afae         
+Holodeck      0x00007ff63bdb0000 + 526792e         
+Holodeck      0x00007ff63bdb0000 + 60304eb         
+Holodeck      0x00007ff63bdb0000 + 6038024         
+Holodeck      0x00007ff63bdb0000 + 1b0073b         
+Holodeck      0x00007ff63bdb0000 + 1b00b9e         
+Holodeck      0x00007ff63bdb0000 + 1b0fde6         
+Holodeck      0x00007ff63bdb0000 + 604cb8c         
+Holodeck      0x00007ff63bdb0000 + 6052014         
+Holodeck      0x00007ff63bdb0000 + 5933c6f         
+Holodeck      0x00007ff63bdb0000 + 593ecf1         
+Holodeck      0x00007ff63bdb0000 + 578cfee         
+Holodeck      0x00007ff63bdb0000 + 9a8814          
+Holodeck      0x00007ff63bdb0000 + 9bf08f          
+Holodeck      0x00007ff63bdb0000 + 9bf15a          
+Holodeck      0x00007ff63bdb0000 + 9c155c          
+Holodeck      0x00007ff63bdb0000 + 9d2da4          
+Holodeck      0x00007ff63bdb0000 + 72b5002         
+KERNEL32      0x00007ffe5c2c0000 + 17614           
+ntdll         0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>true</IsCrashed>
+<Registers></Registers>
+<ThreadID>1880</ThreadID>
+<ThreadName>GameThread</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>19660</ThreadID>
+<ThreadName>TaskGraphThreadNP 0</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>11196</ThreadID>
+<ThreadName>TaskGraphThreadNP 1</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>12264</ThreadID>
+<ThreadName>TaskGraphThreadNP 2</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>6396</ThreadID>
+<ThreadName>TaskGraphThreadNP 3</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>21028</ThreadID>
+<ThreadName>TaskGraphThreadNP 4</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>10716</ThreadID>
+<ThreadName>TaskGraphThreadNP 5</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>22044</ThreadID>
+<ThreadName>TaskGraphThreadNP 6</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>7088</ThreadID>
+<ThreadName>TaskGraphThreadNP 7</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>20828</ThreadID>
+<ThreadName>TaskGraphThreadNP 8</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>1644</ThreadID>
+<ThreadName>TaskGraphThreadNP 9</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>10504</ThreadID>
+<ThreadName>TaskGraphThreadHP 10</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>22260</ThreadID>
+<ThreadName>TaskGraphThreadHP 11</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>8384</ThreadID>
+<ThreadName>TaskGraphThreadHP 12</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>15320</ThreadID>
+<ThreadName>TaskGraphThreadHP 13</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>3872</ThreadID>
+<ThreadName>TaskGraphThreadHP 14</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>10288</ThreadID>
+<ThreadName>TaskGraphThreadHP 15</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>6276</ThreadID>
+<ThreadName>TaskGraphThreadHP 16</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>11492</ThreadID>
+<ThreadName>TaskGraphThreadHP 17</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>4828</ThreadID>
+<ThreadName>TaskGraphThreadHP 18</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>14808</ThreadID>
+<ThreadName>TaskGraphThreadHP 19</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>10920</ThreadID>
+<ThreadName>TaskGraphThreadBP 20</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>15964</ThreadID>
+<ThreadName>TaskGraphThreadBP 21</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>8564</ThreadID>
+<ThreadName>TaskGraphThreadBP 22</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>472</ThreadID>
+<ThreadName>TaskGraphThreadBP 23</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>12076</ThreadID>
+<ThreadName>TaskGraphThreadBP 24</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>2368</ThreadID>
+<ThreadName>TaskGraphThreadBP 25</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>9596</ThreadID>
+<ThreadName>TaskGraphThreadBP 26</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>8100</ThreadID>
+<ThreadName>TaskGraphThreadBP 27</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>2556</ThreadID>
+<ThreadName>TaskGraphThreadBP 28</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1aff677         
+Holodeck    0x00007ff63bdb0000 + 1b00c30         
+Holodeck    0x00007ff63bdb0000 + 1b065d5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>18164</ThreadID>
+<ThreadName>TaskGraphThreadBP 29</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1b00442         
+Holodeck    0x00007ff63bdb0000 + 1b00b9e         
+Holodeck    0x00007ff63bdb0000 + 1e1eeed         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>7104</ThreadID>
+<ThreadName>StatsThread</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>17148</ThreadID>
+<ThreadName>PoolThread 0</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>17764</ThreadID>
+<ThreadName>PoolThread 1</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>3556</ThreadID>
+<ThreadName>PoolThread 2</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>16420</ThreadID>
+<ThreadName>PoolThread 3</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>10056</ThreadID>
+<ThreadName>PoolThread 4</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>10320</ThreadID>
+<ThreadName>PoolThread 5</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>2364</ThreadID>
+<ThreadName>PoolThread 6</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>2216</ThreadID>
+<ThreadName>PoolThread 7</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>15148</ThreadID>
+<ThreadName>PoolThread 8</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>9828</ThreadID>
+<ThreadName>PoolThread 9</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>21984</ThreadID>
+<ThreadName>PoolThread 10</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>15972</ThreadID>
+<ThreadName>PoolThread 11</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d744           
+KERNELBASE  0x00007ffe59d30000 + 4b16e           
+Holodeck    0x00007ff63bdb0000 + 1d6a115         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>12676</ThreadID>
+<ThreadName>FAsyncWriter_HolodeckLog</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 51562bc         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>19796</ThreadID>
+<ThreadName>FMediaTicker</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d744           
+KERNELBASE  0x00007ffe59d30000 + 4b16e           
+Holodeck    0x00007ff63bdb0000 + 2499db0         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>6472</ThreadID>
+<ThreadName>HttpManagerThread</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 16d3b46         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>21020</ThreadID>
+<ThreadName>OnlineAsyncTaskThreadNull DefaultInstance(1)</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>11880</ThreadID>
+<ThreadName>PoolThread 12</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>2968</ThreadID>
+<ThreadName>PoolThread 13</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>22456</ThreadID>
+<ThreadName>PoolThread 14</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>3148</ThreadID>
+<ThreadName>PoolThread 15</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 5ab5de5         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>21796</ThreadID>
+<ThreadName>ODSCThread</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1b00442         
+Holodeck    0x00007ff63bdb0000 + 1b00b9e         
+Holodeck    0x00007ff63bdb0000 + 480bd19         
+Holodeck    0x00007ff63bdb0000 + 4810d19         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>5636</ThreadID>
+<ThreadName>RenderThread 1</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d744           
+KERNELBASE  0x00007ffe59d30000 + 4b16e           
+Holodeck    0x00007ff63bdb0000 + 2021c62         
+Holodeck    0x00007ff63bdb0000 + 4810e77         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>19108</ThreadID>
+<ThreadName>RTHeartBeat 1</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 2a62f0a         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>13648</ThreadID>
+<ThreadName>FMessageBus.DefaultBus.Router</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d744           
+KERNELBASE  0x00007ffe59d30000 + 4b16e           
+Holodeck    0x00007ff63bdb0000 + 2021c62         
+Holodeck    0x00007ff63bdb0000 + 18ed39a         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>5208</ThreadID>
+<ThreadName>LiveLinkMessageBusDiscoveryManager</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 6948282         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>1680</ThreadID>
+<ThreadName>FFileTransferRunnable</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>10624</ThreadID>
+<ThreadName>PoolThread 16</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>5732</ThreadID>
+<ThreadName>PoolThread 17</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>7216</ThreadID>
+<ThreadName>PoolThread 18</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>17372</ThreadID>
+<ThreadName>PoolThread 19</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>3672</ThreadID>
+<ThreadName>PoolThread 20</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1bf10c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>11532</ThreadID>
+<ThreadName>PoolThread 21</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d744           
+KERNELBASE  0x00007ffe59d30000 + 4b16e           
+Holodeck    0x00007ff63bdb0000 + 2021c62         
+Holodeck    0x00007ff63bdb0000 + 60e63c1         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>21936</ThreadID>
+<ThreadName>ScreenSaverInhibitor</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 4f00cc5         
+Holodeck    0x00007ff63bdb0000 + 4f00b83         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>9240</ThreadID>
+<ThreadName>AudioMixerRenderThread(1)</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 1b00442         
+Holodeck    0x00007ff63bdb0000 + 1b00b9e         
+Holodeck    0x00007ff63bdb0000 + 5477f57         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>3344</ThreadID>
+<ThreadName>AudioThread</ThreadName>
+</Thread>
+<Thread><CallStack>ntdll       0x00007ffe5c4f0000 + 9d144           
+KERNELBASE  0x00007ffe59d30000 + 2306e           
+Holodeck    0x00007ff63bdb0000 + 202498b         
+Holodeck    0x00007ff63bdb0000 + 22dd0a2         
+Holodeck    0x00007ff63bdb0000 + 20208cf         
+Holodeck    0x00007ff63bdb0000 + 2016de0         
+KERNEL32    0x00007ffe5c2c0000 + 17614           
+ntdll       0x00007ffe5c4f0000 + 526a1           
+</CallStack>
+<IsCrashed>false</IsCrashed>
+<Registers></Registers>
+<ThreadID>9540</ThreadID>
+<ThreadName>FAsyncPurge</ThreadName>
+</Thread>
+</Threads>
+</RuntimeProperties>
+<PlatformProperties>
+<PlatformIsRunningWindows>1</PlatformIsRunningWindows>
+<IsRunningOnBattery>false</IsRunningOnBattery>
+<PlatformCallbackResult>0</PlatformCallbackResult>
+</PlatformProperties>
+<EngineData>
+<RHI.IsGPUOverclocked>false</RHI.IsGPUOverclocked>
+<RHI.RHIName>D3D11</RHI.RHIName>
+<RHI.AdapterName>NVIDIA GeForce RTX 2070 Super with Max-Q Design</RHI.AdapterName>
+<RHI.UserDriverVersion>526.98</RHI.UserDriverVersion>
+<RHI.InternalDriverVersion>31.0.15.2698</RHI.InternalDriverVersion>
+<RHI.DriverDate>11-13-2022</RHI.DriverDate>
+<RHI.FeatureLevel>SM5</RHI.FeatureLevel>
+<DeviceProfile.Name>WindowsNoEditor</DeviceProfile.Name>
+<Platform.AppHasFocus>true</Platform.AppHasFocus>
+</EngineData>
+<GameData>
+</GameData>
+</FGenericCrashContext>

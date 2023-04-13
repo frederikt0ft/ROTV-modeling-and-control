@@ -1,0 +1,35 @@
+{
+    "name": "CustomAgent",
+    "world": "ExampleLevel",
+    "main_agent": "CustomAgent",
+    "ticks_per_sec": 200,
+    "frames_per_sec": true,
+    "octree_min": 0.02,
+    "octree_max": 5.0,
+    "agents":[
+        {
+            "agent_name": "CustomAgent",
+            "agent_type": "CustomAgent",
+            "sensors": [
+                {
+                    "sensor_type": "DVLSensor",
+                    "socket": "DVLSocket",
+                    "Hz": 20,
+                    "configuration": {
+                        "Elevation": 22.5,
+                        "VelSigma": 0.02626,
+                        "ReturnRange": true,
+                        "MaxRange": 50,
+                        "RangeSigma": 0.1
+                    }
+                }
+            ],
+            "control_scheme": 0,
+            "location": [10, 10, -100.0],
+            "rotation": [0.0, 0.0, 135.0]
+        }
+    ],
+
+    "window_width":  1280,
+    "window_height": 720
+}
