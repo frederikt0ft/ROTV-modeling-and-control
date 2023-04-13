@@ -1,0 +1,14 @@
+
+Develop enviorment:
+C:\Users\frede\holoocean_develop
+
+Agents.py:
+C:\Users\frede\AppData\Local\Programs\Python\Python38-32\Lib\site-packages\holoocean
+
+C:\Users\frede\AppData\Local\Programs\Python\Python38-32\Lib\holoocean-0.5.0.dist-info
+
+Scenarios:
+C:\Users\frede\AppData\Local\holoocean\0.5.0\worlds\Ocean
+
+Simulation.exe
+C:\Users\frede\AppData\Local\holoocean\0.5.0\worlds\Ocean\WindowsNoEditor\Holodeck.exe
