@@ -1,3 +1,4 @@
-import serial.tools.list_ports
-for port in serial.tools.list_ports.comports():
-    print(f'Current port: {port}')
+
+T = 0.001
+
+print(f"frekvens: {1/T}")
