@@ -15,9 +15,10 @@ def encode_output():
     num_str = "{:03d}".format(num)
     return num_str
 while True:
-    val1 = encode_output()
-    val2 = encode_output()
-    val3 = encode_output()
+    val1 = "001"
+    val2 = "002"
+    val3 = "003"
     num_str = val1+val2+val3
     num_bytes = num_str.encode()
     ser.write(num_bytes)
+    time.sleep(0.05)

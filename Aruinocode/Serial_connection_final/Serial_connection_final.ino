@@ -1,43 +1,5 @@
 char buffer[10]; // 9 digits + 1 null terminator
-
-
-
-
-
-
-
-
 void setup() {
-
-  
-  // 31Hz
-  TCCR0A = 0b00000001; // 
-  TCCR0B = 0b00000101; // 
-
-  // 62 Hz
-  TCCR0A = 0b00000011; // 
-  TCCR0B = 0b00000101; //
-
-  // 125Hz
-  TCCR0A = 0b00000001; // 
-  TCCR0B = 0b00000100; //
-
-  // 250 Hz
-  TCCR0A = 0b00000011; // 
-  TCCR0B = 0b00000100; //
-
-  // 500Hz
-  TCCR0A = 0b00000001; // 
-  TCCR0B = 0b00000011; // 
-
-  // 1000Hz
-  TCCR0A = 0b00000011; // 
-  TCCR0B = 0b00000011; // 
-
-  // 4000Hz
-  TCCR0A = 0b00000001; // 
-  TCCR0B = 0b00000010; // 
-
   // 31Hz
   //TCCR0A = 0b00000001; // 
   //TCCR0B = 0b00000101; // 
@@ -45,6 +7,11 @@ void setup() {
 }
 
 void loop() {
+    int sensorValue = analogRead(A0);
+       Serial.println(sensorValue);
+    delay(60);
+    
+  
     if (Serial.available() > 0) {
         int num_bytes = Serial.readBytesUntil('\n', buffer, sizeof(buffer)-1);
         buffer[num_bytes] = '\0';
@@ -57,16 +24,15 @@ void loop() {
                 int val1 = atoi(buf1);
                 int val2 = atoi(buf2);
                 int val3 = atoi(buf3);
-
-                // Do something with the values
+              // Do something with the values
+                /*
                 Serial.print("Values: ");
                 Serial.print(val1);
                 Serial.print(", ");
                 Serial.print(val2);
                 Serial.print(", ");
                 Serial.println(val3);
-
-                
+                */
                 analogWrite(6, val1);
                 analogWrite(9, val2);
                 analogWrite(10, val3);
