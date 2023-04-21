@@ -2,6 +2,15 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 
+import sys
+
+ref = sys.argv[1]
+
+
+print("arg1:", int(ref))
+
+
+
 df = pd.read_csv("Simulation_data_1.csv")
 plt.style.use("dark_background")
 
@@ -27,7 +36,6 @@ fig2, axs2 = plt.subplots(2,3)
 
 param = "x1"
 axs2[0, 0].plot(t1, df[param])
-axs2[0, 0].axhline(y=1, color='yellow', linestyle='-')
 axs2[0, 0].set_title(param)
 
 param = "x2"
@@ -54,7 +62,7 @@ fig2.suptitle('States', fontsize=16)
 
 
 plt.figure(3)
-plt.axhline(y=3, color='yellow', linestyle='-', label = "ref")
+plt.axhline(y=int(ref), color='yellow', linestyle='-', label = "ref")
 plt.plot(t1,df["x1"], label = "x1")
 plt.plot(t1,df["u1"], label = "u1")
 plt.plot(t1,df["u2"], label = "u2")

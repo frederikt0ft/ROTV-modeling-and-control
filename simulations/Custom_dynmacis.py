@@ -55,7 +55,9 @@ scenario = {
             "location": [0,0,-26],
             "rotation": [phi_i,theta_i,psi_i]
         }
-    ]
+    ],
+    "window_width":  1200,
+    "window_height": 700
 }
 
 # Create list for storing data
@@ -66,7 +68,7 @@ ang_vel_d = np.array([])
 pos_d = np.array([])
 rpy_d = np.array([])
 tick1 = 200
-tick2 = 200 +tick1
+tick2 = 200 + tick1
 
 # List of lists
 data = np.zeros((9, tick2, 3))
@@ -235,12 +237,11 @@ error_h_prev = 0
 error_r_prev = 0
 error_p_prev = 0
 
-def pid_controller(states_var):
+def pid_controller(states_var, ref_h):
     #Error dynamics ()
     global error_h_prev
     global error_r_prev
     global error_p_prev
-    ref_h = 1
     ref_r = 0
     ref_p = 0
 
@@ -343,10 +344,9 @@ with holoocean.make(scenario_cfg=scenario) as env:
         print(f"Depth: {state['RangeFinderSensor'][0]}")
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
-
-        #u1, u2, u3 = pid_controller(states)
+        ref = 5
+        #u1, u2, u3 = pid_controller(states,ref)
         #u1, u2, u3 = state_feedback_controller(states, 5, 0 ,0)
-        ref = 3
         u1, u2, u3 = R @ LQR(states,ref)
 
         R = (sensor_data[-1])
@@ -364,10 +364,11 @@ print(df)
 
 import sys
 
-args = sys.argv[1:]
+import subprocess
 
-with open('plots.py', 'r') as file:
-    code = file.read()
+arg1_value = ref
+
+subprocess.run(["python", "plots.py", str(arg1_value)])
 
 exec(code)
 
