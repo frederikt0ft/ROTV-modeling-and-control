@@ -1,17 +1,19 @@
 char buffer[10]; // 9 digits + 1 null terminator
 void setup() {
-  // 31Hz
-  //TCCR0A = 0b00000001; // 
-  //TCCR0B = 0b00000101; // 
+  // 125Hz
+//TCCR0A = 0b00000001; // 
+//TCCR0B = 0b00000100; // 
+
+
     Serial.begin(115200);
+    
+    pinMode(7, OUTPUT);
 }
 
 void loop() {
-    int sensorValue = analogRead(A0);
-       Serial.println(sensorValue);
-    delay(60);
-    
-  
+
+
+
     if (Serial.available() > 0) {
         int num_bytes = Serial.readBytesUntil('\n', buffer, sizeof(buffer)-1);
         buffer[num_bytes] = '\0';
@@ -25,22 +27,26 @@ void loop() {
                 int val2 = atoi(buf2);
                 int val3 = atoi(buf3);
               // Do something with the values
-                /*
+               /* 
                 Serial.print("Values: ");
                 Serial.print(val1);
                 Serial.print(", ");
                 Serial.print(val2);
                 Serial.print(", ");
                 Serial.println(val3);
-                */
+              */
                 analogWrite(6, val1);
-                analogWrite(9, val2);
+                digitalWrite(7, val2);
                 analogWrite(10, val3);
+                
             } else {
                 Serial.println("Invalid input");
             }
         } else {
             Serial.println("Invalid input");
         }
+            int sensorValue = analogRead(A0);
+            Serial.println(sensorValue);
     }
+   
 }

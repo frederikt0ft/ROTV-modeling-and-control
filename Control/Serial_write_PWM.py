@@ -15,8 +15,8 @@ def encode_output():
     num_str = "{:03d}".format(num)
     return num_str
 while True:
-    val1 = "001"
-    val2 = "002"
+    val1 = "10"
+    val2 = "001"
     val3 = "003"
     num_str = val1+val2+val3
     num_bytes = num_str.encode()
