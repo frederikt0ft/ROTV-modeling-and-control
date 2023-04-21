@@ -1,26 +1,14 @@
 import numpy as np
 import holoocean
-from holoocean.agents import HoveringAUV
-import pandas as pd
-import matplotlib.pyplot as plt
 from scipy.spatial.transform import Rotation
-from multiprocessing import Process
 import control as ct
-from pyquaternion import Quaternion
-import random
-from itertools import count
 import pandas as pd
 import matplotlib.pyplot as plt
-from matplotlib.animation import FuncAnimation
 
-plt.style.use("dark_background")
-
-import os
 #---------------------------------- INITIAL ROLL PITCH YAW -------------------------------------------#
 phi_i = 0
 theta_i = 0
 psi_i = -20
-
 
 scenario = {
     "name": "hovering_dynamics",
@@ -70,7 +58,6 @@ scenario = {
     ]
 }
 
-
 # Create list for storing data
 acc_d = np.array([])
 vel_d= np.array([])
@@ -79,7 +66,7 @@ ang_vel_d = np.array([])
 pos_d = np.array([])
 rpy_d = np.array([])
 tick1 = 200
-tick2 = 6000 +tick1
+tick2 = 200 +tick1
 
 # List of lists
 data = np.zeros((9, tick2, 3))
@@ -101,7 +88,6 @@ x_list1 = []
 x_list2 = []
 sonar_list = [0]
 acc_list = [u_list,x_list1,x_list2]
-
 
 r1_val = 0.31
 S1_val = 0.052
@@ -339,12 +325,10 @@ def LQR(states_var, z_ref):
     u3 = u[2]
     return u1,u2, u3
 
-
 ref = np.array([0,0,0])[:,np.newaxis]
 
 # Make environment
 with holoocean.make(scenario_cfg=scenario) as env:
-
     lin_accel = np.array([5, 0, 0])   # 5 m/s
     rot_accel = np.array([0, 0, 0])
     for i in range(tick1):
@@ -362,14 +346,14 @@ with holoocean.make(scenario_cfg=scenario) as env:
 
         #u1, u2, u3 = pid_controller(states)
         #u1, u2, u3 = state_feedback_controller(states, 5, 0 ,0)
-        u1, u2, u3 = R @ LQR(states,3)
+        ref = 3
+        u1, u2, u3 = R @ LQR(states,ref)
 
         R = (sensor_data[-1])
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
         acc = compute_acc(x_dot)
 
         print()
-
         # Step simulation
         state = env.step(acc)
     print("Finished Simulation!")
@@ -377,6 +361,16 @@ with holoocean.make(scenario_cfg=scenario) as env:
 #Dataframe:
 df = build_df(data)
 print(df)
-exec(open("plots.py").read())
-exec(open("plots2.py").read())
+
+import sys
+
+args = sys.argv[1:]
+
+with open('plots.py', 'r') as file:
+    code = file.read()
+
+exec(code)
+
+
+
 

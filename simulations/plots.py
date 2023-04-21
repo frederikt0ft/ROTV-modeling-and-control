@@ -1,18 +1,13 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-from matplotlib import interactive
-from mpl_toolkits import mplot3d
-from multiprocessing import Process
+
 df = pd.read_csv("Simulation_data_1.csv")
 plt.style.use("dark_background")
+
 t1 = np.arange(0, len(df["x"]))/200
 
 # For plot
-
-
-
-
 fig1 = plt.figure()
 
 
@@ -64,17 +59,9 @@ plt.plot(t1,df["x1"], label = "x1")
 plt.plot(t1,df["u1"], label = "u1")
 plt.plot(t1,df["u2"], label = "u2")
 plt.plot(t1,df["u3"], label = "u3")
+plt.title("Actuator input + depth + ref")
 plt.legend()
 
 
-plt.figure(4)
-fig4, axs4 = plt.subplots(2,2)
-param = "x1"
-axs4[0, 0].plot(t1, df[param])
-axs4[0, 0].axhline(y=1, color='r', linestyle='-')
-axs4[0, 0].set_title(param)
 
-param = "u1"
-axs4[1, 0].plot(t1, df[param], color = "yellow")
-axs4[1, 0].set_title(param)
 plt.show()
