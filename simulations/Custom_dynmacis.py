@@ -1,14 +1,14 @@
 import numpy as np
 import holoocean
 from scipy.spatial.transform import Rotation
-import control as ct
+#import control as ct
 import pandas as pd
 import matplotlib.pyplot as plt
 
 #---------------------------------- INITIAL ROLL PITCH YAW -------------------------------------------#
 phi_i = 0
 theta_i = 0
-psi_i = -20
+psi_i = -65   #-20
 
 scenario = {
     "name": "hovering_dynamics",
@@ -52,7 +52,7 @@ scenario = {
                 },
             ],
             "control_scheme": 1, # this is the custom dynamics control scheme
-            "location": [0,0,-26],
+            "location": [0,0,-28.9],
             "rotation": [phi_i,theta_i,psi_i]
         }
     ],
@@ -68,7 +68,7 @@ ang_vel_d = np.array([])
 pos_d = np.array([])
 rpy_d = np.array([])
 tick1 = 200
-tick2 = 200 + tick1
+tick2 = 12000 + tick1
 
 # List of lists
 data = np.zeros((9, tick2, 3))
@@ -127,9 +127,9 @@ B = np.array([[0.000, 0.000, 0.000],
               [-0.165, -0.170, 2.317]])
 
 
-K = np.array([[-6.521, -14.222, -0.224, -22.359, -2.352, -8.084],
-              [-6.527, -14.231, 0.224, 22.348, -2.351, -8.067],
-              [-3.857, 2.033, -0.000, -0.017, 0.873, 29.319]])
+K = np.array([[-3.646, -23.665, -3.539, -1.528, -4.350, -3.847],
+              [-3.649, -23.680, 3.533, 1.524, -4.357, -3.858],
+              [-4.837, -17.443, 0.002, 0.002, 2.433, 6.664]])
 
 def build_df(data):
     columns = ["acc_x", "acc_y", "acc_z","vel_x", "vel_y", "vel_z","ang_acc_roll", "ang_acc_pitch", "ang_acc_yaw","ang_vel_roll", "ang_vel_pitch", "ang_vel_yaw","x","y","z","roll","pitch","yaw","u1","u2","u3","x1","x2","x3","x4","x5","x6"]
@@ -233,10 +233,13 @@ def compute_acc(x_dot_var):
 
     return np.array([lin_accel,rot_accel])
 #-------------------Controllers---------------------#
-error_h_prev = 0
+error_h_prev = 1.06
 error_r_prev = 0
 error_p_prev = 0
 
+
+def clamp(arr, minimum, maximum):
+    return np.clip(arr, minimum, maximum)
 def pid_controller(states_var, ref_h):
     #Error dynamics ()
     global error_h_prev
@@ -246,14 +249,14 @@ def pid_controller(states_var, ref_h):
     ref_p = 0
 
 
-    p_h = 5
-    d_h = 1
+    p_h = 10000
+    d_h = 8000000
 
-    p_r = 5
+    p_r = 1000
     d_r = 1
 
-    p_p = 5
-    d_p = 1
+    p_p = 1000
+    d_p = 50000
 
     error_h = ref_h - states_var[0]
     error_r = ref_r - states_var[3]
@@ -293,8 +296,12 @@ def pid_controller(states_var, ref_h):
     error_p_prev = error_p
 
     print()
+    u1 = u[0]
+    u2 = u[1]
+    u3 = u[2]
 
-    return u[0], u[1], u[2]
+    return clamp(u1, -20, 20), clamp(u2, -20, 20), clamp(u3, -20, 20)
+"""
 def state_feedback_controller(states_var, ref_h, ref_r, ref_p):
     desired_poles1 = [0, -2, 0,0, (-2+1j),(-2-1j)]
     K=ct.place(A,B,desired_poles1)
@@ -307,6 +314,7 @@ def state_feedback_controller(states_var, ref_h, ref_r, ref_p):
 
     print(u1, u2, u3)
     return u1, u2, u3
+"""
 def LQR(states_var, z_ref):
     state_vector = np.array([states_var[0],states_var[1],states_var[2],states_var[3],states_var[4],states_var[5]])[:,np.newaxis]
     #print("ref")
@@ -330,7 +338,7 @@ ref = np.array([0,0,0])[:,np.newaxis]
 
 # Make environment
 with holoocean.make(scenario_cfg=scenario) as env:
-    lin_accel = np.array([5, 0, 0])   # 5 m/s
+    lin_accel = np.array([4, 0, 0])   # 5 m/s
     rot_accel = np.array([0, 0, 0])
     for i in range(tick1):
         acc = np.array([R@lin_accel,R@rot_accel])
@@ -344,10 +352,10 @@ with holoocean.make(scenario_cfg=scenario) as env:
         print(f"Depth: {state['RangeFinderSensor'][0]}")
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
-        ref = 5
-        #u1, u2, u3 = pid_controller(states,ref)
+        ref = 2    #Target above seabed
+        u1, u2, u3 = pid_controller(states,ref)
         #u1, u2, u3 = state_feedback_controller(states, 5, 0 ,0)
-        u1, u2, u3 = R @ LQR(states,ref)
+        #u1, u2, u3 = R @ LQR(states,ref)
 
         R = (sensor_data[-1])
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
