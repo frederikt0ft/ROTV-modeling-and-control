@@ -8,7 +8,7 @@ import matplotlib.pyplot as plt
 #---------------------------------- INITIAL ROLL PITCH YAW -------------------------------------------#
 phi_i = 0
 theta_i = 0
-psi_i = -65   #-20
+psi_i = -20   #-20
 
 scenario = {
     "name": "hovering_dynamics",
@@ -52,7 +52,7 @@ scenario = {
                 },
             ],
             "control_scheme": 1, # this is the custom dynamics control scheme
-            "location": [0,0,-28.9],
+            "location": [0,0,-27.8],
             "rotation": [phi_i,theta_i,psi_i]
         }
     ],
@@ -68,7 +68,7 @@ ang_vel_d = np.array([])
 pos_d = np.array([])
 rpy_d = np.array([])
 tick1 = 200
-tick2 = 12000 + tick1
+tick2 = 4000 + tick1
 
 # List of lists
 data = np.zeros((9, tick2, 3))
@@ -233,7 +233,7 @@ def compute_acc(x_dot_var):
 
     return np.array([lin_accel,rot_accel])
 #-------------------Controllers---------------------#
-error_h_prev = 1.06
+error_h_prev = -0.04
 error_r_prev = 0
 error_p_prev = 0
 
