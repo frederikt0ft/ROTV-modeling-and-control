@@ -1,0 +1,16 @@
+3. Skrive til Hjalte omkring trækmekanisme
+
+1. Forbered spørgsmål til Hakim
+
+6. Færdiggøre guide til git
+
+4. Test af hardware
+
+5. Test af Hardware(sonar igennem pymavlink)
+
+2. Finpudse simulationer
+
+
+
+
+3 -> 5 -> 2-> 1 -> 4-> 6->

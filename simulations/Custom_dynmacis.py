@@ -127,9 +127,11 @@ B = np.array([[0.000, 0.000, 0.000],
               [-0.165, -0.170, 2.317]])
 
 
-K = np.array([[-3.646, -23.665, -3.539, -1.528, -4.350, -3.847],
-              [-3.649, -23.680, 3.533, 1.524, -4.357, -3.858],
-              [-4.837, -17.443, 0.002, 0.002, 2.433, 6.664]])
+K = np.array([[-18.801, -23.957, -3.538, -1.528, -4.344, -3.836],
+              [-18.815, -23.973, 3.533, 1.524, -4.352, -3.847],
+              [-24.850, -17.829, 0.002, 0.002, 2.440, 6.679]])
+
+
 
 def build_df(data):
     columns = ["acc_x", "acc_y", "acc_z","vel_x", "vel_y", "vel_z","ang_acc_roll", "ang_acc_pitch", "ang_acc_yaw","ang_vel_roll", "ang_vel_pitch", "ang_vel_yaw","x","y","z","roll","pitch","yaw","u1","u2","u3","x1","x2","x3","x4","x5","x6"]
@@ -332,7 +334,7 @@ def LQR(states_var, z_ref):
     u1 = u[0]
     u2 = u[1]
     u3 = u[2]
-    return u1,u2, u3
+    return clamp(u1, -20, 20),clamp(u2, -20, 20), clamp(u3, -20, 20)
 
 ref = np.array([0,0,0])[:,np.newaxis]
 
@@ -353,9 +355,9 @@ with holoocean.make(scenario_cfg=scenario) as env:
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
         ref = 2    #Target above seabed
-        u1, u2, u3 = pid_controller(states,ref)
+        #u1, u2, u3 = pid_controller(states,ref)
         #u1, u2, u3 = state_feedback_controller(states, 5, 0 ,0)
-        #u1, u2, u3 = R @ LQR(states,ref)
+        u1, u2, u3 = R @ LQR(states,ref)
 
         R = (sensor_data[-1])
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
