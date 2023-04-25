@@ -57,12 +57,12 @@ scenario = {
                 },
             ],
             "control_scheme": 1, # this is the custom dynamics control scheme
-            "location": [0,0,-27.8],
+            "location": [0,0,-26.84],
             "rotation": [phi_i,theta_i,psi_i]
         }
     ],
-    "window_width":  1200,
-    "window_height": 700
+    "window_width":  800,
+    "window_height": 300
 }
 
 # Create list for storing data
@@ -74,7 +74,7 @@ pos_d = np.array([])
 rpy_d = np.array([])
 
 tick1 = 10
-tick2 = 100 + tick1
+tick2 = 290 + tick1
 
 # List of lists
 data = np.zeros((9, tick2, 3))
@@ -241,15 +241,16 @@ def compute_acc(x_dot_var):
 
     return np.array([lin_accel,rot_accel])
 #-------------------Controllers---------------------#
-error_h_prev = -0.04
+error_h_prev = 0
 error_r_prev = 0
 error_p_prev = 0
 
-
+flag = False
 def clamp(arr, minimum, maximum):
     return np.clip(arr, minimum, maximum)
 def pid_controller(states_var, ref_h):
     #Error dynamics ()
+    global flag
     global error_h_prev
     global error_r_prev
     global error_p_prev
@@ -257,22 +258,35 @@ def pid_controller(states_var, ref_h):
     ref_p = 0
 
 
-    p_h = 10000
-    d_h = 8000000
+    p_h = 500
+    d_h = 5000
 
-    p_r = 1000
+    p_r = 1
     d_r = 1
 
-    p_p = 1000
-    d_p = 50000
+    p_p = 1
+    d_p = 2
 
     error_h = ref_h - states_var[0]
     error_r = ref_r - states_var[3]
     error_p = ref_p - states_var[4]
 
-    LF = error_h*p_h + (error_h-error_h_prev)*d_h
-    RF = error_r*p_r + (error_r-error_r_prev)*d_r
-    PF = error_p*p_p + (error_p-error_p_prev)*d_p
+    if flag:
+        LF = error_h*p_h + (error_h-error_h_prev)*d_h
+        RF = error_r*p_r + (error_r-error_r_prev)*d_r
+        PF = error_p*p_p + (error_p-error_p_prev)*d_p
+
+
+    else:
+        LF = error_h*p_h
+        RF = error_r*p_r
+        PF = error_p*p_p
+
+
+        flag = True
+
+
+
 
     force_vector = np.array([LF, RF, PF]) [:,np.newaxis]
 
@@ -282,8 +296,8 @@ def pid_controller(states_var, ref_h):
 
 
     T = -np.array([[lift_h*S2_val, lift_h*S2_val, lift_h*S4_val],
-                  [lift_r*S2_val, -lift_r*S2_val, 0],
-                  [lift_p*d2_val*S2_val, lift_p*d2_val*S2_val, lift_p*d4_val*S4_val]])
+                   [lift_r*S2_val, -lift_r*S2_val, 0],
+                   [lift_p*d2_val*S2_val, lift_p*d2_val*S2_val, lift_p*d4_val*S4_val]])
 
     #print("force vector")
     #print(force_vector)
@@ -293,8 +307,8 @@ def pid_controller(states_var, ref_h):
     u = np.linalg.pinv(T) @ force_vector
 
 
-    #print(f"input P: {error_h*p_h}")
-    #print(f"input D: {(error_h-error_h_prev)*d_h}")
+    print(f"input P: {error_h*p_h}")
+    print(f"input D: {(error_h-error_h_prev)*d_h}")
     #print(f"e_h: {error_h}")
     #print(f"e_h_prev: {error_h_prev}")
 
@@ -307,6 +321,7 @@ def pid_controller(states_var, ref_h):
     u1 = u[0]
     u2 = u[1]
     u3 = u[2]
+    print(f"u1: {u1}")
 
     return clamp(u1, -20, 20), clamp(u2, -20, 20), clamp(u3, -20, 20)
 """
@@ -361,9 +376,9 @@ with holoocean.make(scenario_cfg=scenario) as env:
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
         ref = 2    #Target above seabed
-        #u1, u2, u3 = pid_controller(states,ref)
+        u1, u2, u3 = pid_controller(states,ref)
         #u1, u2, u3 = state_feedback_controller(states, 5, 0 ,0)
-        u1, u2, u3 = R @ LQR(states,ref)
+        #u1, u2, u3 = R @ LQR(states,ref)
 
         R = (sensor_data[-1])
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3

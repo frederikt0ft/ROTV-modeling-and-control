@@ -57,7 +57,7 @@ scenario = {
                 },
             ],
             "control_scheme": 1, # this is the custom dynamics control scheme
-            "location": [0,0,-27.8],
+            "location": [0,0,-27.84],
             "rotation": [phi_i,theta_i,psi_i]
         }
     ],
@@ -240,15 +240,16 @@ def compute_acc(x_dot_var):
 
     return np.array([lin_accel,rot_accel])
 #-------------------Controllers---------------------#
-error_h_prev = -0.04
+error_h_prev = 0
 error_r_prev = 0
 error_p_prev = 0
 
-
+flag = False
 def clamp(arr, minimum, maximum):
     return np.clip(arr, minimum, maximum)
 def pid_controller(states_var, ref_h):
     #Error dynamics ()
+    global flag
     global error_h_prev
     global error_r_prev
     global error_p_prev
@@ -269,9 +270,18 @@ def pid_controller(states_var, ref_h):
     error_r = ref_r - states_var[3]
     error_p = ref_p - states_var[4]
 
-    LF = error_h*p_h + (error_h-error_h_prev)*d_h
-    RF = error_r*p_r + (error_r-error_r_prev)*d_r
-    PF = error_p*p_p + (error_p-error_p_prev)*d_p
+    if flag:
+        LF = error_h*p_h + (error_h-error_h_prev)*d_h
+        RF = error_r*p_r + (error_r-error_r_prev)*d_r
+        PF = error_p*p_p + (error_p-error_p_prev)*d_p
+
+
+    else:
+        LF = error_h*p_h
+        RF = error_r*p_r
+        PF = error_p*p_p
+
+        flag = True
 
     force_vector = np.array([LF, RF, PF]) [:,np.newaxis]
 
