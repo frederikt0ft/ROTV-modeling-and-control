@@ -16,7 +16,7 @@ The project is split into 3 parts:
 HoloOcean is an underwater robotics simulator developed by E. Potokar and S. Ashford and M. Kaess and J. Mangelson,
 in may 2022. HoloOcean refers to the complete project containing both the engine and client. 
 
-##### HoloDeck
+##### HoloDeck (not incluced in repoistory due to big size)
 HoloDeck is the development enviorment for the simulator. It is based on Unreal Engine 4.27. In the engine you
 are able to develop custom enviorments and agents. Furthermore you are able to add sockets to your
 agent on which you can attach various sensors. HoloDeck can be opened by clicking the "Holodeck.uproject" file.
