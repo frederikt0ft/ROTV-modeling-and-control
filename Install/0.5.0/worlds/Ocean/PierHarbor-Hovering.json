@@ -62,8 +62,8 @@
                     }
                 }
             ],
-            "control_scheme": 9999,
-            "location": [0, 0,-30],
+            "control_scheme": 0,
+            "location": [0, 0,-20],
             "rotation": [0.0, 0.0, 135.0]
         }
     ],
