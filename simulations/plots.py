@@ -1,23 +1,20 @@
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
-
+import os
 import sys
 
 ref = sys.argv[1]
+tick_rate = sys.argv[2]
 
 
-print("arg1:", int(ref))
-
-
-
-df = pd.read_csv("Simulation_data_1.csv")
+df = pd.read_csv("Control/Simulation_data.csv")
 plt.style.use("dark_background")
 
-t1 = np.arange(0, len(df["x"]))/200
+t1 = np.arange(0, len(df["x"]))/int(tick_rate)
 
 # For plot
-fig1 = plt.figure()
+fig1 = plt.figure(1)
 
 
 #------------------------------------------------------------PLOT 2----------------------------------------------------------------------#
@@ -70,6 +67,14 @@ plt.plot(t1,df["u3"], label = "u3")
 plt.title("Actuator input + depth + ref")
 plt.legend()
 
+
+plt.figure(4)
+plt.axhline(y=int(ref), color='yellow', linestyle='-', label = "ref")
+plt.plot(t1,df["x1"], label = "x1")
+plt.xlabel ('Time (s)')
+plt.ylabel ('Heigh above seabed (m)')
+plt.title("Depth + ref")
+plt.legend()
 
 
 plt.show()

@@ -4,18 +4,23 @@ from scipy.spatial.transform import Rotation
 #import control as ct
 import pandas as pd
 import matplotlib.pyplot as plt
+import os
+import subprocess
 
+os.chdir("..")
 #---------------------------------- INITIAL ROLL PITCH YAW -------------------------------------------#
 phi_i = 0
 theta_i = 0
 psi_i = -20   #-20
+
+tick_rate = 200
 
 scenario = {
     "name": "hovering_dynamics",
     "package_name": "Ocean",
     "world": "SimpleUnderwater",
     "main_agent": "auv0",
-    "ticks_per_sec": 200,
+    "ticks_per_sec": tick_rate,
     "lcm_provider": "file:///home/lcm.log",
     "agents": [
         {
@@ -68,7 +73,7 @@ ang_vel_d = np.array([])
 pos_d = np.array([])
 rpy_d = np.array([])
 tick1 = 200
-tick2 = 4000 + tick1
+tick2 = 200 + tick1
 
 # List of lists
 data = np.zeros((9, tick2, 3))
@@ -165,7 +170,7 @@ def build_df(data):
     df = pd.DataFrame(list(zip(lst1, lst2, lst3, lst4, lst5, lst6, lst7, lst8, lst9, lst10, lst11, lst12, lst13, lst14, lst15, lst16, lst17, lst18, lst19, lst20, lst21, lst22, lst23, lst24, lst25, lst26, lst27)),
                       columns =columns)
     print(len(df["x"]))
-    df.to_csv('Simulation_data_1.csv', index = False)
+    df.to_csv('Control/Simulation_data.csv', index = False)
 
     return df
 def extract_sensor_info(x, a):
@@ -372,15 +377,17 @@ with holoocean.make(scenario_cfg=scenario) as env:
 df = build_df(data)
 print(df)
 
-import sys
 
-import subprocess
+print("Generating plots with following parameters: ")
+print(f"Ref:   {ref}")
+print(f"Ticks: {tick2}")
 
 arg1_value = ref
+arg2_value = tick_rate
 
-subprocess.run(["python", "plots.py", str(arg1_value)])
+subprocess.run(["python", "Simulations/plots.py", str(arg1_value), str(arg2_value)])
 
-exec(code)
+
 
 
 
