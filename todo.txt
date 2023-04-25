@@ -1,16 +1,19 @@
-3. Skrive til Hjalte omkring trækmekanisme
 
-1. Forbered spørgsmål til Hakim
+Test af hardware
 
-6. Færdiggøre guide til git
+Få kommukation til Sonar op at spille 
 
-4. Test af hardware
 
-5. Test af Hardware(sonar igennem pymavlink)
-
-2. Finpudse simulationer
+Implementer indre PID på flap
+Finpudse simulationer
+Sæt tickrate
 
 
 
 
-3 -> 5 -> 2-> 1 -> 4-> 6->
+* TIL TEST
+   Få fat i træksystem
+   Forbered hvilke test vi vil lave og hvordan. Hør evt. Hakim
+
+
+

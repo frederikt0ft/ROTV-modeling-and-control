@@ -23,10 +23,10 @@ agent on which you can attach various sensors. HoloDeck can be opened by clickin
 When done editing in Unreal Engine you go to "File" -> "Package Project" -> "Windows (64-bit)". This will create 
 the Holodeck.exe program which the client will run. See "paths.txt" for location of the packaged Holodeck.exe
 
-##### Client (python)
+##### Client (>= Python 3.6) 
 The clients runs Holodeck.exe, using a scenario profile which is a .json file. See paths.txt to see available scenarios
 profiles. It is within the python you send commands to your agent, but there are different Control Schemes to each agent(see docs).
-The control scheme should be set in the scenario profile. 
+The control scheme should be set in the scenario profile. I used python 3.8.5
 
 ## Installation
 To install the software you should clone the repository and move all folders/files in the install folder to your respective place on your local pc - see "paths.txt".
