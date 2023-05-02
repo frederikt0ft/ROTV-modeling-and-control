@@ -242,6 +242,7 @@ def compute_x_dot(x_states_var, u1_var, u2_var, u3_var):
     u_input = np.array([u1_var, u2_var, u3_var]) #[:,np.newaxis]
     x_dot = A @ x_states1 + B @ u_input
     return x_dot
+
 def compute_acc(x_dot_var):
     heave_vel1   = x_dot_var[0][0] # positiv er frem
     heave_acc1   = x_dot_var[1][0] # positiv er til venstre
@@ -250,9 +251,11 @@ def compute_acc(x_dot_var):
     pitch_vel1   = x_dot_var[4][0] # positiv er snuden kører nedad
     pitch_acc1   = -x_dot_var[5][0] # positiv er anticlockwise fra toppen
 
-    lin_accel = R@np.array([[0], [0], [heave_acc1]])/200
-    rot_accel = R@np.array([[roll_acc1], [pitch_acc1], [0]])/200
-
+    lin_accel = R@np.array([[0], [0], [heave_acc1]])
+    rot_accel = R@np.array([[roll_acc1], [pitch_acc1], [0]])
+    lin_accel[0] = 0
+    lin_accel[1] = 0
+    rot_accel[2] = 0
 
     return np.array([lin_accel,rot_accel])
 #-------------------Controllers---------------------#
@@ -273,14 +276,14 @@ def pid_controller(states_var, ref_h):
     ref_p = 0
 
 
-    p_h = 10000
-    d_h = 8000000
+    p_h = 10000 #10000
+    d_h = 8000000 #8000000
 
-    p_r = 1000
-    d_r = 1
+    p_r = 1000 #1000
+    d_r = 1 #1
 
-    p_p = 1000
-    d_p = 50000
+    p_p = 1000 #1000
+    d_p = 50000 #50000
 
     error_h = ref_h - states_var[0]
     error_r = ref_r - states_var[3]
@@ -372,9 +375,9 @@ with holoocean.make(scenario_cfg=scenario) as env:
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
         ref = 2    #Target above seabed
-        #u1, u2, u3 = pid_controller(states,ref)
+        u1, u2, u3 = pid_controller(states,ref)
         #u1, u2, u3 = state_feedback_controller(states, 5, 0 ,0)
-        u1, u2, u3 = R @ LQR(states,ref)
+        #u1, u2, u3 = R @ LQR(states,ref)
 
         R = (sensor_data[-1])
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
