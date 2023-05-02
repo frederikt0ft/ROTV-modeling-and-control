@@ -13,6 +13,8 @@ phi_i = 0
 theta_i = 0
 psi_i = -20   #-20
 
+u_val = 1
+
 tick_rate = 200
 
 scenario = {
@@ -355,7 +357,7 @@ ref = np.array([0,0,0])[:,np.newaxis]
 
 # Make environment
 with holoocean.make(scenario_cfg=scenario) as env:
-    lin_accel = np.array([5, 0, 0])   # 5 m/s
+    lin_accel = np.array([u_val, 0, 0])   # 5 m/s
     rot_accel = np.array([0, 0, 0])
     for i in range(tick1):
         acc = np.array([R@lin_accel,R@rot_accel])
