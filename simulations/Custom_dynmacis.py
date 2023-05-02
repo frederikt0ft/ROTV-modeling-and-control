@@ -13,7 +13,7 @@ phi_i = 0
 theta_i = 0
 psi_i = -20   #-20
 
-u_val = 1
+u_val = 3
 
 tick_rate = 200
 
