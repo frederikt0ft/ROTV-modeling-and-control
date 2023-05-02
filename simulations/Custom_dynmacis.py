@@ -61,8 +61,8 @@ scenario = {
             "rotation": [phi_i,theta_i,psi_i]
         }
     ],
-    "window_width":  1200,
-    "window_height": 700
+    "window_width":  800,
+    "window_height": 300
 }
 
 # Create list for storing data
@@ -73,7 +73,7 @@ ang_vel_d = np.array([])
 pos_d = np.array([])
 rpy_d = np.array([])
 tick1 = 200
-tick2 = 200 + tick1
+tick2 = 4000 + tick1
 
 # List of lists
 data = np.zeros((9, tick2, 3))
@@ -355,7 +355,7 @@ ref = np.array([0,0,0])[:,np.newaxis]
 
 # Make environment
 with holoocean.make(scenario_cfg=scenario) as env:
-    lin_accel = np.array([4, 0, 0])   # 5 m/s
+    lin_accel = np.array([5, 0, 0])   # 5 m/s
     rot_accel = np.array([0, 0, 0])
     for i in range(tick1):
         acc = np.array([R@lin_accel,R@rot_accel])
@@ -370,9 +370,9 @@ with holoocean.make(scenario_cfg=scenario) as env:
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
         ref = 2    #Target above seabed
-        #u1, u2, u3 = pid_controller(states,ref)
+        u1, u2, u3 = pid_controller(states,ref)
         #u1, u2, u3 = state_feedback_controller(states, 5, 0 ,0)
-        u1, u2, u3 = R @ LQR(states,ref)
+        #u1, u2, u3 = R @ LQR(states,ref)
 
         R = (sensor_data[-1])
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
