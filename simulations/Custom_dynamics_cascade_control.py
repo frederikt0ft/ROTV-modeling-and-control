@@ -307,8 +307,8 @@ def pid_controller(states_var, ref_h):
 
 
     T = -np.array([[lift_h*S2_val, lift_h*S2_val, lift_h*S4_val],
-                  [lift_r*S2_val, -lift_r*S2_val, 0],
-                  [lift_p*d2_val*S2_val, lift_p*d2_val*S2_val, lift_p*d4_val*S4_val]])
+                   [lift_r*S2_val, -lift_r*S2_val, 0],
+                   [lift_p*d2_val*S2_val, lift_p*d2_val*S2_val, lift_p*d4_val*S4_val]])
 
     #print("force vector")
     #print(force_vector)
