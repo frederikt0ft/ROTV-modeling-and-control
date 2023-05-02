@@ -1,19 +1,21 @@
 import numpy as np
 import holoocean
 from scipy.spatial.transform import Rotation
-#import control as ct
+import control as ct
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
 import subprocess
-
+import scipy as sp
+np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 os.chdir("..")
 #---------------------------------- INITIAL ROLL PITCH YAW -------------------------------------------#
 phi_i = 0
 theta_i = 0
 psi_i = -20   #-20
 
-u_val = 3
+u_val = 5
+
 
 tick_rate = 200
 
@@ -119,27 +121,38 @@ r = 0
 # x' = Ax + Bu
 x_dot = np.array([u, v, w, p, q, r]) [:,np.newaxis]
 
-A = np.array([[0.000, 1.000, 0.000, 0.000, 0.000, 0.000],
-           [0.000, -0.005, 0.000, 0.000, 3.811, -0.806],
-           [0.000, 0.000, 0.000, 1.000, 0.000, 0.000],
-           [0.000, -0.048, 0.000, -0.015, 0.009, 0.000],
-           [0.000, 0.000, 0.000, 0.000, 0.000, 1.000],
-           [0.000, 19.359, 0.000, 0.000, -3.551, -0.009]])
+A = np.array([[0, 1.00, 0, 0, 0, 0],
+              [0, -0.00499, 0, 0, 0.176*u_val**2 - 0.901, -0.163*u_val],
+              [0, 0, 0, 1.00, 0, 0],
+              [0, -0.0115*u_val, 0, -0.0121, 0.000189*u_val**2, 2.73e-5],
+              [0, 0, 0, 0, 0, 1.00],
+              [0, 5.63*u_val, 0, 2.66e-5, -0.093*u_val**2, -0.0134]])
+print(A)
 
-B = np.array([[0.000, 0.000, 0.000],
-              [-0.727, -0.727, -0.865],
-              [0.000, 0.000, 0.000],
-              [-1.690, 1.691, -0.006],
-              [0.000, 0.000, 0.000],
-              [-0.165, -0.170, 2.317]])
+B = np.array([[0, 0, 0],
+              [-0.029*u_val**2, -0.029*u_val**2, -0.0346*u_val**2],
+              [0, 0, 0],
+              [-0.052*u_val**2, 0.052*u_val**2, -0.000237*u_val**2],
+              [0, 0, 0],
+              [-0.0106*u_val**2, -0.0109*u_val**2, 0.116*u_val**2]])
+print(B)
 
+#--------------------------- LQR --------------------------------#
 
-K = np.array([[-18.801, -23.957, -3.538, -1.528, -4.344, -3.836],
-              [-18.815, -23.973, 3.533, 1.524, -4.352, -3.847],
-              [-24.850, -17.829, 0.002, 0.002, 2.440, 6.679]])
+Q = np.array([[265.000, 0.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 100.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 5.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 0.000, 0.100, 0.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 5.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 0.000, 15.00]])
 
+R = np.array([[0.200, 0.000, 0.000],
+              [0.000, 0.200, 0.000],
+              [0.000, 0.000, 0.200]])
 
+K, S, E = ct.lqr(A, B, Q, R)
 
+#-------------------Functions------------------------------------#
 def build_df(data):
     columns = ["acc_x", "acc_y", "acc_z","vel_x", "vel_y", "vel_z","ang_acc_roll", "ang_acc_pitch", "ang_acc_yaw","ang_vel_roll", "ang_vel_pitch", "ang_vel_yaw","x","y","z","roll","pitch","yaw","u1","u2","u3","x1","x2","x3","x4","x5","x6"]
     lst1 = data[0][:,0]     #acc_x
@@ -320,20 +333,7 @@ def pid_controller(states_var, ref_h):
     u3 = u[2]
 
     return clamp(u1, -20, 20), clamp(u2, -20, 20), clamp(u3, -20, 20)
-"""
-def state_feedback_controller(states_var, ref_h, ref_r, ref_p):
-    desired_poles1 = [0, -2, 0,0, (-2+1j),(-2-1j)]
-    K=ct.place(A,B,desired_poles1)
-    print(np.shape(K))
-    feedback = -K @ states_var
-    print(np.shape(feedback))
-    u1 = ref_h + feedback[0]
-    u2 = ref_r + feedback[1]
-    u3 = ref_p + feedback[2]
 
-    print(u1, u2, u3)
-    return u1, u2, u3
-"""
 def LQR(states_var, z_ref):
     state_vector = np.array([states_var[0],states_var[1],states_var[2],states_var[3],states_var[4],states_var[5]])[:,np.newaxis]
     #print("ref")
@@ -372,9 +372,9 @@ with holoocean.make(scenario_cfg=scenario) as env:
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
         ref = 2    #Target above seabed
-        u1, u2, u3 = pid_controller(states,ref)
+        #u1, u2, u3 = pid_controller(states,ref)
         #u1, u2, u3 = state_feedback_controller(states, 5, 0 ,0)
-        #u1, u2, u3 = R @ LQR(states,ref)
+        u1, u2, u3 = R @ LQR(states,ref)
 
         R = (sensor_data[-1])
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
