@@ -11,10 +11,10 @@ np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 os.chdir("..")
 #---------------------------------- INITIAL ROLL PITCH YAW -------------------------------------------#
 phi_i = 0
-theta_i = 5
+theta_i = 0
 psi_i = -20   #-20
 
-u_val = 2
+u_val = 5
 
 tick_rate = 200
 
@@ -76,7 +76,7 @@ ang_vel_d = np.array([])
 pos_d = np.array([])
 rpy_d = np.array([])
 tick1 = 200
-tick2 = 800 + tick1
+tick2 = 2800 + tick1
 
 # List of lists
 data = np.zeros((9, tick2, 3))
@@ -138,16 +138,16 @@ print(B)
 
 #--------------------------- LQR --------------------------------#
 
-Q = np.array([[265.000, 0.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 100.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 5.000, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.100, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 5.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 0.000, 15.00]])
+Q = np.array([[900.000, 0.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 30.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 10.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 0.000, 1.00, 0.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 10.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 0.000, 5.00]])
 
-LQR_R = np.array([[0.200, 0.000, 0.000],
-              [0.000, 0.200, 0.000],
-              [0.000, 0.000, 0.200]])
+LQR_R = np.array([[0.20, 0.000, 0.000],
+                  [0.000, 0.200, 0.000],
+                  [0.000, 0.000, 1.0]])
 
 K, S, E = ct.lqr(A, B, Q, LQR_R)
 
@@ -251,8 +251,8 @@ def compute_acc(x_dot_var):
     pitch_vel1   = x_dot_var[4][0] # positiv er snuden kører nedad
     pitch_acc1   = -x_dot_var[5][0] # positiv er anticlockwise fra toppen
 
-    lin_accel = R@np.array([[0], [0], [heave_acc1]])/tick_rate
-    rot_accel = R@np.array([[roll_acc1], [pitch_acc1], [0]])/tick_rate
+    lin_accel = R@np.array([[0], [0], [heave_acc1]])
+    rot_accel = R@np.array([[roll_acc1], [pitch_acc1], [0]])
     lin_accel[0] = 0
     lin_accel[1] = 0
     rot_accel[2] = 0
@@ -276,17 +276,17 @@ def pid_controller(states_var, ref_h):
     ref_p = 0
 
 
-    p_h = 10000 #10000
-    d_h = 8000000 #8000000
+    p_h = 3000 #10000 for god #1000 realistisk
+    d_h = 500000 #8000000 for god #500000 realistisk
 
-    p_r = 1000 #1000
-    d_r = 1 #1
+    p_r = 250 #1000 #1 realistisk
+    d_r = 10000 #1 for god #1 realistisk
 
-    p_p = 1000 #1000
-    d_p = 50000 #50000
+    p_p = 500 #1000 for god #500 realistisk
+    d_p = 10000 #50000 for god #10000 realistisk
 
     error_h = ref_h - states_var[0]
-    error_r = ref_r - states_var[3]
+    error_r = ref_r - states_var[2]
     error_p = ref_p - states_var[4]
 
     if flag:
@@ -304,9 +304,9 @@ def pid_controller(states_var, ref_h):
 
     force_vector = np.array([LF, RF, PF]) [:,np.newaxis]
 
-    lift_h = (1/2)*997*1/8*5**2
-    lift_r = (1/2)*997*1/8*5**2*r1_val
-    lift_p = (1/2)*997*1/8*5**2
+    lift_h = (1/2)*997*1/8*u_val**2
+    lift_r = (1/2)*997*1/8*u_val**2*r1_val
+    lift_p = (1/2)*997*1/8*u_val**2
 
 
     T = -np.array([[lift_h*S2_val, lift_h*S2_val, lift_h*S4_val],
@@ -336,7 +336,7 @@ def pid_controller(states_var, ref_h):
     u2 = u[1]
     u3 = u[2]
 
-    return clamp(u1, -20, 20), clamp(u2, -20, 20), clamp(u3, -20, 20)
+    return clamp(u1, -30, 30), clamp(u2, -30, 30), clamp(u3, -30, 30)
 
 def LQR(states_var, z_ref):
     state_vector = np.array([states_var[0],states_var[1],states_var[2],states_var[3],states_var[4],states_var[5]])[:,np.newaxis]
@@ -355,9 +355,14 @@ def LQR(states_var, z_ref):
     u1 = u[0]
     u2 = u[1]
     u3 = u[2]
-    return clamp(u1, -20, 20),clamp(u2, -20, 20), clamp(u3, -20, 20)
+    return clamp(u1, -30, 30),clamp(u2, -30, 30), clamp(u3, -30, 30)
 
-ref = np.array([0,0,0])[:,np.newaxis]
+#ref = np.array([0,0,0])[:,np.newaxis]
+
+u1_true_prev = 0
+u2_true_prev = 0
+u3_true_prev = 0
+
 
 # Make environment
 with holoocean.make(scenario_cfg=scenario) as env:
@@ -374,7 +379,7 @@ with holoocean.make(scenario_cfg=scenario) as env:
     for i in range(tick1,tick2):
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
-        ref = 2    #Target above seabed
+        ref = 1    #Target above seabed
         u1, u2, u3 = pid_controller(states,ref)
         #u1, u2, u3 = state_feedback_controller(states, 5, 0 ,0)
         #u1, u2, u3 = R @ LQR(states,ref)
@@ -400,7 +405,7 @@ print(f"Ticks: {tick2}")
 arg1_value = ref
 arg2_value = tick_rate
 
-#subprocess.run(["python", "Simulations/plots.py", str(arg1_value), str(arg2_value)])
+subprocess.run(["python", "Simulations/plots.py", str(arg1_value), str(arg2_value)])
 
 
 
