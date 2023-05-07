@@ -11,10 +11,10 @@ np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 os.chdir("..")
 #---------------------------------- INITIAL ROLL PITCH YAW -------------------------------------------#
 phi_i = 0
-theta_i = 0
+theta_i = 5
 psi_i = -20   #-20
 
-u_val = 5
+u_val = 2
 
 tick_rate = 200
 
@@ -76,7 +76,7 @@ ang_vel_d = np.array([])
 pos_d = np.array([])
 rpy_d = np.array([])
 tick1 = 200
-tick2 = 4000 + tick1
+tick2 = 800 + tick1
 
 # List of lists
 data = np.zeros((9, tick2, 3))
@@ -145,11 +145,11 @@ Q = np.array([[265.000, 0.000, 0.000, 0.000, 0.000, 0.000],
               [0.000, 0.000, 0.000, 0.000, 5.000, 0.000],
               [0.000, 0.000, 0.000, 0.000, 0.000, 15.00]])
 
-R = np.array([[0.200, 0.000, 0.000],
+LQR_R = np.array([[0.200, 0.000, 0.000],
               [0.000, 0.200, 0.000],
               [0.000, 0.000, 0.200]])
 
-K, S, E = ct.lqr(A, B, Q, R)
+K, S, E = ct.lqr(A, B, Q, LQR_R)
 
 #-------------------Functions------------------------------------#
 def build_df(data):
@@ -191,8 +191,8 @@ def extract_sensor_info(x, a):
     # Extract all info from state
     quat = x[15:19]
     R = Rotation.from_quat(quat).as_matrix()
-    acc = x[:3]
-    vel = x[3:6]
+    acc = np.linalg.inv(R)@x[:3]
+    vel = np.linalg.inv(R)@x[3:6]
     pos = x[6:9]
     ang_acc = x[9:12]
     ang_vel = x[12:15]
@@ -208,7 +208,7 @@ def extract_sensor_info(x, a):
     print(f"Roll: {rpy[0]}")
     print(f"Pitch: {rpy[1]}")
 
-    sensor_data = [acc, vel, ang_acc, ang_vel, pos, rpy, R] #vel[2]  =x2, rpy[0] = x3, ang_vel[0] = x4, rpy[1] = x5, ang_vel[1] = x6
+    sensor_data = [acc, vel, ang_acc, ang_vel, pos, rpy, R]
     for j in range(6):
         for k in range(3):
             if (float(sensor_data[j][k]) <= 0.001 and float(sensor_data[j][k]) >= 0) or (float(sensor_data[j][k]) >= -0.001 and float(sensor_data[j][k]) <= 0) :
@@ -251,8 +251,8 @@ def compute_acc(x_dot_var):
     pitch_vel1   = x_dot_var[4][0] # positiv er snuden kører nedad
     pitch_acc1   = -x_dot_var[5][0] # positiv er anticlockwise fra toppen
 
-    lin_accel = R@np.array([[0], [0], [heave_acc1]])
-    rot_accel = R@np.array([[roll_acc1], [pitch_acc1], [0]])
+    lin_accel = R@np.array([[0], [0], [heave_acc1]])/tick_rate
+    rot_accel = R@np.array([[roll_acc1], [pitch_acc1], [0]])/tick_rate
     lin_accel[0] = 0
     lin_accel[1] = 0
     rot_accel[2] = 0
@@ -400,7 +400,7 @@ print(f"Ticks: {tick2}")
 arg1_value = ref
 arg2_value = tick_rate
 
-subprocess.run(["python", "Simulations/plots.py", str(arg1_value), str(arg2_value)])
+#subprocess.run(["python", "Simulations/plots.py", str(arg1_value), str(arg2_value)])
 
 
 
