@@ -14,7 +14,7 @@ phi_i = 0
 theta_i = 0
 psi_i = -20   #-20
 
-u_val = 5
+u_val = 2
 
 tick_rate = 200
 
@@ -380,9 +380,9 @@ with holoocean.make(scenario_cfg=scenario) as env:
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
         ref = 1    #Target above seabed
-        u1, u2, u3 = pid_controller(states,ref)
+        #u1, u2, u3 = pid_controller(states,ref)
         #u1, u2, u3 = state_feedback_controller(states, 5, 0 ,0)
-        #u1, u2, u3 = R @ LQR(states,ref)
+        u1, u2, u3 = LQR(states,ref)
 
         R = (sensor_data[-1])
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3

@@ -10,6 +10,8 @@ import scipy as sp
 np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 os.chdir("..")
 #---------------------------------- INITIAL ROLL PITCH YAW -------------------------------------------#
+damp_mp = 3 #5 #damping multiplier
+
 phi_i = 0
 theta_i = 0
 psi_i = -20   #-20
@@ -122,11 +124,19 @@ r = 0
 x_dot = np.array([u, v, w, p, q, r]) [:,np.newaxis]
 
 A = np.array([[0, 1.00, 0, 0, 0, 0],
-              [0, -0.00499, 0, 0, 0.176*u_val**2 - 0.901, -0.163*u_val],
+              [0, -0.00499*damp_mp, 0, 0, 0.176*u_val**2 - 0.901, -0.163*u_val],
               [0, 0, 0, 1.00, 0, 0],
-              [0, -0.0115*u_val, 0, -0.0121, 0.000189*u_val**2, 2.73e-5],
+              [0, -0.0115*u_val, 0, -0.0121*damp_mp, 0.000189*u_val**2, 2.73e-5],
               [0, 0, 0, 0, 0, 1.00],
-              [0, 5.63*u_val, 0, 2.66e-5, -0.093*u_val**2, -0.0134]])
+              [0, 5.63*u_val, 0, 2.66e-5, -0.093*u_val**2, -0.0134*damp_mp]])
+
+
+A = np.array([[0, 1.00, 0, 0, 0, 0],
+              [0, -0.0222, 0, 0, 0.176*u_val**2 - 0.901, -0.163*u_val],
+              [0, 0, 0, 1.00, 0, 0],
+              [0, -0.0115*u_val, 0, -0.103, 0.000189*u_val**2, 0.000304],
+              [0, 0, 0, 0, 0, 1.00],
+              [0, 5.63*u_val, 0, 0.000228, -0.093*u_val**2, -0.149]])
 print(A)
 
 B = np.array([[0, 0, 0],
@@ -135,19 +145,21 @@ B = np.array([[0, 0, 0],
               [-0.052*u_val**2, 0.052*u_val**2, -0.000237*u_val**2],
               [0, 0, 0],
               [-0.0106*u_val**2, -0.0109*u_val**2, 0.116*u_val**2]])
+
+
 print(B)
 
 #--------------------------- LQR --------------------------------#
 
-Q = np.array([[900.000, 0.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 30.000, 0.000, 0.000, 0.000, 0.000],
+Q = np.array([[350.000, 0.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 40.000, 0.000, 0.000, 0.000, 0.000],
               [0.000, 0.000, 10.000, 0.000, 0.000, 0.000],
               [0.000, 0.000, 0.000, 1.00, 0.000, 0.000],
               [0.000, 0.000, 0.000, 0.000, 10.000, 0.000],
               [0.000, 0.000, 0.000, 0.000, 0.000, 5.00]])
 
-LQR_R = np.array([[0.20, 0.000, 0.000],
-                  [0.000, 0.200, 0.000],
+LQR_R = np.array([[0.25, 0.000, 0.000],
+                  [0.000, 0.250, 0.000],
                   [0.000, 0.000, 1.0]])
 
 K, S, E = ct.lqr(A, B, Q, LQR_R)
@@ -276,17 +288,17 @@ def pid_controller(states_var, ref_h):
     ref_p = 0
 
 
-    p_h = 5000 #10000
-    d_h = 8000000 #8000000
+    p_h = 150 #10000
+    d_h = 6000 #8000000
 
-    p_r = 1000 #1000
-    d_r = 1 #1
+    p_r = 50 #1000
+    d_r = 200 #1
 
-    p_p = 1000 #1000
-    d_p = 400000 #50000
+    p_p = 75 #1000
+    d_p = 250 #50000
 
     error_h = ref_h - states_var[0]
-    error_r = ref_r - states_var[3]
+    error_r = ref_r - states_var[2]
     error_p = ref_p - states_var[4]
 
     if flag:
@@ -302,9 +314,9 @@ def pid_controller(states_var, ref_h):
 
     force_vector = np.array([LF, RF, PF]) [:,np.newaxis]
 
-    lift_h = (1/2)*997*1/8*5**2
-    lift_r = (1/2)*997*1/8*5**2*r1_val
-    lift_p = (1/2)*997*1/8*5**2
+    lift_h = (1/2)*997*1/8*u_val**2
+    lift_r = (1/2)*997*1/8*u_val**2*r1_val
+    lift_p = (1/2)*997*1/8*u_val**2
 
     T = -np.array([[lift_h*S2_val, lift_h*S2_val, lift_h*S4_val],
                    [lift_r*S2_val, -lift_r*S2_val, 0],
@@ -351,7 +363,7 @@ def LQR(states_var, z_ref):
     u2 = u[1]
     u3 = u[2]
     return clamp(u1, -20, 20),clamp(u2, -20, 20), clamp(u3, -20, 20)
-diff = 0
+diff = np.array([0,0,0])[:,np.newaxis]
 prev_angles = np.array([0,0,0])[:,np.newaxis]
 real_angles = np.array([0,0,0])[:,np.newaxis]
 def wing_pid2(da1,da2,da3):
@@ -360,19 +372,13 @@ def wing_pid2(da1,da2,da3):
 
     error_angles = desired_angles - prev_angles
     print(error_angles)
-    Kp_a = 0.05
-    Kd_a = 0.2
+    Kp_a = 0.1
+    Kd_a = 0.05
 
     real_angles = prev_angles + error_angles*Kp_a + diff * Kd_a
     diff = real_angles - prev_angles
     prev_angles = real_angles
     return real_angles[0], real_angles[1], real_angles[2]
-
-
-
-
-
-
 
 ref = np.array([0,0,0])[:,np.newaxis]
 
@@ -391,11 +397,12 @@ with holoocean.make(scenario_cfg=scenario) as env:
     for i in range(tick1,tick2):
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
-        ref = 3   #Target above seabed
+        ref = 1   #Target above seabed
 
-        #u1, u2, u3 = pid_controller(states,ref)
-        if i%1 == 0:
-            u1, u2, u3 = LQR(states,ref)
+
+        if i%20 == 0:
+            u1, u2, u3 = pid_controller(states,ref)
+            #u1, u2, u3 = LQR(states,ref)
             u1,u2,u3 = wing_pid2(u1,u2,u3)
 
         R = (sensor_data[-1])
