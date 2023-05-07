@@ -1,7 +1,7 @@
 import numpy as np
 import holoocean
 from scipy.spatial.transform import Rotation
-#import control as ct
+import control as ct
 import pandas as pd
 import matplotlib.pyplot as plt
 import os
@@ -12,6 +12,8 @@ os.chdir("..")
 phi_i = 0
 theta_i = 0
 psi_i = -20   #-20
+
+u_val = 3
 
 tick_rate = 10
 
@@ -57,7 +59,7 @@ scenario = {
                 },
             ],
             "control_scheme": 1, # this is the custom dynamics control scheme
-            "location": [0,0,-26.84],
+            "location": [0,0,-27.34],
             "rotation": [phi_i,theta_i,psi_i]
         }
     ],
@@ -74,7 +76,7 @@ pos_d = np.array([])
 rpy_d = np.array([])
 
 tick1 = 10
-tick2 = 290 + tick1
+tick2 = 190 + tick1
 
 # List of lists
 data = np.zeros((9, tick2, 3))
@@ -97,15 +99,15 @@ x_list2 = []
 sonar_list = [0]
 acc_list = [u_list,x_list1,x_list2]
 
-r1_val = 0.31
+r1_val = 0.288
 S1_val = 0.052
 S2_val = 0.084
 S3_val = 0.069
 S4_val = 0.05
-d1_val = 0.17
-d2_val = 0.05
-d3_val = -0.23
-d4_val = -0.58
+d1_val = 0.14
+d2_val = 0.055
+d3_val = -0.1
+d4_val = -0.5
 
 #---------------------------------------STATE SPACE -------------------------------------------
 
@@ -118,24 +120,36 @@ r = 0
 # x' = Ax + Bu
 x_dot = np.array([u, v, w, p, q, r]) [:,np.newaxis]
 
-A = np.array([[0.000, 1.000, 0.000, 0.000, 0.000, 0.000],
-           [0.000, -0.005, 0.000, 0.000, 3.811, -0.806],
-           [0.000, 0.000, 0.000, 1.000, 0.000, 0.000],
-           [0.000, -0.048, 0.000, -0.015, 0.009, 0.000],
-           [0.000, 0.000, 0.000, 0.000, 0.000, 1.000],
-           [0.000, 19.359, 0.000, 0.000, -3.551, -0.009]])
+A = np.array([[0, 1.00, 0, 0, 0, 0],
+              [0, -0.00499, 0, 0, 0.176*u_val**2 - 0.901, -0.163*u_val],
+              [0, 0, 0, 1.00, 0, 0],
+              [0, -0.0115*u_val, 0, -0.0121, 0.000189*u_val**2, 2.73e-5],
+              [0, 0, 0, 0, 0, 1.00],
+              [0, 5.63*u_val, 0, 2.66e-5, -0.093*u_val**2, -0.0134]])
 
-B = np.array([[0.000, 0.000, 0.000],
-              [-0.727, -0.727, -0.865],
-              [0.000, 0.000, 0.000],
-              [-1.690, 1.691, -0.006],
-              [0.000, 0.000, 0.000],
-              [-0.165, -0.170, 2.317]])
+B = np.array([[0, 0, 0],
+              [-0.029*u_val**2, -0.029*u_val**2, -0.0346*u_val**2],
+              [0, 0, 0],
+              [-0.052*u_val**2, 0.052*u_val**2, -0.000237*u_val**2],
+              [0, 0, 0],
+              [-0.0106*u_val**2, -0.0109*u_val**2, 0.116*u_val**2]])
 
 
-K = np.array([[-18.801, -23.957, -3.538, -1.528, -4.344, -3.836],
-              [-18.815, -23.973, 3.533, 1.524, -4.352, -3.847],
-              [-24.850, -17.829, 0.002, 0.002, 2.440, 6.679]])
+#----------------------------------------LQR----------------------------------------#
+
+
+Q = np.array([[265.000, 0.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 100.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 5.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 0.000, 0.100, 0.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 5.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 0.000, 15.00]])
+
+LQR_R = np.array([[0.200, 0.000, 0.000],
+                  [0.000, 0.200, 0.000],
+                  [0.000, 0.000, 0.200]])
+
+K, S, E = ct.lqr(A, B, Q, LQR_R)
 
 
 
@@ -178,8 +192,8 @@ def extract_sensor_info(x, a):
     # Extract all info from state
     quat = x[15:19]
     R = Rotation.from_quat(quat).as_matrix()
-    acc = x[:3]
-    vel = x[3:6]
+    acc = np.linalg.inv(R)@x[:3]
+    vel = np.linalg.inv(R)@x[3:6]
     pos = x[6:9]
     ang_acc = x[9:12]
     ang_vel = x[12:15]
@@ -235,8 +249,11 @@ def compute_acc(x_dot_var):
     pitch_vel1   = x_dot_var[4][0] # positiv er snuden kører nedad
     pitch_acc1   = -x_dot_var[5][0] # positiv er anticlockwise fra toppen
 
-    lin_accel = R@np.array([[0], [0], [heave_acc1]])/200
-    rot_accel = R@np.array([[roll_acc1], [pitch_acc1], [0]])/200
+    lin_accel = R@np.array([[0], [0], [heave_acc1]])
+    rot_accel = R@np.array([[roll_acc1], [pitch_acc1], [0]])
+    lin_accel[0] = 0
+    lin_accel[1] = 0
+    rot_accel[2] = 0
 
 
     return np.array([lin_accel,rot_accel])
@@ -258,17 +275,17 @@ def pid_controller(states_var, ref_h):
     ref_p = 0
 
 
-    p_h = 500
-    d_h = 5000
+    p_h = 3000
+    d_h = 500000
 
     p_r = 1
     d_r = 1
 
-    p_p = 1
-    d_p = 2
+    p_p = 500
+    d_p = 10000
 
     error_h = ref_h - states_var[0]
-    error_r = ref_r - states_var[3]
+    error_r = ref_r - states_var[2]
     error_p = ref_p - states_var[4]
 
     if flag:
@@ -290,9 +307,9 @@ def pid_controller(states_var, ref_h):
 
     force_vector = np.array([LF, RF, PF]) [:,np.newaxis]
 
-    lift_h = (1/2)*997*1/8*5**2
-    lift_r = (1/2)*997*1/8*5**2*r1_val
-    lift_p = (1/2)*997*1/8*5**2
+    lift_h = (1/2)*997*1/8*u_val**2
+    lift_r = (1/2)*997*1/8*u_val**2*r1_val
+    lift_p = (1/2)*997*1/8*u_val**2
 
 
     T = -np.array([[lift_h*S2_val, lift_h*S2_val, lift_h*S4_val],
@@ -322,8 +339,9 @@ def pid_controller(states_var, ref_h):
     u2 = u[1]
     u3 = u[2]
     print(f"u1: {u1}")
+    print(f"u3: {u3}")
 
-    return clamp(u1, -20, 20), clamp(u2, -20, 20), clamp(u3, -20, 20)
+    return clamp(u1, -30, 30), clamp(u2, -30, 30), clamp(u3, -30, 30)
 """
 def state_feedback_controller(states_var, ref_h, ref_r, ref_p):
     desired_poles1 = [0, -2, 0,0, (-2+1j),(-2-1j)]
@@ -357,7 +375,32 @@ def LQR(states_var, z_ref):
     u3 = u[2]
     return clamp(u1, -20, 20),clamp(u2, -20, 20), clamp(u3, -20, 20)
 
-ref = np.array([0,0,0])[:,np.newaxis]
+#ref = np.array([0,0,0])[:,np.newaxis]
+
+u1_true_prev = 0
+u2_true_prev = 0
+u3_true_prev = 0
+def wing_pid(da1, da2, da3):
+    global u1_true_prev, u2_true_prev, u3_true_prev
+    increment = 15/200
+    if da1 > u1_true_prev:
+        u1_true_var = u1_true_prev + increment
+    else:
+        u1_true_var = u1_true_prev - increment
+    if da2 > u2_true_prev:
+        u2_true_var = u2_true_prev + increment
+    else:
+        u2_true_var = u2_true_prev - increment
+    if da3 > u3_true_prev:
+        u3_true_var = u3_true_prev + increment
+    else:
+        u3_true_var = u3_true_prev - increment
+
+    u1_true_prev = u1_true_var
+    u2_true_prev = u2_true_var
+    u3_true_prev = u3_true_var
+
+    return np.array([u1_true_var]), np.array([u2_true_var]), np.array([u3_true_var])
 
 # Make environment
 with holoocean.make(scenario_cfg=scenario) as env:

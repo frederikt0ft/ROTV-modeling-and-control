@@ -14,7 +14,8 @@ phi_i = 0
 theta_i = 0
 psi_i = -20   #-20
 
-u_val = 2
+al = 20         # Angle limit
+u_val = 2       # m/s
 
 tick_rate = 200
 
@@ -60,7 +61,7 @@ scenario = {
                 },
             ],
             "control_scheme": 1, # this is the custom dynamics control scheme
-            "location": [10,0,-27.84],
+            "location": [0,0,-27.84],
             "rotation": [phi_i,theta_i,psi_i]
         }
     ],
@@ -76,7 +77,7 @@ ang_vel_d = np.array([])
 pos_d = np.array([])
 rpy_d = np.array([])
 tick1 = 200
-tick2 = 200 + tick1
+tick2 = 3000 + tick1
 
 # List of lists
 data = np.zeros((9, tick2, 3))
@@ -138,18 +139,18 @@ print(B)
 
 #--------------------------- LQR --------------------------------#
 
-Q = np.array([[265.000, 0.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 100.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 5.000, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.100, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 5.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 0.000, 15.00]])
+Q = np.array([[900.000, 0.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 30.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 10.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 0.000, 1.00, 0.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 10.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 0.000, 5.00]])
 
-R = np.array([[0.200, 0.000, 0.000],
-              [0.000, 0.200, 0.000],
-              [0.000, 0.000, 0.200]])
+LQR_R = np.array([[0.20, 0.000, 0.000],
+                  [0.000, 0.200, 0.000],
+                  [0.000, 0.000, 1.0]])
 
-K, S, E = ct.lqr(A, B, Q, R)
+K, S, E = ct.lqr(A, B, Q, LQR_R)
 
 #-------------------Functions------------------------------------#
 def build_df(data):
@@ -191,8 +192,8 @@ def extract_sensor_info(x, a):
     # Extract all info from state
     quat = x[15:19]
     R = Rotation.from_quat(quat).as_matrix()
-    acc = x[:3]
-    vel = x[3:6]
+    acc = np.linalg.inv(R)@x[:3]
+    vel = np.linalg.inv(R)@x[3:6]
     pos = x[6:9]
     ang_acc = x[9:12]
     ang_vel = x[12:15]
@@ -208,7 +209,7 @@ def extract_sensor_info(x, a):
     print(f"Roll: {rpy[0]}")
     print(f"Pitch: {rpy[1]}")
 
-    sensor_data = [acc, vel, ang_acc, ang_vel, pos, rpy, R] #vel[2]  =x2, rpy[0] = x3, ang_vel[0] = x4, rpy[1] = x5, ang_vel[1] = x6
+    sensor_data = [acc, vel, ang_acc, ang_vel, pos, rpy, R]
     for j in range(6):
         for k in range(3):
             if (float(sensor_data[j][k]) <= 0.001 and float(sensor_data[j][k]) >= 0) or (float(sensor_data[j][k]) >= -0.001 and float(sensor_data[j][k]) <= 0) :
@@ -242,7 +243,6 @@ def compute_x_dot(x_states_var, u1_var, u2_var, u3_var):
     u_input = np.array([u1_var, u2_var, u3_var]) #[:,np.newaxis]
     x_dot = A @ x_states1 + B @ u_input
     return x_dot
-
 def compute_acc(x_dot_var):
     heave_vel1   = x_dot_var[0][0] # positiv er frem
     heave_acc1   = x_dot_var[1][0] # positiv er til venstre
@@ -251,8 +251,8 @@ def compute_acc(x_dot_var):
     pitch_vel1   = x_dot_var[4][0] # positiv er snuden kører nedad
     pitch_acc1   = -x_dot_var[5][0] # positiv er anticlockwise fra toppen
 
-    lin_accel = R@np.array([[0], [0], [heave_acc1]])/200
-    rot_accel = R@np.array([[roll_acc1], [pitch_acc1], [0]])/200
+    lin_accel = R@np.array([[0], [0], [heave_acc1]])
+    rot_accel = R@np.array([[roll_acc1], [pitch_acc1], [0]])
     lin_accel[0] = 0
     lin_accel[1] = 0
     rot_accel[2] = 0
@@ -276,14 +276,14 @@ def pid_controller(states_var, ref_h):
     ref_p = 0
 
 
-    p_h = 10000 #10000
+    p_h = 5000 #10000
     d_h = 8000000 #8000000
 
     p_r = 1000 #1000
     d_r = 1 #1
 
     p_p = 1000 #1000
-    d_p = 50000 #50000
+    d_p = 400000 #50000
 
     error_h = ref_h - states_var[0]
     error_r = ref_r - states_var[3]
@@ -293,8 +293,6 @@ def pid_controller(states_var, ref_h):
         LF = error_h*p_h + (error_h-error_h_prev)*d_h
         RF = error_r*p_r + (error_r-error_r_prev)*d_r
         PF = error_p*p_p + (error_p-error_p_prev)*d_p
-
-
     else:
         LF = error_h*p_h
         RF = error_r*p_r
@@ -307,7 +305,6 @@ def pid_controller(states_var, ref_h):
     lift_h = (1/2)*997*1/8*5**2
     lift_r = (1/2)*997*1/8*5**2*r1_val
     lift_p = (1/2)*997*1/8*5**2
-
 
     T = -np.array([[lift_h*S2_val, lift_h*S2_val, lift_h*S4_val],
                    [lift_r*S2_val, -lift_r*S2_val, 0],
@@ -336,8 +333,7 @@ def pid_controller(states_var, ref_h):
     u2 = u[1]
     u3 = u[2]
 
-    return clamp(u1, -20, 20), clamp(u2, -20, 20), clamp(u3, -20, 20)
-
+    return clamp(u1, -al, al), clamp(u2, -al, al), clamp(u3, -al, al)
 def LQR(states_var, z_ref):
     state_vector = np.array([states_var[0],states_var[1],states_var[2],states_var[3],states_var[4],states_var[5]])[:,np.newaxis]
     #print("ref")
@@ -350,35 +346,33 @@ def LQR(states_var, z_ref):
     #print(-K)
     ref_vec = np.array([z_ref, 0, 0, 0, 0, 0])[:,np.newaxis]
     u = - K @ (state_vector - ref_vec)
-    #print(u)
-    #print(u)
+
     u1 = u[0]
     u2 = u[1]
     u3 = u[2]
     return clamp(u1, -20, 20),clamp(u2, -20, 20), clamp(u3, -20, 20)
+diff = 0
+prev_angles = np.array([0,0,0])[:,np.newaxis]
+real_angles = np.array([0,0,0])[:,np.newaxis]
+def wing_pid2(da1,da2,da3):
+    global prev_angles, real_angles, diff
+    desired_angles = np.vstack((da1, da2, da3))
 
-u1_prev = 0
-u2_prev = 0
-u3_prev = 0
-u1_true = 0
-u2_true = 0
-u3_true = 0
+    error_angles = desired_angles - prev_angles
+    print(error_angles)
+    Kp_a = 0.05
+    Kd_a = 0.2
 
-def wing_pid(da1,da2,da3): #da = desired angle
-    global u1_prev,  u2_prev, u3_prev
-    Kp = 0
+    real_angles = prev_angles + error_angles*Kp_a + diff * Kd_a
+    diff = real_angles - prev_angles
+    prev_angles = real_angles
+    return real_angles[0], real_angles[1], real_angles[2]
 
-    u1_true = u1_prev - (u1_prev - da1)/4000
-    u2_true = u2_prev - (u2_prev - da2)/4000
-    u3_true = u3_prev - (u3_prev - da3)/4000
 
-    u1_prev = u1_true
-    u2_prev = u2_true
-    u3_prev = u3_true
 
-    print(u1_true, u2_true, u3_true)
 
-    return u1_true,  u2_true, u3_true
+
+
 
 ref = np.array([0,0,0])[:,np.newaxis]
 
@@ -396,15 +390,16 @@ with holoocean.make(scenario_cfg=scenario) as env:
 
     for i in range(tick1,tick2):
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
-        states = extract_acc_terms(sensor_data,u1_true,u2_true,u3_true, tick1, state["RangeFinderSensor"], state["IMUSensor"])
-        ref = 2    #Target above seabed
-        u1, u2, u3 = pid_controller(states,ref)
-        #u1, u2, u3 = state_feedback_controller(states, 5, 0 ,0)
-        #u1, u2, u3 = R @ LQR(states,ref)
+        states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
+        ref = 3   #Target above seabed
+
+        #u1, u2, u3 = pid_controller(states,ref)
+        if i%1 == 0:
+            u1, u2, u3 = LQR(states,ref)
+            u1,u2,u3 = wing_pid2(u1,u2,u3)
 
         R = (sensor_data[-1])
-        u1_true,  u2_true, u3_true = wing_pid(u1, u2, u3)
-        x_dot = compute_x_dot(states,u1_true,  u2_true, u3_true)   #u1 u2 u3
+        x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
         acc = compute_acc(x_dot)
 
         print()
@@ -425,9 +420,3 @@ arg1_value = ref
 arg2_value = tick_rate
 
 subprocess.run(["python", "Simulations/plots.py", str(arg1_value), str(arg2_value)])
-
-
-
-
-
-
