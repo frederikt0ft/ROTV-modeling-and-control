@@ -13,7 +13,7 @@ import json
 np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 os.chdir("..")
 #---------------------------------- INITIAL ROLL PITCH YAW -------------------------------------------#
-damp_mp = 3 #5 #damping multiplier
+
 
 #Initial position
 x_i = 0
@@ -147,16 +147,16 @@ B = np.array([[0, 0, 0],
 print()
 print("B:\n", B)
 print()
-print(f"Control is: ", Control, " running ", tick2, " ticks")
+print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s")
 
 #--------------------------- LQR --------------------------------#
 
-Q = np.array([[350.000, 0.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 40.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 10.000, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 1.00, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 10.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 0.000, 5.00]])
+Q = np.array([[23.000, 0.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 3.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 1.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 0.000, 0.10, 0.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 8.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 0.000, 0.30]])
 
 LQR_R = np.array([[0.25, 0.000, 0.000],
                   [0.000, 0.250, 0.000],
@@ -185,6 +185,7 @@ def log(l, str,u_val_var):
             "d_vec": d_vec.tolist(),
             "wing_p": p,
             "wing_d": d,
+            "Angle limit": al,
             "x_i": x_i,
             "y_i": y_i,
             "z_i": z_i,
@@ -199,7 +200,6 @@ def log(l, str,u_val_var):
         # Write the data to the JSON file
         with open(filename, "w") as f:
             json.dump(data1, f, indent=4)
-
 def build_df(data):
 
     global df
@@ -261,9 +261,9 @@ def extract_sensor_info(x, a):
     rpy = a
     rpy[1] *= -1
 
-    print(f"Depth: {state['RangeFinderSensor'][0]}")
-    print(f"Roll: {rpy[0]}")
-    print(f"Pitch: {rpy[1]}")
+    print(f"Depth: {state['RangeFinderSensor'][0]:.2f}")
+    print(f"Roll: {rpy[0]:.2f}")
+    print(f"Pitch: {rpy[1]:.2f}")
 
     sensor_data = [acc, vel, ang_acc, ang_vel, pos, rpy, R]
     for j in range(6):
@@ -327,8 +327,8 @@ def pid_controller(states_var):
     #Error dynamics ()
     global flag, p_h, d_h, p_r, d_r, p_p, d_p, error,error_prev, diff
     state_vec = np.array([states_var[0],states_var[2],states_var[4]])[:,np.newaxis]
-    p_vec = np.array([6200, 1, 1]) [:,np.newaxis]
-    d_vec = np.array([29000, 1, 1]) [:,np.newaxis]
+    p_vec = np.array([950, 1, 1]) [:,np.newaxis]
+    d_vec = np.array([13000, 1, 1]) [:,np.newaxis]
     error = ref_pid - state_vec
 
     if flag:
@@ -420,7 +420,7 @@ with holoocean.make(scenario_cfg=scenario) as env:
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, 0, state["RangeFinderSensor"], state["IMUSensor"])
         R = (sensor_data[-1])
-
+    print()
     for i in range(tick1,tick2):
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
@@ -438,10 +438,9 @@ with holoocean.make(scenario_cfg=scenario) as env:
 
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
         acc = compute_acc(x_dot)
-
-        print()
         # Step simulation
         state = env.step(acc)
+        print()
     print("Finished Simulation!")
 
 #Dataframe:
