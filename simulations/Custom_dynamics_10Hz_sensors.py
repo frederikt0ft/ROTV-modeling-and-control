@@ -15,8 +15,6 @@ os.chdir("..")
 damp_mp = 3 #5 #damping multiplier
 
 
-
-
 phi_i = 0
 theta_i = 0
 psi_i = -20   #-20
@@ -84,7 +82,7 @@ ang_vel_d = np.array([])
 pos_d = np.array([])
 rpy_d = np.array([])
 tick1 = 200
-tick2 = 200 + tick1
+tick2 = 3000 + tick1
 
 # List of lists
 data = np.zeros((9, tick2, 3))
@@ -384,18 +382,20 @@ def LQR(states_var, z_ref):
 diff = np.array([0,0,0])[:,np.newaxis]
 prev_angles = np.array([0,0,0])[:,np.newaxis]
 real_angles = np.array([0,0,0])[:,np.newaxis]
+
 def wing_model(da1,da2,da3):
     global prev_angles, real_angles, diff
     desired_angles = np.vstack((da1, da2, da3))
-
     error_angles = desired_angles - prev_angles
-
-    p = 0.1
-    d = 0
-
+    p = 10
     pwm = error_angles * p
 
-    aps = pwm/10 # assuming linearity with 100 pwm = 10 aps
+    if np.any(pwm > 100):
+        pwm[pwm > 100] = 100
+    if np.any(pwm < -100):
+        pwm[pwm < -100] = -100
+
+    aps = pwm/10 # assuming linearity with 100 pwm = 10 aps. #aps = angle per second
 
     real_angles = prev_angles + aps/tick_rate #angle per second -> angles per tick
     #diff = real_angles - prev_angles
