@@ -28,14 +28,14 @@ psi_i = -20   #-20
 al = 20         # Angle limit
 u_val = 2       # m/s
 
+#Simulation specifications 1 sec = 200 ticks
 tick1 = 200
 tick2 = 1800 + tick1
+tick_rate = 200
 
 ref_h = 1
-Control = "LQR"
-tick_rate = 200
+Control = "PID"
 logging = False
-
 
 scenario = {
     "name": "hovering_dynamics",
@@ -97,7 +97,7 @@ rpy_d = np.array([])
 
 
 # List of lists
-data = np.zeros((11, tick2, 3))
+data = np.zeros((11, tick2, 3))   #Data matrix for logging all data in simulation
 R = np.zeros((3,3))
 
 #Initial conditions:
@@ -125,22 +125,9 @@ d4_val = -0.5
 
 #---------------------------------------STATE SPACE -------------------------------------------
 
-u = 0
-v = 0
-w = 0
-p = 0
-q = 0
-r = 0
+u = v = w = p = q = r = 0
 # x' = Ax + Bu
 x_dot = np.array([u, v, w, p, q, r]) [:,np.newaxis]
-
-A = np.array([[0, 1.00, 0, 0, 0, 0],
-              [0, -0.00499*damp_mp, 0, 0, 0.176*u_val**2 - 0.901, -0.163*u_val],
-              [0, 0, 0, 1.00, 0, 0],
-              [0, -0.0115*u_val, 0, -0.0121*damp_mp, 0.000189*u_val**2, 2.73e-5],
-              [0, 0, 0, 0, 0, 1.00],
-              [0, 5.63*u_val, 0, 2.66e-5, -0.093*u_val**2, -0.0134*damp_mp]])
-
 
 A = np.array([[0, 1.00, 0, 0, 0, 0],
               [0, -0.0222, 0, 0, 0.176*u_val**2 - 0.901, -0.163*u_val],
@@ -148,7 +135,7 @@ A = np.array([[0, 1.00, 0, 0, 0, 0],
               [0, -0.0115*u_val, 0, -0.103, 0.000189*u_val**2, 0.000304],
               [0, 0, 0, 0, 0, 1.00],
               [0, 5.63*u_val, 0, 0.000228, -0.093*u_val**2, -0.149]])
-print(A)
+print("A:\n", A)
 
 B = np.array([[0, 0, 0],
               [-0.029*u_val**2, -0.029*u_val**2, -0.0346*u_val**2],
@@ -157,8 +144,10 @@ B = np.array([[0, 0, 0],
               [0, 0, 0],
               [-0.0106*u_val**2, -0.0109*u_val**2, 0.116*u_val**2]])
 
-
-print(B)
+print()
+print("B:\n", B)
+print()
+print(f"Control is: ", Control, " running ", tick2, " ticks")
 
 #--------------------------- LQR --------------------------------#
 
@@ -327,48 +316,31 @@ def compute_acc(x_dot_var):
     return np.array([lin_accel,rot_accel])
 #-------------------Controllers---------------------#
 
-error = np.array([0,0,0])[:,np.newaxis]
-error_prev = np.array([0,0,0])[:,np.newaxis]
+diff = error_prev = error = np.array([0,0,0])[:,np.newaxis]
 ref_pid = np.array([ref_h,0,0])[:,np.newaxis]
-diff = np.array([0,0,0])[:,np.newaxis]
+
 flag = False
 
-errors_h_list = [0]
-errors_r_list = [0]
-errors_p_list = [0]
 def clamp(arr, minimum, maximum):
     return np.clip(arr, minimum, maximum)
 def pid_controller(states_var):
     #Error dynamics ()
     global flag, p_h, d_h, p_r, d_r, p_p, d_p, error,error_prev, diff
-
     state_vec = np.array([states_var[0],states_var[2],states_var[4]])[:,np.newaxis]
     p_vec = np.array([6200, 1, 1]) [:,np.newaxis]
     d_vec = np.array([29000, 1, 1]) [:,np.newaxis]
-
     error = ref_pid - state_vec
-
 
     if flag:
         force_vec = error * p_vec + diff * d_vec
-
-
-
     else:
         force_vec = error * p_vec
         flag = True
-
 
     if i%20 == 0:
         diff = error - error_prev
         error_prev = error
 
-
-    print(i)
-    print(error)
-    print(error_prev)
-    print(diff)
-    print()
     lift_h = (1/2)*997*1/8*u_val**2
     lift_r = (1/2)*997*1/8*u_val**2*r1_val
     lift_p = (1/2)*997*1/8*u_val**2
@@ -376,33 +348,26 @@ def pid_controller(states_var):
     T = -np.array([[lift_h*S2_val, lift_h*S2_val, lift_h*S4_val],
                    [lift_r*S2_val, -lift_r*S2_val, 0],
                    [lift_p*d2_val*S2_val, lift_p*d2_val*S2_val, lift_p*d4_val*S4_val]])
+
     u = np.linalg.pinv(T) @ force_vec
 
-
-
-
-    print()
     u1 = u[0]
     u2 = u[1]
     u3 = u[2]
 
-
-
     return clamp(u1, -al, al), clamp(u2, -al, al), clamp(u3, -al, al)
 def LQR(states_var):
     state_vector = np.array([states_var[0],states_var[1],states_var[2],states_var[3],states_var[4],states_var[5]])[:,np.newaxis]
-
     ref_vec = np.array([ref_h, 0, 0, 0, 0, 0])[:,np.newaxis]
     u = - K @ (state_vector - ref_vec)
 
     u1 = u[0]
     u2 = u[1]
     u3 = u[2]
-    return clamp(u1, -20, 20),clamp(u2, -20, 20), clamp(u3, -20, 20)
-diff = np.array([0,0,0])[:,np.newaxis]
+    return clamp(u1, -al, al),clamp(u2, -al, al), clamp(u3, -al, al)
+
 prev_angles = np.array([0,0,0])[:,np.newaxis]
 real_angles = np.array([0,0,0])[:,np.newaxis]
-
 
 if Control == "PID":
     p = 10
@@ -412,7 +377,7 @@ if Control == "LQR":
     p = 10
     d = 0
 def wing_model(da1,da2,da3):
-    global prev_angles, real_angles, diff, pwm, p, d, p_vec, d_vec
+    global prev_angles, real_angles, pwm, p, d, p_vec, d_vec
     desired_angles = np.vstack((da1, da2, da3))
     error_angles = desired_angles - real_angles
 
