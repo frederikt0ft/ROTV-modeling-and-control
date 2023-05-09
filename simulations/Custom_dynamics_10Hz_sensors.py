@@ -85,7 +85,7 @@ tick1 = 200
 tick2 = 3000 + tick1
 
 # List of lists
-data = np.zeros((9, tick2, 3))
+data = np.zeros((11, tick2, 3))
 R = np.zeros((3,3))
 
 #Initial conditions:
@@ -179,8 +179,9 @@ def log(l, str):
 
 
 def build_df(data):
+
     global df
-    columns = ["acc_x", "acc_y", "acc_z","vel_x", "vel_y", "vel_z","ang_acc_roll", "ang_acc_pitch", "ang_acc_yaw","ang_vel_roll", "ang_vel_pitch", "ang_vel_yaw","x","y","z","roll","pitch","yaw","u1","u2","u3","x1","x2","x3","x4","x5","x6"]
+    columns = ["acc_x", "acc_y", "acc_z","vel_x", "vel_y", "vel_z","ang_acc_roll", "ang_acc_pitch", "ang_acc_yaw","ang_vel_roll", "ang_vel_pitch", "ang_vel_yaw","x","y","z","roll","pitch","yaw","u1","u2","u3","x1","x2","x3","x4","x5","x6", "u1_d","u2_d","u3_d", "pwm_1", "pwm_2", "pwm_3"]
     lst1 = data[0][:,0]     #acc_x
     lst2 = data[0][:,1]     #acc_y
     lst3 = data[0][:,2]     #acc_z
@@ -208,7 +209,13 @@ def build_df(data):
     lst25 = data[8][:,0]    #x4
     lst26 = data[8][:,1]    #x5
     lst27 = data[8][:,2]    #x6
-    df = pd.DataFrame(list(zip(lst1, lst2, lst3, lst4, lst5, lst6, lst7, lst8, lst9, lst10, lst11, lst12, lst13, lst14, lst15, lst16, lst17, lst18, lst19, lst20, lst21, lst22, lst23, lst24, lst25, lst26, lst27)),
+    lst28 = data[9][:,0]    #u1_d
+    lst29 = data[9][:,1]    #u2_d
+    lst30 = data[9][:,2]    #u3_d
+    lst31 = data[10][:,0]    #u1_d
+    lst32 = data[10][:,1]    #u2_d
+    lst33 = data[10][:,2]    #u3_d
+    df = pd.DataFrame(list(zip(lst1, lst2, lst3, lst4, lst5, lst6, lst7, lst8, lst9, lst10, lst11, lst12, lst13, lst14, lst15, lst16, lst17, lst18, lst19, lst20, lst21, lst22, lst23, lst24, lst25, lst26, lst27, lst28, lst29,lst30, lst31, lst32,lst33)),
                       columns =columns)
     print(len(df["x"]))
 
@@ -320,6 +327,9 @@ def pid_controller(states_var, ref_h):
         LF = error_h*p_h + (error_h-error_h_prev)*d_h
         RF = error_r*p_r + (error_r-error_r_prev)*d_r
         PF = error_p*p_p + (error_p-error_p_prev)*d_p
+        print(error_h)
+        print(error_h_prev)
+        print(error_h-error_h_prev)
     else:
         LF = error_h*p_h
         RF = error_r*p_r
@@ -363,15 +373,7 @@ def pid_controller(states_var, ref_h):
     return clamp(u1, -al, al), clamp(u2, -al, al), clamp(u3, -al, al)
 def LQR(states_var, z_ref):
     state_vector = np.array([states_var[0],states_var[1],states_var[2],states_var[3],states_var[4],states_var[5]])[:,np.newaxis]
-    #print("ref")
-    #print(ref)
-    #print()
-    #print("states")
-    #print(state_vector)
-    #print(states_var)
-    #print()
-    #print("-K")
-    #print(-K)
+
     ref_vec = np.array([z_ref, 0, 0, 0, 0, 0])[:,np.newaxis]
     u = - K @ (state_vector - ref_vec)
 
@@ -390,7 +392,7 @@ def wing_model(da1,da2,da3):
     p = 10
     if i%20 == 0:
         pwm = error_angles * p
-    print(pwm)
+
 
     if np.any(pwm > 100):
         pwm[pwm > 100] = 100
@@ -400,8 +402,18 @@ def wing_model(da1,da2,da3):
     aps = pwm/10 # assuming linearity with 100 pwm = 10 aps. #aps = angle per second
 
     real_angles = prev_angles + aps/tick_rate #angle per second -> angles per tick
-    #diff = real_angles - prev_angles
+
     prev_angles = real_angles
+
+    #Log Desird angle
+    j = 9
+    for k in range(3):
+        data[j,i,k] = desired_angles[k]
+
+    #Log pwm
+    j = 10
+    for k in range(3):
+        data[j,i,k] = pwm[k]
 
     return real_angles[0], real_angles[1], real_angles[2]
 
@@ -429,10 +441,10 @@ with holoocean.make(scenario_cfg=scenario) as env:
 
 
 
-        #u1, u2, u3 = pid_controller(states_10,ref)
+        #u1_d, u2_d, u3_d = pid_controller(states_10,ref)
 
-        u1, u2, u3 = LQR(states_10,ref)
-        u1,u2,u3 = wing_model(u1,u2,u3)
+        u1_d, u2_d, u3_d = LQR(states_10,ref)
+        u1,u2,u3 = wing_model(u1_d,u2_d,u3_d)
 
         R = (sensor_data[-1])
 

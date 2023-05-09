@@ -14,18 +14,33 @@ plt.style.use("dark_background")
 t1 = np.arange(0, len(df["x"]))/int(tick_rate)
 
 # For plot
-fig1 = plt.figure(1)
+plt.figure(1)
 
 
 #------------------------------------------------------------PLOT 2----------------------------------------------------------------------#
 
 
+plt.plot(t1,df["u1_d"], label = "u1_d", color ="r")
+plt.plot(t1,df["u2_d"], label = "u2_d", color ="g")
+plt.plot(t1,df["u3_d"], label = "u3_d", color ="b")
+plt.plot(t1,df["u1"], label = "u1", color ="r")
+plt.plot(t1,df["u2"], label = "u2", color ="g")
+plt.plot(t1,df["u3"], label = "u3", color ="b")
+plt.xlabel ('Time (s)')
+plt.ylabel ('Angle (degree)')
+
+plt.title("Real and desired angles")
+plt.legend()
+
+
+
+""" 3D-plot
 fig1 = plt.axes(projection='3d')
 fig1.plot3D(df["x"], df["y"], df["z"])
 fig1.set_xlabel('x')
 fig1.set_ylabel('y')
 fig1.set_zlabel('z')
-
+"""
 #------------------------------------------------------------PLOT 3----------------------------------------------------------------------#
 
     # For plot
@@ -76,5 +91,13 @@ plt.ylabel ('Heigh above seabed (m)')
 plt.title("Depth + ref")
 plt.legend()
 
+plt.figure(5)   
+plt.plot(t1,df["pwm_1"], label = "pwm_1", color ="r")
+plt.plot(t1,df["pwm_2"], label = "pwm_2", color ="g")
+plt.plot(t1,df["pwm_3"], label = "pwm_3", color ="b")
+plt.xlabel ('Time (s)')
+plt.ylabel ('Angle (degree)')
 
+plt.title("Real and desired angles")
+plt.legend()
 plt.show()
