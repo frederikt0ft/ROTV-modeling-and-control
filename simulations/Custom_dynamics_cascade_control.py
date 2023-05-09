@@ -389,8 +389,8 @@ def wing_pid2(da1,da2,da3):
 
     error_angles = desired_angles - prev_angles
     print(error_angles)
-    Kp_a = 0.1
-    Kd_a = 0.05
+    Kp_a = 0.1 #0.1
+    Kd_a = 0.05#0.05
 
     real_angles = prev_angles + error_angles*Kp_a + diff * Kd_a
     diff = real_angles - prev_angles
