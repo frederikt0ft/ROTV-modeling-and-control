@@ -26,16 +26,16 @@ theta_i = 0
 psi_i = -20   #-20
 
 al = 20         # Angle limit
-u_val = 2       # m/s
+u_val = 2      # m/s
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
-tick2 = 1800 + tick1
+tick2 = 4000 + tick1
 tick_rate = 200
 
 ref_h = 1
-Control = "PID"
-logging = False
+Control = "LQR"
+logging = True
 
 scenario = {
     "name": "hovering_dynamics",
@@ -151,12 +151,12 @@ print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s")
 
 #--------------------------- LQR --------------------------------#
 
-Q = np.array([[23.000, 0.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 3.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 1.000, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.10, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 8.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 0.000, 0.30]])
+Q = np.array([[350.000, 0.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 40.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 10.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 0.000, 1, 0.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 10.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 0.000, 5.0]])
 
 LQR_R = np.array([[0.25, 0.000, 0.000],
                   [0.000, 0.250, 0.000],
@@ -165,17 +165,19 @@ LQR_R = np.array([[0.25, 0.000, 0.000],
 K, S, E = ct.lqr(A, B, Q, LQR_R)
 
 #-------------------Functions------------------------------------#
-def log(l, str,u_val_var):
+def log(l, str,u_val_var, df):
     now = datetime.datetime.now()
     tid = now.strftime("%Y-%d-%m-%H-%M-%S")
     string = f"{str}"
 
     if l == True:
+        df = df.round(3)
         df.to_csv(f'Control/logs/{str}/{u_val_var}_{tid}.csv', index = False)
 
         # Create a dictionary to hold the data
         data1 = {
             "u_val": u_val,
+            "ticks": tick2,
             "Q": Q.tolist(),  # Convert NumPy array to list
             "LQR_R": LQR_R.tolist(),
             "K": K.tolist(),
@@ -331,15 +333,15 @@ def pid_controller(states_var):
     d_vec = np.array([13000, 1, 1]) [:,np.newaxis]
     error = ref_pid - state_vec
 
+    if i%20 == 0:
+        diff = error - error_prev
+        error_prev = error
+
     if flag:
         force_vec = error * p_vec + diff * d_vec
     else:
         force_vec = error * p_vec
         flag = True
-
-    if i%20 == 0:
-        diff = error - error_prev
-        error_prev = error
 
     lift_h = (1/2)*997*1/8*u_val**2
     lift_r = (1/2)*997*1/8*u_val**2*r1_val
@@ -422,6 +424,7 @@ with holoocean.make(scenario_cfg=scenario) as env:
         R = (sensor_data[-1])
     print()
     for i in range(tick1,tick2):
+        print(i)
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
         if i%20 == 0:
@@ -445,7 +448,7 @@ with holoocean.make(scenario_cfg=scenario) as env:
 
 #Dataframe:
 df = build_df(data)
-log(logging, Control, u_val)
+log(logging, Control, u_val, df)
 print(df)
 
 
