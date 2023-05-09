@@ -384,11 +384,13 @@ prev_angles = np.array([0,0,0])[:,np.newaxis]
 real_angles = np.array([0,0,0])[:,np.newaxis]
 
 def wing_model(da1,da2,da3):
-    global prev_angles, real_angles, diff
+    global prev_angles, real_angles, diff, pwm
     desired_angles = np.vstack((da1, da2, da3))
     error_angles = desired_angles - prev_angles
     p = 10
-    pwm = error_angles * p
+    if i%20 == 0:
+        pwm = error_angles * p
+    print(pwm)
 
     if np.any(pwm > 100):
         pwm[pwm > 100] = 100
@@ -428,10 +430,12 @@ with holoocean.make(scenario_cfg=scenario) as env:
 
 
         #u1, u2, u3 = pid_controller(states_10,ref)
+
         u1, u2, u3 = LQR(states_10,ref)
         u1,u2,u3 = wing_model(u1,u2,u3)
 
         R = (sensor_data[-1])
+
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
         acc = compute_acc(x_dot)
 
