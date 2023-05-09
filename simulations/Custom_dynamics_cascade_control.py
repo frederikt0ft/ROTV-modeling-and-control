@@ -8,7 +8,7 @@ import os
 import subprocess
 import scipy as sp
 import datetime
-
+import json
 np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 os.chdir("..")
 #---------------------------------- INITIAL ROLL PITCH YAW -------------------------------------------#
@@ -178,8 +178,27 @@ def log(l, str):
 
     if l == True:
         df.to_csv(f'Control/logs/{tid}/{string}.csv', index = False)
+    # Define a sample matrix
+    matrix = np.array([[1, 2, 3], [4, 5, 6], [7, 8, 9]])
 
+    # Define a sample constant
+    constant = 42
 
+    # Create a dictionary to hold the data
+    data = {
+        "u_val": u_val,
+        "Q": Q.tolist(),  # Convert NumPy array to list
+        "R": R,
+        "A": A,
+        "B": B
+    }
+
+    # Define the filename for the JSON log file
+    filename = "log.json"
+
+    # Write the data to the JSON file
+    with open(filename, "w") as f:
+        json.dump(data, f, indent=4)
 def build_df(data):
     global df
     columns = ["acc_x", "acc_y", "acc_z","vel_x", "vel_y", "vel_z","ang_acc_roll", "ang_acc_pitch", "ang_acc_yaw","ang_vel_roll", "ang_vel_pitch", "ang_vel_yaw","x","y","z","roll","pitch","yaw","u1","u2","u3","x1","x2","x3","x4","x5","x6"]

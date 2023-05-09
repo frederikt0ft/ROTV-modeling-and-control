@@ -8,12 +8,12 @@ import os
 import subprocess
 import scipy as sp
 import datetime
+import json
 
 np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 os.chdir("..")
 #---------------------------------- INITIAL ROLL PITCH YAW -------------------------------------------#
 damp_mp = 3 #5 #damping multiplier
-
 
 phi_i = 0
 theta_i = 0
@@ -22,7 +22,14 @@ psi_i = -20   #-20
 al = 20         # Angle limit
 u_val = 2       # m/s
 
+tick1 = 200
+tick2 = 1800 + tick1
+
+ref_h = 1
+Control = "PID"
 tick_rate = 200
+logging = False
+
 
 scenario = {
     "name": "hovering_dynamics",
@@ -81,23 +88,15 @@ ang_acc_d = np.array([])
 ang_vel_d = np.array([])
 pos_d = np.array([])
 rpy_d = np.array([])
-tick1 = 200
-tick2 = 3000 + tick1
+
 
 # List of lists
 data = np.zeros((11, tick2, 3))
 R = np.zeros((3,3))
 
 #Initial conditions:
-u1 = 0
-u2 = 0
-u3 = 0
-x1 = 0
-x2 = 0
-x3 = 0
-x4 = 0
-x5 = 0
-x6 = 0
+u1 = u2 = u3 = x1 = x2 = x3 = x4 = x5 = x6 = 0
+p = d = p_h = d_h = p_r = d_r = p_p = d_p = 0
 
 u_list = []
 x_list1 = []
@@ -168,15 +167,39 @@ LQR_R = np.array([[0.25, 0.000, 0.000],
 K, S, E = ct.lqr(A, B, Q, LQR_R)
 
 #-------------------Functions------------------------------------#
-def log(l, str):
+def log(l, str,u_val_var):
     now = datetime.datetime.now()
     tid = now.strftime("%Y-%d-%m-%H-%M-%S")
     os.mkdir(f"Control/logs/{tid}")
     string = f"{str}"
 
     if l == True:
-        df.to_csv(f'Control/logs/{tid}/{string}.csv', index = False)
+        df.to_csv(f'Control/logs/{str}/{u_val_var}_{tid}.csv', index = False)
 
+        # Create a dictionary to hold the data
+    data1 = {
+        "u_val": u_val,
+        "Q": Q.tolist(),  # Convert NumPy array to list
+        "LQR_R": LQR_R.tolist(),
+        "K": K.tolist(),
+        "A": A.tolist(),
+        "B": B.tolist(),
+        "p_h": p_h,
+        "d_h": d_h,
+        "p_r": p_r,
+        "d_r": d_r,
+        "p_p": p_p,
+        "d_p": d_p,
+        "wing_p": p,
+        "wing_d": d
+    }
+
+    # Define the filename for the JSON log file
+    filename = f"Control/logs/{str}/{u_val_var}_{tid}_config.json"
+
+    # Write the data to the JSON file
+    with open(filename, "w") as f:
+        json.dump(data1, f, indent=4)
 
 def build_df(data):
 
@@ -293,52 +316,49 @@ def compute_acc(x_dot_var):
 
     return np.array([lin_accel,rot_accel])
 #-------------------Controllers---------------------#
-error_h_prev = 0
-error_r_prev = 0
-error_p_prev = 0
 
+error = np.array([0,0,0])[:,np.newaxis]
+error_prev = np.array([0,0,0])[:,np.newaxis]
+ref_pid = np.array([ref_h,0,0])[:,np.newaxis]
+diff = np.array([0,0,0])[:,np.newaxis]
 flag = False
+
+errors_h_list = [0]
+errors_r_list = [0]
+errors_p_list = [0]
 def clamp(arr, minimum, maximum):
     return np.clip(arr, minimum, maximum)
-def pid_controller(states_var, ref_h):
+def pid_controller(states_var):
     #Error dynamics ()
-    global flag
-    global error_h_prev
-    global error_r_prev
-    global error_p_prev
-    ref_r = 0
-    ref_p = 0
+    global flag, p_h, d_h, p_r, d_r, p_p, d_p, error,error_prev, diff
 
+    state_vec = np.array([states_var[0],states_var[2],states_var[4]])[:,np.newaxis]
+    p_vec = np.array([6200, 1, 1]) [:,np.newaxis]
+    d_vec = np.array([29000, 1, 1]) [:,np.newaxis]
 
-    p_h = 150 #10000
-    d_h = 6000 #8000000
+    error = ref_pid - state_vec
 
-    p_r = 50 #1000
-    d_r = 200 #1
-
-    p_p = 75 #1000
-    d_p = 250 #50000
-
-    error_h = ref_h - states_var[0]
-    error_r = ref_r - states_var[2]
-    error_p = ref_p - states_var[4]
 
     if flag:
-        LF = error_h*p_h + (error_h-error_h_prev)*d_h
-        RF = error_r*p_r + (error_r-error_r_prev)*d_r
-        PF = error_p*p_p + (error_p-error_p_prev)*d_p
-        print(error_h)
-        print(error_h_prev)
-        print(error_h-error_h_prev)
-    else:
-        LF = error_h*p_h
-        RF = error_r*p_r
-        PF = error_p*p_p
+        force_vec = error * p_vec + diff * d_vec
 
+
+
+    else:
+        force_vec = error * p_vec
         flag = True
 
-    force_vector = np.array([LF, RF, PF]) [:,np.newaxis]
 
+    if i%20 == 0:
+        diff = error - error_prev
+        error_prev = error
+
+
+    print(i)
+    print(error)
+    print(error_prev)
+    print(diff)
+    print()
     lift_h = (1/2)*997*1/8*u_val**2
     lift_r = (1/2)*997*1/8*u_val**2*r1_val
     lift_p = (1/2)*997*1/8*u_val**2
@@ -346,35 +366,23 @@ def pid_controller(states_var, ref_h):
     T = -np.array([[lift_h*S2_val, lift_h*S2_val, lift_h*S4_val],
                    [lift_r*S2_val, -lift_r*S2_val, 0],
                    [lift_p*d2_val*S2_val, lift_p*d2_val*S2_val, lift_p*d4_val*S4_val]])
-
-    #print("force vector")
-    #print(force_vector)
-    #print("inv T")
-    #print(np.linalg.pinv(T))
-
-    u = np.linalg.pinv(T) @ force_vector
+    u = np.linalg.pinv(T) @ force_vec
 
 
-    #print(f"input P: {error_h*p_h}")
-    #print(f"input D: {(error_h-error_h_prev)*d_h}")
-    #print(f"e_h: {error_h}")
-    #print(f"e_h_prev: {error_h_prev}")
 
-
-    error_h_prev = error_h
-    error_r_prev = error_r
-    error_p_prev = error_p
 
     print()
     u1 = u[0]
     u2 = u[1]
     u3 = u[2]
 
+
+
     return clamp(u1, -al, al), clamp(u2, -al, al), clamp(u3, -al, al)
-def LQR(states_var, z_ref):
+def LQR(states_var):
     state_vector = np.array([states_var[0],states_var[1],states_var[2],states_var[3],states_var[4],states_var[5]])[:,np.newaxis]
 
-    ref_vec = np.array([z_ref, 0, 0, 0, 0, 0])[:,np.newaxis]
+    ref_vec = np.array([ref_h, 0, 0, 0, 0, 0])[:,np.newaxis]
     u = - K @ (state_vector - ref_vec)
 
     u1 = u[0]
@@ -385,14 +393,21 @@ diff = np.array([0,0,0])[:,np.newaxis]
 prev_angles = np.array([0,0,0])[:,np.newaxis]
 real_angles = np.array([0,0,0])[:,np.newaxis]
 
-def wing_model(da1,da2,da3):
-    global prev_angles, real_angles, diff, pwm
-    desired_angles = np.vstack((da1, da2, da3))
-    error_angles = desired_angles - prev_angles
-    p = 10
-    if i%20 == 0:
-        pwm = error_angles * p
 
+if Control == "PID":
+    p = 10
+    d = 0
+
+if Control == "LQR":
+    p = 10
+    d = 0
+def wing_model(da1,da2,da3):
+    global prev_angles, real_angles, diff, pwm, p, d
+    desired_angles = np.vstack((da1, da2, da3))
+    error_angles = desired_angles - real_angles
+
+    if i%20 == 0:
+        pwm = error_angles * p - (real_angles - prev_angles) * d
 
     if np.any(pwm > 100):
         pwm[pwm > 100] = 100
@@ -401,9 +416,10 @@ def wing_model(da1,da2,da3):
 
     aps = pwm/10 # assuming linearity with 100 pwm = 10 aps. #aps = angle per second
 
+    prev_angles = real_angles
     real_angles = prev_angles + aps/tick_rate #angle per second -> angles per tick
 
-    prev_angles = real_angles
+
 
     #Log Desird angle
     j = 9
@@ -417,7 +433,6 @@ def wing_model(da1,da2,da3):
 
     return real_angles[0], real_angles[1], real_angles[2]
 
-ref = np.array([0,0,0])[:,np.newaxis]
 
 # Make environment
 with holoocean.make(scenario_cfg=scenario) as env:
@@ -437,13 +452,11 @@ with holoocean.make(scenario_cfg=scenario) as env:
         if i%20 == 0:
             states_10 = states
 
-        ref = 1   #Target above seabed
 
-
-
-        #u1_d, u2_d, u3_d = pid_controller(states_10,ref)
-
-        u1_d, u2_d, u3_d = LQR(states_10,ref)
+        if Control == "PID":
+            u1_d, u2_d, u3_d = pid_controller(states_10)
+        if Control == "LQR":
+            u1_d, u2_d, u3_d = LQR(states_10)
         u1,u2,u3 = wing_model(u1_d,u2_d,u3_d)
 
         R = (sensor_data[-1])
@@ -458,15 +471,15 @@ with holoocean.make(scenario_cfg=scenario) as env:
 
 #Dataframe:
 df = build_df(data)
-log(False, "LQR")
+log(logging, Control, u_val)
 print(df)
 
 
 print("Generating plots with following parameters: ")
-print(f"Ref:   {ref}")
+print(f"Ref:   {ref_h}")
 print(f"Ticks: {tick2}")
 
-arg1_value = ref
+arg1_value = ref_h
 arg2_value = tick_rate
 
 subprocess.run(["python", "Simulations/plots.py", str(arg1_value), str(arg2_value)])
