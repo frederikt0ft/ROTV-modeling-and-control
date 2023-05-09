@@ -7,10 +7,15 @@ import matplotlib.pyplot as plt
 import os
 import subprocess
 import scipy as sp
+import datetime
+
 np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 os.chdir("..")
 #---------------------------------- INITIAL ROLL PITCH YAW -------------------------------------------#
 damp_mp = 3 #5 #damping multiplier
+
+
+
 
 phi_i = 0
 theta_i = 0
@@ -165,7 +170,18 @@ LQR_R = np.array([[0.25, 0.000, 0.000],
 K, S, E = ct.lqr(A, B, Q, LQR_R)
 
 #-------------------Functions------------------------------------#
+def log(l, str):
+    now = datetime.datetime.now()
+    tid = now.strftime("%Y-%d-%m-%H-%M-%S")
+    os.mkdir(f"Control/logs/{tid}")
+    string = f"{str}"
+
+    if l == True:
+        df.to_csv(f'Control/logs/{tid}/{string}.csv', index = False)
+
+
 def build_df(data):
+    global df
     columns = ["acc_x", "acc_y", "acc_z","vel_x", "vel_y", "vel_z","ang_acc_roll", "ang_acc_pitch", "ang_acc_yaw","ang_vel_roll", "ang_vel_pitch", "ang_vel_yaw","x","y","z","roll","pitch","yaw","u1","u2","u3","x1","x2","x3","x4","x5","x6"]
     lst1 = data[0][:,0]     #acc_x
     lst2 = data[0][:,1]     #acc_y
@@ -197,6 +213,7 @@ def build_df(data):
     df = pd.DataFrame(list(zip(lst1, lst2, lst3, lst4, lst5, lst6, lst7, lst8, lst9, lst10, lst11, lst12, lst13, lst14, lst15, lst16, lst17, lst18, lst19, lst20, lst21, lst22, lst23, lst24, lst25, lst26, lst27)),
                       columns =columns)
     print(len(df["x"]))
+
     df.to_csv('Control/Simulation_data.csv', index = False)
 
     return df
@@ -401,8 +418,8 @@ with holoocean.make(scenario_cfg=scenario) as env:
 
 
         if i%20 == 0:
-            u1, u2, u3 = pid_controller(states,ref)
-            #u1, u2, u3 = LQR(states,ref)
+            #u1, u2, u3 = pid_controller(states,ref)
+            u1, u2, u3 = LQR(states,ref)
             u1,u2,u3 = wing_pid2(u1,u2,u3)
 
         R = (sensor_data[-1])
@@ -416,6 +433,7 @@ with holoocean.make(scenario_cfg=scenario) as env:
 
 #Dataframe:
 df = build_df(data)
+log(False, "LQR")
 print(df)
 
 

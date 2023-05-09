@@ -24,7 +24,7 @@ psi_i = -20   #-20
 al = 20         # Angle limit
 u_val = 2       # m/s
 
-tick_rate = 10
+tick_rate = 200
 
 scenario = {
     "name": "hovering_dynamics",
@@ -83,8 +83,8 @@ ang_acc_d = np.array([])
 ang_vel_d = np.array([])
 pos_d = np.array([])
 rpy_d = np.array([])
-tick1 = 10
-tick2 = 150 + tick1
+tick1 = 200
+tick2 = 3000 + tick1
 
 # List of lists
 data = np.zeros((9, tick2, 3))
@@ -158,16 +158,16 @@ print(B)
 
 Q = np.array([[350.000, 0.000, 0.000, 0.000, 0.000, 0.000],
               [0.000, 40.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 50.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 10.000, 0.000, 0.000, 0.000],
               [0.000, 0.000, 0.000, 1.00, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 100.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 10.000, 0.000],
               [0.000, 0.000, 0.000, 0.000, 0.000, 5.00]])
 
 LQR_R = np.array([[0.25, 0.000, 0.000],
                   [0.000, 0.250, 0.000],
                   [0.000, 0.000, 1.0]])
 
-K, S, E = ct.lqr(A, B, Q, LQR_R*5000000000000000000)
+K, S, E = ct.lqr(A, B, Q, LQR_R)
 
 #-------------------Functions------------------------------------#
 def log(l, str):
@@ -257,14 +257,16 @@ def extract_acc_terms(sensor_data_var, u1_var,u2_var,u3_var, tick, sonar_sensor,
     x_list1.append(x_list1_temp)
     x_list2.append(x_list2_temp)
     sonar_list.append(sonar_sensor[0])
-
-
+    """
+    print(np.shape(acc_list))
     for j in range(6,9):
+        print()
         for k in range(3):
             if (float(acc_list[j-6][i][k]) <= 0.001 and float(acc_list[j-6][i][k]) >= 0) or (float(acc_list[j-6][i][k]) >= -0.001 and float(acc_list[j-6][i][k]) <= 0):
                 data[j,i,k] = 0
             else:
-                data[j,i,k] = float(acc_list[j-6][i][k])
+                data[j,i,k] = float(acc_list[j-6][i][k])"""
+
     return [x_list1_temp[0],x_list1_temp[1],x_list1_temp[2],x_list2_temp[0],x_list2_temp[1],x_list2_temp[2]]
 def compute_x_dot(x_states_var, u1_var, u2_var, u3_var):
 
@@ -344,7 +346,7 @@ def pid_controller(states_var, ref_h):
     #print("inv T")
     #print(np.linalg.pinv(T))
 
-    u = np.linalg.pinv(T) @ force_vector 
+    u = np.linalg.pinv(T) @ force_vector
 
 
     #print(f"input P: {error_h*p_h}")
@@ -412,15 +414,13 @@ with holoocean.make(scenario_cfg=scenario) as env:
         R = (sensor_data[-1])
 
     for i in range(tick1,tick2):
-        sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
-        states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
         ref = 1   #Target above seabed
-
-
-
-        #u1, u2, u3 = pid_controller(states,ref)
-        u1, u2, u3 = LQR(states,ref)
-        u1,u2,u3 = wing_pid2(u1,u2,u3)
+        if i%20 == 0:
+            sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
+            states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
+            #u1, u2, u3 = pid_controller(states,ref)
+            u1, u2, u3 = LQR(states,ref)
+            u1,u2,u3 = wing_pid2(u1,u2,u3)
 
         R = (sensor_data[-1])
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3

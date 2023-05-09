@@ -13,3 +13,6 @@ command = np.array([0,0,0,0,20,20,20,20])
 
 for _ in range(1800):
     state = env.step(command)
+
+    if "IMUSensor" in state:
+        print(state["IMUSensor"])
