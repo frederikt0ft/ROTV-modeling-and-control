@@ -15,6 +15,12 @@ os.chdir("..")
 #---------------------------------- INITIAL ROLL PITCH YAW -------------------------------------------#
 damp_mp = 3 #5 #damping multiplier
 
+#Initial position
+x_i = 0
+y_i = 0
+z_i = -27.84
+
+#initial orientation
 phi_i = 0
 theta_i = 0
 psi_i = -20   #-20
@@ -26,7 +32,7 @@ tick1 = 200
 tick2 = 1800 + tick1
 
 ref_h = 1
-Control = "PID"
+Control = "LQR"
 tick_rate = 200
 logging = False
 
@@ -73,7 +79,7 @@ scenario = {
                 },
             ],
             "control_scheme": 1, # this is the custom dynamics control scheme
-            "location": [0,0,-27.84],
+            "location": [x_i,y_i,z_i],
             "rotation": [phi_i,theta_i,psi_i]
         }
     ],
@@ -97,6 +103,9 @@ R = np.zeros((3,3))
 #Initial conditions:
 u1 = u2 = u3 = x1 = x2 = x3 = x4 = x5 = x6 = 0
 p = d = p_h = d_h = p_r = d_r = p_p = d_p = 0
+
+p_vec = np.array([0,0,0])[:,np.newaxis]
+d_vec = np.array([0,0,0])[:,np.newaxis]
 
 u_list = []
 x_list1 = []
@@ -170,36 +179,37 @@ K, S, E = ct.lqr(A, B, Q, LQR_R)
 def log(l, str,u_val_var):
     now = datetime.datetime.now()
     tid = now.strftime("%Y-%d-%m-%H-%M-%S")
-    os.mkdir(f"Control/logs/{tid}")
     string = f"{str}"
 
     if l == True:
         df.to_csv(f'Control/logs/{str}/{u_val_var}_{tid}.csv', index = False)
 
         # Create a dictionary to hold the data
-    data1 = {
-        "u_val": u_val,
-        "Q": Q.tolist(),  # Convert NumPy array to list
-        "LQR_R": LQR_R.tolist(),
-        "K": K.tolist(),
-        "A": A.tolist(),
-        "B": B.tolist(),
-        "p_h": p_h,
-        "d_h": d_h,
-        "p_r": p_r,
-        "d_r": d_r,
-        "p_p": p_p,
-        "d_p": d_p,
-        "wing_p": p,
-        "wing_d": d
-    }
+        data1 = {
+            "u_val": u_val,
+            "Q": Q.tolist(),  # Convert NumPy array to list
+            "LQR_R": LQR_R.tolist(),
+            "K": K.tolist(),
+            "A": A.tolist(),
+            "B": B.tolist(),
+            "p_vec": p_vec.tolist(),
+            "d_vec": d_vec.tolist(),
+            "wing_p": p,
+            "wing_d": d,
+            "x_i": x_i,
+            "y_i": y_i,
+            "z_i": z_i,
+            "phi_i":phi_i,
+            "theta_i":theta_i,
+            "psi_i":psi_i
+        }
 
-    # Define the filename for the JSON log file
-    filename = f"Control/logs/{str}/{u_val_var}_{tid}_config.json"
+        # Define the filename for the JSON log file
+        filename = f"Control/logs/{str}/{u_val_var}_{tid}_config.json"
 
-    # Write the data to the JSON file
-    with open(filename, "w") as f:
-        json.dump(data1, f, indent=4)
+        # Write the data to the JSON file
+        with open(filename, "w") as f:
+            json.dump(data1, f, indent=4)
 
 def build_df(data):
 
@@ -402,7 +412,7 @@ if Control == "LQR":
     p = 10
     d = 0
 def wing_model(da1,da2,da3):
-    global prev_angles, real_angles, diff, pwm, p, d
+    global prev_angles, real_angles, diff, pwm, p, d, p_vec, d_vec
     desired_angles = np.vstack((da1, da2, da3))
     error_angles = desired_angles - real_angles
 
