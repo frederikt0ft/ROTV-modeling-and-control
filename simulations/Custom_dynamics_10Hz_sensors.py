@@ -18,7 +18,7 @@ os.chdir("..")
 #Initial position
 x_i = 0
 y_i = 0
-z_i = -27.84
+z_i = -26.84
 
 #initial orientation
 phi_i = 0
@@ -30,17 +30,17 @@ u_val = 2      # m/s
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
-tick2 = 4000 + tick1
+tick2 = 3000 + tick1
 tick_rate = 200
 
 ref_h = 1
 Control = "LQR"
-logging = True
+logging = False
 
 scenario = {
     "name": "hovering_dynamics",
     "package_name": "Ocean",
-    "world": "SimpleUnderwater",
+    "world": "ExampleLevel",
     "main_agent": "auv0",
     "ticks_per_sec": tick_rate,
     "lcm_provider": "file:///home/lcm.log",
@@ -128,9 +128,17 @@ d4_val = -0.5
 u = v = w = p = q = r = 0
 # x' = Ax + Bu
 x_dot = np.array([u, v, w, p, q, r]) [:,np.newaxis]
-
+#A using sin
 A = np.array([[0, 1.00, 0, 0, 0, 0],
               [0, -0.0222, 0, 0, 0.176*u_val**2 - 0.901, -0.163*u_val],
+              [0, 0, 0, 1.00, 0, 0],
+              [0, -0.0115*u_val, 0, -0.103, 0.000189*u_val**2, 0.000304],
+              [0, 0, 0, 0, 0, 1.00],
+              [0, 5.63*u_val, 0, 0.000228, -0.093*u_val**2, -0.149]])
+
+#A using cos
+A = np.array([[0, 1.00, 0, 0, 0, 0],
+              [0, -0.0222, 0, 0, 0.176*u_val**2, -0.163*u_val],
               [0, 0, 0, 1.00, 0, 0],
               [0, -0.0115*u_val, 0, -0.103, 0.000189*u_val**2, 0.000304],
               [0, 0, 0, 0, 0, 1.00],
@@ -151,11 +159,11 @@ print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s")
 
 #--------------------------- LQR --------------------------------#
 
-Q = np.array([[350.000, 0.000, 0.000, 0.000, 0.000, 0.000],
+Q = np.array([[50.000, 0.000, 0.000, 0.000, 0.000, 0.000],
               [0.000, 40.000, 0.000, 0.000, 0.000, 0.000],
               [0.000, 0.000, 10.000, 0.000, 0.000, 0.000],
               [0.000, 0.000, 0.000, 1, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 10.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 7000.000, 0.000],
               [0.000, 0.000, 0.000, 0.000, 0.000, 5.0]])
 
 LQR_R = np.array([[0.25, 0.000, 0.000],
