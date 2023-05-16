@@ -18,20 +18,20 @@ os.chdir("..")
 #Initial position
 x_i = 0
 y_i = 0
-z_i = -24.84
+z_i = -27.84
 
 #initial orientation
 phi_i = 0
 theta_i = 0
-psi_i = 2   #-20
+psi_i = -20   #-20
 
 al = 20         # Angle limit
-u_val = 4      # m/s
+u_val = 5      # m/s
 
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
-tick2 = 2000 + tick1
+tick2 = 2300 + tick1
 tick_rate = 200
 
 ref_h = 1
@@ -137,8 +137,13 @@ A = np.array([[0, 1.00, 0, 0, 0, 0],
               [0, -0.0161*u_val, 0, -0.291, 0.000532*u_val**2, 0.000739],
               [0, 0, 0, 0, 0, 1.00],
               [0, 2.81*u_val, 0, 0.000554, -0.0928*u_val**2, -0.129]])
-
-
+# pitch _damping = 7
+A = np.array([[0, 1.00, 0, 0, 0, 0],
+              [0, -0.0602, 0, 0, 0.229*u_val**2, -0.252*u_val],
+              [0, 0, 0, 1.00, 0, 0],
+              [0, -1.66e-6*u_val, 0, -3.00e-5, 5.47e-8*u_val**2, 7.61e-8],
+              [0, 0, 0, 0, 0, 1.00],
+              [0, 2.81*u_val, 0, 5.71e-8, -0.0928*u_val**2, -0.129]])
 print("A:\n", A)
 
 B = np.array([[0, 0, 0],
@@ -146,7 +151,7 @@ B = np.array([[0, 0, 0],
               [0, 0, 0],
               [-0.165*u_val**2, 0.166*u_val**2, -0.000507*u_val**2],
               [0, 0, 0],
-              [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
+              [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])*2
 
 
 print()
@@ -156,17 +161,17 @@ print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s\nRank 
 
 #--------------------------- LQR --------------------------------#
 
-Q = np.array([[30.000, 0.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 10.000, 0.000, 0.000, 0.000, 0.000],
+Q = np.array([[80.000, 0.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 30.000, 0.000, 0.000, 0.000, 0.000],
               [0.000, 0.000, 5.000, 0.000, 0.000, 0.000],
               [0.000, 0.000, 0.000, 1, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 30.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 0.000, 5.0]])
+              [0.000, 0.000, 0.000, 0.000, 150.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 0.000, 35.0]])
 
 
-LQR_R = np.array([[1.00, 0.000, 0.000],
-                  [0.000, 1.0, 0.000],
-                  [0.000, 0.000, 4]])
+LQR_R = np.array([[0.7, 0.000, 0.000],
+                  [0.000, 0.7, 0.000],
+                  [0.000, 0.000, 3.5]])
 
 K, S, E = ct.lqr(A, B, Q, LQR_R)
 
@@ -252,6 +257,21 @@ def build_df(data):
     df.to_csv('Control/Simulation_data.csv', index = False)
 
     return df
+abc = 200
+desired_poles1 = [-11.8/abc, -3.3/abc, -0.6/abc,-0.9/abc, (-1.5+1.4j)/abc,(-1.5-1.4j)/abc]
+K=ct.place(A,B,desired_poles1)
+
+
+def state_feedback_controller(states_var, ref_h, ref_r, ref_p):
+
+    feedback = -K @ states_var
+    u1 = ref_h + feedback[0]
+    u2 = ref_r + feedback[1]
+    u3 = ref_p + feedback[2]
+
+    print(u1, u2, u3)
+    return np.array([u1]),  np.array([u2]),  np.array([u3])
+
 def extract_sensor_info(x, a):
     # Extract all info from state
     quat = x[15:19]
@@ -335,8 +355,8 @@ def pid_controller(states_var):
     #Error dynamics ()
     global flag, p_h, d_h, p_r, d_r, p_p, d_p, error,error_prev, diff
     state_vec = np.array([states_var[0],states_var[2],states_var[4]])[:,np.newaxis]
-    p_vec = np.array([950, 1, 1]) [:,np.newaxis]
-    d_vec = np.array([13000, 1, 1]) [:,np.newaxis]
+    p_vec = np.array([0.005*0.6, 1, 330/0.6]) [:,np.newaxis]
+    d_vec = np.array([0.005*1/2*100/8, 0,330*1/2*100/8]) [:,np.newaxis]
     error = ref_pid - state_vec
 
     if i%20 == 0:
@@ -382,6 +402,10 @@ if Control == "PID":
     d = 0
 
 if Control == "LQR":
+    p = 10
+    d = 0
+
+if Control == "PPC":
     p = 10
     d = 0
 
@@ -442,6 +466,9 @@ with holoocean.make(scenario_cfg=scenario) as env:
             u1_d, u2_d, u3_d = pid_controller(states_10)
         if Control == "LQR":
             u1_d, u2_d, u3_d = LQR(states_10)
+        if Control == "PPC":
+            u1_d, u2_d, u3_d = state_feedback_controller(states_10, ref_h, 0, 0)
+            print("WANKER")
         u1,u2,u3 = wing_model(u1_d,u2_d,u3_d)
         #u1 = u2 = u3 = np.array([0])
         R = (sensor_data[-1])
