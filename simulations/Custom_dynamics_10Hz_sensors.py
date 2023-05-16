@@ -23,16 +23,15 @@ z_i = -24.84
 #initial orientation
 phi_i = 0
 theta_i = 0
-psi_i = -20   #-20
+psi_i = 2   #-20
 
 al = 20         # Angle limit
-u_val = 2      # m/s
-F_drag = 0.00657*1.99*u_val**2*997/2
-print(F_drag)
+u_val = 4      # m/s
+
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
-tick2 = 3000 + tick1
+tick2 = 2000 + tick1
 tick_rate = 200
 
 ref_h = 1
@@ -116,10 +115,10 @@ sonar_list = [0]
 acc_list = [u_list,x_list1,x_list2]
 
 r1_val = 0.288
-S1_val = 0.052
-S2_val = 0.084
-S3_val = 0.069
-S4_val = 0.05
+S1_val = 0.0051
+S2_val = 0.095
+S3_val = 0.0693
+S4_val = 0.044
 d1_val = 0.14
 d2_val = 0.055
 d3_val = -0.1
@@ -130,28 +129,7 @@ d4_val = -0.5
 u = v = w = p = q = r = 0
 # x' = Ax + Bu
 x_dot = np.array([u, v, w, p, q, r]) [:,np.newaxis]
-#A using sin
-A = np.array([[0, 1.00, 0, 0, 0, 0],
-              [0, -0.0222, 0, 0, 0.176*u_val**2 - 0.901, -0.163*u_val],
-              [0, 0, 0, 1.00, 0, 0],
-              [0, -0.0115*u_val, 0, -0.103, 0.000189*u_val**2, 0.000304],
-              [0, 0, 0, 0, 0, 1.00],
-              [0, 5.63*u_val, 0, 0.000228, -0.093*u_val**2, -0.149]])
 
-#A using cos
-A = np.array([[0, 1.00, 0, 0, 0, 0],
-              [0, -0.0222, 0, 0, 0.176*u_val**2, -0.163*u_val],
-              [0, 0, 0, 1.00, 0, 0],
-              [0, -0.0115*u_val, 0, -0.103, 0.000189*u_val**2, 0.000304],
-              [0, 0, 0, 0, 0, 1.00],
-              [0, 5.63*u_val, 0, 0.000228, -0.093*u_val**2, -0.149]])
-
-A = np.array([[0, 1.00, 0, 0, 0, 0],
-              [0, -0.0285, 0, 0, 0.227*u_val**2, -0.209*u_val],
-              [0, 0, 0, 1.00, 0, 0],
-              [0, -0.00641*u_val, 0, -0.214, 1.01e-6*F_drag + 0.000144*u_val**2, 0.000231],
-              [0, 0, 0, 0, 0, 1.00],
-              [0, 1.52*u_val, 0, 0.000173, -0.000239*F_drag - 0.0341*u_val**2, -0.0548]])
 
 A = np.array([[0, 1.00, 0, 0, 0, 0],
               [0, -0.0344, 0, 0, 0.229*u_val**2, -0.252*u_val],
@@ -160,28 +138,17 @@ A = np.array([[0, 1.00, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 1.00],
               [0, 2.81*u_val, 0, 0.000554, -0.0928*u_val**2, -0.129]])
 
+
 print("A:\n", A)
 
 B = np.array([[0, 0, 0],
-              [-0.029*u_val**2, -0.029*u_val**2, -0.0346*u_val**2],
+             [-0.0509*u_val**2, -0.0509*u_val**2, -0.0471*u_val**2],
               [0, 0, 0],
-              [-0.052*u_val**2, 0.052*u_val**2, -0.000237*u_val**2],
+              [-0.165*u_val**2, 0.166*u_val**2, -0.000507*u_val**2],
               [0, 0, 0],
-              [-0.0106*u_val**2, -0.0109*u_val**2, 0.116*u_val**2]])
+              [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
 
-B = np.array([[0, 0, 0],
-              [-0.0373*u_val**2, -0.0373*u_val**2, -0.0444*u_val**2],
-              [0, 0, 0],
-              [-0.108*u_val**2, 0.108*u_val**2, -0.00018*u_val**2],
-              [0, 0, 0],
-              [-0.00386*u_val**2, -0.00403*u_val**2, 0.0427*u_val**2]])
 
-B = np.array([[0, 0, 0],
-              [-0.0446*u_val**2, -0.0446*u_val**2, -0.0531*u_val**2],
-              [0, 0, 0],
-              [-0.146*u_val**2, 0.146*u_val**2, -0.000576*u_val**2],
-              [0, 0, 0],
-              [-0.00901*u_val**2, -0.00957*u_val**2, 0.101*u_val**2]])
 print()
 print("B:\n", B)
 print()
@@ -417,6 +384,7 @@ if Control == "PID":
 if Control == "LQR":
     p = 10
     d = 0
+
 def wing_model(da1,da2,da3):
     global prev_angles, real_angles, pwm, p, d, p_vec, d_vec
     desired_angles = np.vstack((da1, da2, da3))
@@ -475,7 +443,7 @@ with holoocean.make(scenario_cfg=scenario) as env:
         if Control == "LQR":
             u1_d, u2_d, u3_d = LQR(states_10)
         u1,u2,u3 = wing_model(u1_d,u2_d,u3_d)
-
+        #u1 = u2 = u3 = np.array([0])
         R = (sensor_data[-1])
 
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
