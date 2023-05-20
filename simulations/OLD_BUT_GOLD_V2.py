@@ -16,31 +16,33 @@ os.chdir("..")
 
 
 #Initial position
-x_i = 0
-y_i = 0
-z_i = -27.84 + 10
+x_i = 0.1
+y_i = -0.1
+z_i = -28.34
 
 #initial orientation
 phi_i = 0
 theta_i = 0
-psi_i = -20   #-20
+psi_i = 0 #-20
 
 al = 20         # Angle limit
-u_val = 2      # m/s
+u_val = 5      # m/s
+
+distance = 150 # in meters
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
-tick2 = 4200 + tick1
+tick2 = int(distance/u_val*tick1 + tick1)
 tick_rate = 200
 
-ref_h = 1 + 10
-Control = "PID"
-logging = False
+ref_h = 1
+Control = "LQR"
+logging = True
 
 scenario = {
     "name": "hovering_dynamics",
     "package_name": "Ocean",
-    "world": "SimpleUnderwater",
+    "world": "ExampleLevel",
     "main_agent": "auv0",
     "ticks_per_sec": tick_rate,
     "lcm_provider": "file:///home/lcm.log",
@@ -144,10 +146,41 @@ A = np.array([[0, 1.00, 0, 0, 0, 0],
               [0, 0, 0, 1.00, 0, 0],
               [0, -0.0118*u_val, 0, -0.103, 0.000225*u_val**2, 0.000313],
               [0, 0, 0, 0, 0, 1.00],
-              [0, 5.81*u_val, 0, 0.000235, -0.111*u_val**2, -0.154]])
+              [0, 5.81*u_val, 0, 0.000235, -0.111*u_val**2, -0.169]])
 
+# HIGH DAMPING:
+A = np.array([[0, 1.00, 0, 0, 0, 0],
+              [0, -0.238, 0, 0, 0.147*u_val**2, -0.163*u_val],
+              [0, 0, 0, 1.00, 0, 0],
+              [0, -0.0118*u_val, 0, -0.0517*2, 0.000225*u_val**2, 0.000509],
+              [0, 0, 0, 0, 0, 1.00],
+              [0, 5.81*u_val, 0, 0.000117, -0.111*u_val**2, -0.250]])
 
+#mathematical correct
+A = np.array([[0, 1.00, 0, 0, 0, 0],
+             [0, -0.370, 0, 0, 0.229*u_val**2, -0.252*u_val],
+             [0, 0, 0, 1.00, 0, 0],
+             [0, -0.0161*u_val, 0, -0.146, 0.000532*u_val**2, 0.00120],
+             [0, 0, 0, 0, 0, 1.00],
+             [0, 2.81*u_val, 0, 0.000277, -0.0928*u_val**2, -0.210]])
 print("A:\n", A)
+
+B =  np.array([[0, 0, 0],
+              [-0.0509*u_val**2, -0.0509*u_val**2, -0.0471*u_val**2],
+              [0, 0, 0],
+              [-0.165*u_val**2, 0.166*u_val**2, -0.000507*u_val**2],
+              [0, 0, 0],
+              [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
+
+#gammel added mass
+B =  np.array([[0, 0, 0],
+              [-0.0328*u_val**2, -0.0328*u_val**2, -0.0304*u_val**2],
+              [0, 0, 0],
+              [-0.0588*u_val**2, 0.0588*u_val**2, -0.000215*u_val**2],
+              [0, 0, 0],
+              [-0.0124*u_val**2, -0.0127*u_val**2, 0.105*u_val**2]])
+
+#mathematical correct
 
 B = np.array([[0, 0, 0],
               [-0.0509*u_val**2, -0.0509*u_val**2, -0.0471*u_val**2],
@@ -156,14 +189,6 @@ B = np.array([[0, 0, 0],
               [0, 0, 0],
               [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
 
-#gammel added mass
-B = np.array([[0, 0, 0],
-              [-0.0328*u_val**2, -0.0328*u_val**2, -0.0304*u_val**2],
-              [0, 0, 0],
-              [-0.0588*u_val**2, 0.0588*u_val**2, -0.000215*u_val**2],
-              [0, 0, 0],
-              [-0.0124*u_val**2, -0.0127*u_val**2, 0.105*u_val**2]])
-
 
 print()
 print("B:\n", B)
@@ -171,17 +196,18 @@ print()
 print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s")
 
 #--------------------------- LQR --------------------------------#
-
-Q = np.array([[220.000, 0.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000,125.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 10.000, 0.000, 0.000, 0.000],
+Q = np.array([[290.000, 0.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000,50.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 1, 0.000, 0.000, 0.000],
               [0.000, 0.000, 0.000, 1, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 60.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 0.000, 45.0]])
+              [0.000, 0.000, 0.000, 0.000, 45.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 0.000, 300.0]])
 
-LQR_R = np.array([[0.350, 0.000, 0.000],
-                  [0.000, 0.350, 0.000],
-                  [0.000, 0.000, 1.6]])*2
+
+LQR_R = np.array([[0.30, 0.000, 0.000],
+                  [0.000, 0.30, 0.000],
+                  [0.000, 0.000, 1.8]])*23
+
 
 K, S, E = ct.lqr(A, B, Q, LQR_R)
 
@@ -277,10 +303,10 @@ def extract_sensor_info(x, a):
     ang_acc = x[9:12]
     ang_vel = x[12:15]
     rot = Rotation.from_quat(quat)
-    rot_euler = rot.as_euler('xyz', degrees=True)
-    rot_euler[0] -= phi_i
-    rot_euler[1] -= theta_i
-    rot_euler[2] -= psi_i
+#    rot_euler = rot.as_euler('xyz', degrees=True)
+#    rot_euler[0] -= phi_i
+#    rot_euler[1] -= theta_i
+#    rot_euler[2] -= psi_i
     rpy = a
     rpy[1] *= -1
 
@@ -353,8 +379,8 @@ def pid_controller(states_var):
     #Error dynamics ()
     global flag, p_h, d_h, p_r, d_r, p_p, d_p, error,error_prev, diff
     state_vec = np.array([states_var[0],states_var[2],states_var[4]])[:,np.newaxis]
-    p_vec = np.array([85, 1, 450]) [:,np.newaxis] #250 1 450
-    d_vec = np.array([5500, 1, 700]) [:,np.newaxis] #7000 1 700
+    p_vec = np.array([200, 1, 100]) [:,np.newaxis] #85, 1, 450
+    d_vec = np.array([8200, 1, 450]) [:,np.newaxis] #5500, 1, 700
     error = ref_pid - state_vec
 
     if i%20 == 0:
