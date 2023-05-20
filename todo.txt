@@ -24,5 +24,6 @@ HAKIM SPØRGSMÅL:
   	- BAD PID controller
 
 * What to do?
+* Bachelor. Is the objective getting good results or understanding the theory behind some area
 
 
