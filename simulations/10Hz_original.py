@@ -17,7 +17,7 @@ os.chdir("..")
 
 #Initial position
 x_i = 0
-y_i = 0
+y_i = -5
 z_i = -27.84+10
 
 #initial orientation
@@ -26,12 +26,11 @@ theta_i = 0
 psi_i = -20   #-20
 
 al = 20         # Angle limit
-u_val = 1      # m/s
-
+u_val = 2      # m/s
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
-tick2 = 2300 + tick1
+tick2 = 4000 + tick1
 tick_rate = 200
 
 ref_h = 1+10
@@ -41,7 +40,7 @@ logging = False
 scenario = {
     "name": "hovering_dynamics",
     "package_name": "Ocean",
-    "world": "ExampleLevel",
+    "world": "SimpleUnderwater",
     "main_agent": "auv0",
     "ticks_per_sec": tick_rate,
     "lcm_provider": "file:///home/lcm.log",
@@ -114,6 +113,7 @@ x_list2 = []
 sonar_list = [0]
 acc_list = [u_list,x_list1,x_list2]
 
+
 r1_val = 0.288
 S1_val = 0.0051
 S2_val = 0.095
@@ -130,37 +130,55 @@ u = v = w = p = q = r = 0
 # x' = Ax + Bu
 x_dot = np.array([u, v, w, p, q, r]) [:,np.newaxis]
 
-
-A = np.array([[0, 1.00, 0, 0, 0, 0],
-              [0, -0.0344, 0, 0, 0.229*u_val**2, -0.252*u_val],
-              [0, 0, 0, 1.00, 0, 0],
-              [0, -0.0161*u_val, 0, -0.291, 0.000532*u_val**2, 0.000739],
-              [0, 0, 0, 0, 0, 1.00],
-              [0, 2.81*u_val, 0, 0.000554, -0.0928*u_val**2, -0.129]])
-
-#gammel added mass
-
-A = np.array([[0, 1.00, 0, 0, 0, 0],
-              [0, -0.0222, 0, 0, 0.147*u_val**2, -0.163*u_val],
-              [0, 0, 0, 1.00, 0, 0],
-              [0, -0.0118*u_val, 0, -0.103, 0.000225*u_val**2, 0.000313],
-              [0, 0, 0, 0, 0, 1.00],
-              [0, 5.81*u_val, 0, 0.000235, -0.111*u_val**2, -0.154]])
-
-
-
-
 # pitch _damping = 7
-
-'''A = np.array([[0, 1.00, 0, 0, 0, 0],
-              [0, -0.0602, 0, 0, 0.229*u_val**2, -0.252*u_val],
+A = np.array([[0, 1.00, 0, 0, 0, 0],
+              [0, -0.0143, 0, 0, 0.0952*u_val**2/5, -0.105*u_val],
               [0, 0, 0, 1.00, 0, 0],
-              [0, -1.66e-6*u_val, 0, -3.00e-5, 5.47e-8*u_val**2, 7.61e-8],
+              [0, -0.0164*u_val, 0, -0.103, 0.000189*u_val**2, 0.000262],
               [0, 0, 0, 0, 0, 1.00],
-              [0, 2.81*u_val, 0, 5.71e-8, -0.0928*u_val**2, -0.129]])'''
+              [0, 8.06*u_val, 0, 0.000197, -0.0928*u_val**2, -0.129]])
 
 
 print("A:\n", A)
+
+B = np.array([[0, 0, 0],
+              [-0.0212*u_val**2, -0.0212*u_val**2, -0.0196*u_val**2],
+              [0, 0, 0],
+              [-0.0588*u_val**2, 0.0588*u_val**2, -0.00018*u_val**2],
+              [0, 0, 0],
+              [-0.0104*u_val**2, -0.0106*u_val**2, 0.0884*u_val**2]])
+
+
+
+#-NEW:
+
+A = np.array([[0, 1.00, 0, 0, 0, 0],
+              [0, -0.0200, 0, 0, 0.106*u_val**2, -0.146*u_val],
+              [0, 0, 0, 1.00, 0, 0],
+              [0, -0.0094*u_val, 0, -0.103, 0.000127*u_val**2, 0.000220],
+              [0, 0, 0, 0, 0, 1.00],
+              [0, 4.62*u_val, 0, 0.000165, -0.0623*u_val**2, -0.108]])
+print("A:\n", A)
+
+B = np.array([[0, 0, 0],
+              [-0.0236*u_val**2, -0.0236*u_val**2, -0.0219*u_val**2],
+              [0, 0, 0],
+              [-0.047*u_val**2, 0.047*u_val**2, -0.000121*u_val**2],
+              [0, 0, 0],
+              [-0.00696*u_val**2, -0.00711*u_val**2, 0.0593*u_val**2]])
+
+
+
+
+
+
+A = np.array([[0, 1.00, 0, 0, 0, 0],
+              [0, -0.0344*5, 0, 0, 0.229*u_val**2/5, -0.252*u_val],
+              [0, 0, 0, 1.00, 0, 0],
+              [0, -0.0161*u_val, 0, -0.291*5, 0.000532*u_val**2, 0.000739],
+              [0, 0, 0, 0, 0, 1.00],
+              [0, 2.81*u_val, 0, 0.000554, -0.0928*u_val**2, -0.129*5]])
+# pitch _damping = 7
 
 B = np.array([[0, 0, 0],
               [-0.0509*u_val**2, -0.0509*u_val**2, -0.0471*u_val**2],
@@ -169,33 +187,24 @@ B = np.array([[0, 0, 0],
               [0, 0, 0],
               [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
 
-#gammel added mass
-B = np.array([[0, 0, 0],
-              [-0.0328*u_val**2, -0.0328*u_val**2, -0.0304*u_val**2],
-              [0, 0, 0],
-              [-0.0588*u_val**2, 0.0588*u_val**2, -0.000215*u_val**2],
-              [0, 0, 0],
-              [-0.0124*u_val**2, -0.0127*u_val**2, 0.105*u_val**2]])
-
 
 print()
 print("B:\n", B)
 print()
-print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s\nRank controlability matrix:", np.linalg.matrix_rank(ct.ctrb(A,B)), "\nLogging:", logging)
+print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s")
 
 #--------------------------- LQR --------------------------------#
 
-Q = np.array([[350.000, 0.000, 0.000, 0.000, 0.000, 0.000],
+Q = np.array([[250.000, 0.000, 0.000, 0.000, 0.000, 0.000],
               [0.000, 40.000, 0.000, 0.000, 0.000, 0.000],
               [0.000, 0.000, 10.000, 0.000, 0.000, 0.000],
               [0.000, 0.000, 0.000, 1, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 10.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 0.000, 5.0]])*100
+              [0.000, 0.000, 0.000, 0.000, 150.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 0.000, 5.0]])
 
-
-LQR_R = np.array([[0.25, 0.000, 0.000],
-                  [0.000, 0.25, 0.000],
-                  [0.000, 0.000, 1]])
+LQR_R = np.array([[0.5, 0.000, 0.000],
+                  [0.000, 0.50, 0.000],
+                  [0.000, 0.000, 5.0]])
 
 K, S, E = ct.lqr(A, B, Q, LQR_R)
 
@@ -281,20 +290,6 @@ def build_df(data):
     df.to_csv('Control/Simulation_data.csv', index = False)
 
     return df
-
-abc = 200
-desired_poles1 = [-11.8/abc, -3.3/abc, -0.6/abc,-0.9/abc, (-1.5+1.4j)/abc,(-1.5-1.4j)/abc]
-K=ct.place(A,B,desired_poles1)
-def state_feedback_controller(states_var, ref_h, ref_r, ref_p):
-
-    feedback = -K @ states_var
-    u1 = ref_h + feedback[0]
-    u2 = ref_r + feedback[1]
-    u3 = ref_p + feedback[2]
-
-    print(u1, u2, u3)
-    return np.array([u1]),  np.array([u2]),  np.array([u3])
-
 def extract_sensor_info(x, a):
     # Extract all info from state
     quat = x[15:19]
@@ -349,6 +344,7 @@ def compute_x_dot(x_states_var, u1_var, u2_var, u3_var):
     x_states1 = np.array([x_states_var[0],x_states_var[1],x_states_var[2],x_states_var[3],x_states_var[4],x_states_var[5]]) [:,np.newaxis]
     u_input = np.array([u1_var, u2_var, u3_var]) #[:,np.newaxis]
     x_dot = A @ x_states1 + B @ u_input
+
     return x_dot
 def compute_acc(x_dot_var):
     heave_vel1   = x_dot_var[0][0] # positiv er frem
@@ -378,8 +374,8 @@ def pid_controller(states_var):
     #Error dynamics ()
     global flag, p_h, d_h, p_r, d_r, p_p, d_p, error,error_prev, diff
     state_vec = np.array([states_var[0],states_var[2],states_var[4]])[:,np.newaxis]
-    p_vec = np.array([1, 1, 1]) [:,np.newaxis]
-    d_vec = np.array([1, 1, 1]) [:,np.newaxis]
+    p_vec = np.array([100, 1, 350]) [:,np.newaxis]
+    d_vec = np.array([9000, 0, 4000]) [:,np.newaxis]
     error = ref_pid - state_vec
 
     if i%20 == 0:
@@ -423,13 +419,10 @@ real_angles = np.array([0,0,0])[:,np.newaxis]
 if Control == "PID":
     p = 10
     d = 0
+
 if Control == "LQR":
     p = 10
     d = 0
-if Control == "PPC":
-    p = 10
-    d = 0
-
 def wing_model(da1,da2,da3):
     global prev_angles, real_angles, pwm, p, d, p_vec, d_vec
     desired_angles = np.vstack((da1, da2, da3))
@@ -462,6 +455,7 @@ def wing_model(da1,da2,da3):
 
     return real_angles[0], real_angles[1], real_angles[2]
 
+
 # Make environment
 with holoocean.make(scenario_cfg=scenario) as env:
     lin_accel = np.array([u_val, 0, 0])   # 5 m/s
@@ -486,9 +480,6 @@ with holoocean.make(scenario_cfg=scenario) as env:
             u1_d, u2_d, u3_d = pid_controller(states_10)
         if Control == "LQR":
             u1_d, u2_d, u3_d = LQR(states_10)
-        if Control == "PPC":
-            u1_d, u2_d, u3_d = state_feedback_controller(states_10, ref_h, 0, 0)
-            print("WANKER")
         u1,u2,u3 = wing_model(u1_d,u2_d,u3_d)
         #u1 = u2 = u3 = np.array([0])
         R = (sensor_data[-1])
