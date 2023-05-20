@@ -17,3 +17,12 @@ Sæt tickrate
 
 
 
+HAKIM SPØRGSMÅL:
+* Rapport - gennemgå outline
+* Hardware - pulley rig + motor
+* Software - unintivuly results 
+  	- BAD PID controller
+
+* What to do?
+
+
