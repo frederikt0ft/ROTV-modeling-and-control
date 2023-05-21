@@ -16,33 +16,31 @@ os.chdir("..")
 
 
 #Initial position
-x_i = 0.1
-y_i = -0.1
-z_i = -28.34
+x_i = 0.05
+y_i = 0.1
+z_i = -27.84 + 5
 
 #initial orientation
 phi_i = 0
 theta_i = 0
-psi_i = 0 #-20
+psi_i = 0   #-20
 
 al = 20         # Angle limit
-u_val = 5      # m/s
-
-distance = 150 # in meters
+u_val = 2      # m/s
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
-tick2 = int(distance/u_val*tick1 + tick1)
+tick2 = 800 + tick1
 tick_rate = 200
 
-ref_h = 1
+ref_h = 1 + 5
 Control = "PID"
-logging = True
+logging = False
 
 scenario = {
     "name": "hovering_dynamics",
     "package_name": "Ocean",
-    "world": "ExampleLevel",
+    "world": "SimpleUnderwater",
     "main_agent": "auv0",
     "ticks_per_sec": tick_rate,
     "lcm_provider": "file:///home/lcm.log",
@@ -146,41 +144,10 @@ A = np.array([[0, 1.00, 0, 0, 0, 0],
               [0, 0, 0, 1.00, 0, 0],
               [0, -0.0118*u_val, 0, -0.103, 0.000225*u_val**2, 0.000313],
               [0, 0, 0, 0, 0, 1.00],
-              [0, 5.81*u_val, 0, 0.000235, -0.111*u_val**2, -0.169]])
+              [0, 5.81*u_val, 0, 0.000235, -0.111*u_val**2, -0.154]])
 
-# HIGH DAMPING:
-A = np.array([[0, 1.00, 0, 0, 0, 0],
-              [0, -0.238, 0, 0, 0.147*u_val**2, -0.163*u_val],
-              [0, 0, 0, 1.00, 0, 0],
-              [0, -0.0118*u_val, 0, -0.0517*2, 0.000225*u_val**2, 0.000509],
-              [0, 0, 0, 0, 0, 1.00],
-              [0, 5.81*u_val, 0, 0.000117, -0.111*u_val**2, -0.250]])
 
-#mathematical correct
-A = np.array([[0, 1.00, 0, 0, 0, 0],
-             [0, -0.370, 0, 0, 0.229*u_val**2, -0.252*u_val],
-             [0, 0, 0, 1.00, 0, 0],
-             [0, -0.0161*u_val, 0, -0.146, 0.000532*u_val**2, 0.00120],
-             [0, 0, 0, 0, 0, 1.00],
-             [0, 2.81*u_val, 0, 0.000277, -0.0928*u_val**2, -0.210]])
 print("A:\n", A)
-
-B =  np.array([[0, 0, 0],
-              [-0.0509*u_val**2, -0.0509*u_val**2, -0.0471*u_val**2],
-              [0, 0, 0],
-              [-0.165*u_val**2, 0.166*u_val**2, -0.000507*u_val**2],
-              [0, 0, 0],
-              [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
-
-#gammel added mass
-B =  np.array([[0, 0, 0],
-              [-0.0328*u_val**2, -0.0328*u_val**2, -0.0304*u_val**2],
-              [0, 0, 0],
-              [-0.0588*u_val**2, 0.0588*u_val**2, -0.000215*u_val**2],
-              [0, 0, 0],
-              [-0.0124*u_val**2, -0.0127*u_val**2, 0.105*u_val**2]])
-
-#mathematical correct
 
 B = np.array([[0, 0, 0],
               [-0.0509*u_val**2, -0.0509*u_val**2, -0.0471*u_val**2],
@@ -189,6 +156,14 @@ B = np.array([[0, 0, 0],
               [0, 0, 0],
               [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
 
+#gammel added mass
+B = np.array([[0, 0, 0],
+              [-0.0328*u_val**2, -0.0328*u_val**2, -0.0304*u_val**2],
+              [0, 0, 0],
+              [-0.0588*u_val**2, 0.0588*u_val**2, -0.000215*u_val**2],
+              [0, 0, 0],
+              [-0.0124*u_val**2, -0.0127*u_val**2, 0.105*u_val**2]])
+
 
 print()
 print("B:\n", B)
@@ -196,18 +171,17 @@ print()
 print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s")
 
 #--------------------------- LQR --------------------------------#
-Q = np.array([[290.000, 0.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000,50.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 1, 0.000, 0.000, 0.000],
+
+Q = np.array([[220.000, 0.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000,125.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 10.000, 0.000, 0.000, 0.000],
               [0.000, 0.000, 0.000, 1, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 45.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 0.000, 300.0]])
+              [0.000, 0.000, 0.000, 0.000, 60.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 0.000, 45.0]])
 
-
-LQR_R = np.array([[0.30, 0.000, 0.000],
-                  [0.000, 0.30, 0.000],
-                  [0.000, 0.000, 1.8]])*23
-
+LQR_R = np.array([[0.350, 0.000, 0.000],
+                  [0.000, 0.350, 0.000],
+                  [0.000, 0.000, 1.6]])*2
 
 K, S, E = ct.lqr(A, B, Q, LQR_R)
 
@@ -303,10 +277,10 @@ def extract_sensor_info(x, a):
     ang_acc = x[9:12]
     ang_vel = x[12:15]
     rot = Rotation.from_quat(quat)
-#    rot_euler = rot.as_euler('xyz', degrees=True)
-#    rot_euler[0] -= phi_i
-#    rot_euler[1] -= theta_i
-#    rot_euler[2] -= psi_i
+    rot_euler = rot.as_euler('xyz', degrees=True)
+    rot_euler[0] -= phi_i
+    rot_euler[1] -= theta_i
+    rot_euler[2] -= psi_i
     rpy = a
     rpy[1] *= -1
 
@@ -375,34 +349,73 @@ flag = False
 
 def clamp(arr, minimum, maximum):
     return np.clip(arr, minimum, maximum)
-def pid_controller(states_var):
-    #Error dynamics ()
-    global flag, p_h, d_h, p_r, d_r, p_p, d_p, error,error_prev, diff
-    state_vec = np.array([states_var[0],states_var[2],states_var[4]])[:,np.newaxis]
-    p_vec = np.array([200, 1, 100]) [:,np.newaxis] #85, 1, 450
-    d_vec = np.array([8200, 1, 450]) [:,np.newaxis] #5500, 1, 700
-    error = ref_pid - state_vec
 
-    if i%20 == 0:
-        diff = error - error_prev
-        error_prev = error
+def pid_controller(states_var, ref_h):
+    #Error dynamics ()
+    global flag
+    global error_h_prev
+    global error_r_prev
+    global error_p_prev
+    ref_r = 0
+    ref_p = 0
+
+
+    p_h = 220 #220
+    d_h = 8200 #8200
+
+    p_r = 1 #1
+    d_r = 1 #1
+
+    p_p = 100 #350
+    d_p = 450 #450
+
+    error_h = ref_h - states_var[0]
+    error_r = ref_r - states_var[2]
+    error_p = ref_p - states_var[4]
 
     if flag:
-        force_vec = error * p_vec + diff * d_vec
+        LF = error_h*p_h + (error_h-error_h_prev)*d_h
+        RF = error_r*p_r + (error_r-error_r_prev)*d_r
+        PF = error_p*p_p + (error_p-error_p_prev)*d_p
+
+
     else:
-        force_vec = error * p_vec
+        LF = error_h*p_h
+        RF = error_r*p_r
+        PF = error_p*p_p
+
         flag = True
+
+    force_vector = np.array([LF, RF, PF]) [:,np.newaxis]
 
     lift_h = (1/2)*997*1/8*u_val**2
     lift_r = (1/2)*997*1/8*u_val**2*r1_val
     lift_p = (1/2)*997*1/8*u_val**2
 
+
     T = -np.array([[lift_h*S2_val, lift_h*S2_val, lift_h*S4_val],
                    [lift_r*S2_val, -lift_r*S2_val, 0],
                    [lift_p*d2_val*S2_val, lift_p*d2_val*S2_val, lift_p*d4_val*S4_val]])
 
-    u = np.linalg.pinv(T) @ force_vec
+    #print("force vector")
+    #print(force_vector)
+    #print("inv T")
+    #print(np.linalg.pinv(T))
 
+    u = np.linalg.pinv(T) @ force_vector
+
+
+    #print(f"input P: {error_h*p_h}")
+    #print(f"input D: {(error_h-error_h_prev)*d_h}")
+    #print(f"e_h: {error_h}")
+    #print(f"e_h_prev: {error_h_prev}")
+
+
+    error_h_prev = error_h
+    error_r_prev = error_r
+    error_p_prev = error_p
+
+    print()
     u1 = u[0]
     u2 = u[1]
     u3 = u[2]
@@ -428,6 +441,7 @@ if Control == "PID":
 if Control == "LQR":
     p = 10
     d = 0
+
 def wing_model(da1,da2,da3):
     global prev_angles, real_angles, pwm, p, d, p_vec, d_vec
     desired_angles = np.vstack((da1, da2, da3))
@@ -435,6 +449,7 @@ def wing_model(da1,da2,da3):
 
     if i%20 == 0:
         pwm = error_angles * p - (real_angles - prev_angles) * d
+
 
     if np.any(pwm > 100):
         pwm[pwm > 100] = 100
@@ -463,7 +478,7 @@ def wing_model(da1,da2,da3):
 
 # Make environment
 with holoocean.make(scenario_cfg=scenario) as env:
-    lin_accel = np.array([u_val, 0, 0])   # 5 m/s
+    lin_accel = np.array([0, 0, 0])   # 5 m/s
     rot_accel = np.array([0, 0, 0])
     for i in range(tick1):
         acc = np.array([R@lin_accel,R@rot_accel])
@@ -482,11 +497,12 @@ with holoocean.make(scenario_cfg=scenario) as env:
 
 
         if Control == "PID":
-            u1_d, u2_d, u3_d = pid_controller(states_10)
+            u1_d, u2_d, u3_d = pid_controller(states_10, ref_h)
         if Control == "LQR":
             u1_d, u2_d, u3_d = LQR(states_10)
         u1,u2,u3 = wing_model(u1_d,u2_d,u3_d)
-
+        u1 = u2 = np.array([0])
+        u3 = np.array([30])
         R = (sensor_data[-1])
 
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3

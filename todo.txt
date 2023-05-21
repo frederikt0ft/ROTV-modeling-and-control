@@ -25,5 +25,8 @@ HAKIM SPØRGSMÅL:
 
 * What to do?
 * Bachelor. Is the objective getting good results or understanding the theory behind some area
+* We linearize around 0 thus it should only work around 0 (only works close to 0)
+* Should we linerize around having x1 as 1 since its the goal to have it 1 m above the seabed
+* How to find poles from PID controller
 
 

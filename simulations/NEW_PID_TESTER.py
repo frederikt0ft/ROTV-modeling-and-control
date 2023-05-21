@@ -32,7 +32,7 @@ distance = 150 # in meters
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
-tick2 = int(distance/u_val*tick1 + tick1)
+tick2 = 600 #int(distance/u_val*tick1 + tick1)
 tick_rate = 200
 
 ref_h = 1
@@ -158,27 +158,27 @@ A = np.array([[0, 1.00, 0, 0, 0, 0],
 
 #mathematical correct
 A = np.array([[0, 1.00, 0, 0, 0, 0],
-             [0, -0.370, 0, 0, 0.229*u_val**2, -0.252*u_val],
-             [0, 0, 0, 1.00, 0, 0],
-             [0, -0.0161*u_val, 0, -0.146, 0.000532*u_val**2, 0.00120],
-             [0, 0, 0, 0, 0, 1.00],
-             [0, 2.81*u_val, 0, 0.000277, -0.0928*u_val**2, -0.210]])
+              [0, -0.370, 0, 0, 0.229*u_val**2, -0.252*u_val],
+              [0, 0, 0, 1.00, 0, 0],
+              [0, -0.0161*u_val, 0, -0.146, 0.000532*u_val**2, 0.00120],
+              [0, 0, 0, 0, 0, 1.00],
+              [0, 2.81*u_val, 0, 0.000277, -0.0928*u_val**2, -0.210]])
 print("A:\n", A)
 
 B =  np.array([[0, 0, 0],
-              [-0.0509*u_val**2, -0.0509*u_val**2, -0.0471*u_val**2],
-              [0, 0, 0],
-              [-0.165*u_val**2, 0.166*u_val**2, -0.000507*u_val**2],
-              [0, 0, 0],
-              [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
+               [-0.0509*u_val**2, -0.0509*u_val**2, -0.0471*u_val**2],
+               [0, 0, 0],
+               [-0.165*u_val**2, 0.166*u_val**2, -0.000507*u_val**2],
+               [0, 0, 0],
+               [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
 
 #gammel added mass
 B =  np.array([[0, 0, 0],
-              [-0.0328*u_val**2, -0.0328*u_val**2, -0.0304*u_val**2],
-              [0, 0, 0],
-              [-0.0588*u_val**2, 0.0588*u_val**2, -0.000215*u_val**2],
-              [0, 0, 0],
-              [-0.0124*u_val**2, -0.0127*u_val**2, 0.105*u_val**2]])
+               [-0.0328*u_val**2, -0.0328*u_val**2, -0.0304*u_val**2],
+               [0, 0, 0],
+               [-0.0588*u_val**2, 0.0588*u_val**2, -0.000215*u_val**2],
+               [0, 0, 0],
+               [-0.0124*u_val**2, -0.0127*u_val**2, 0.105*u_val**2]])
 
 #mathematical correct
 
@@ -303,10 +303,10 @@ def extract_sensor_info(x, a):
     ang_acc = x[9:12]
     ang_vel = x[12:15]
     rot = Rotation.from_quat(quat)
-#    rot_euler = rot.as_euler('xyz', degrees=True)
-#    rot_euler[0] -= phi_i
-#    rot_euler[1] -= theta_i
-#    rot_euler[2] -= psi_i
+    #    rot_euler = rot.as_euler('xyz', degrees=True)
+    #    rot_euler[0] -= phi_i
+    #    rot_euler[1] -= theta_i
+    #    rot_euler[2] -= psi_i
     rpy = a
     rpy[1] *= -1
 
@@ -368,30 +368,54 @@ def compute_acc(x_dot_var):
     return np.array([lin_accel,rot_accel])
 #-------------------Controllers---------------------#
 
-diff = error_prev = error = np.array([0,0,0])[:,np.newaxis]
-ref_pid = np.array([ref_h,0,0])[:,np.newaxis]
+ref_pid = np.array([ref_h, 0, 0]) [:,np.newaxis]
+error_prev = np.array([0, 0, 0]) [:,np.newaxis]
+diff = np.array([0,0,0]) [:, np.newaxis]
+sum_error = np.array([0,0,0], dtype=float) [:, np.newaxis]
+
 
 flag = False
 
 def clamp(arr, minimum, maximum):
     return np.clip(arr, minimum, maximum)
 def pid_controller(states_var):
-    #Error dynamics ()
-    global flag, p_h, d_h, p_r, d_r, p_p, d_p, error,error_prev, diff
-    state_vec = np.array([states_var[0],states_var[2],states_var[4]])[:,np.newaxis]
-    p_vec = np.array([200, 1, 100]) [:,np.newaxis] #85, 1, 450
-    d_vec = np.array([8200, 1, 450]) [:,np.newaxis] #5500, 1, 700
-    error = ref_pid - state_vec
+    global error_prev, diff, flag, sum_error
+    state_vector = np.array([states_var[0], states_var[2], states_var[4]]) [:,np.newaxis]
+    p_vector = np.array([1, 1, 1]) [:,np.newaxis]
+    i_vector = np.array([1, 1, 1]) [:,np.newaxis]
+    d_vector = np.array([1, 1, 1]) [:,np.newaxis]
 
+    #p_error
+    error = ref_pid - state_vector
+    print(error)
+
+    #i_error
     if i%20 == 0:
+        sum_error += error
+
+    if error[0] < 0 and error_prev[0] > 0 or error[0] > 0 and error_prev[0] < 0:
+        sum_error[0] = 0
+    if error[1] < 0 and error_prev[1] > 0 or error[1] > 0 and error_prev[1] < 0:
+        sum_error[1] = 0
+    if error[2] < 0 and error_prev[2] > 0 or error[2] > 0 and error_prev[2] < 0:
+        sum_error[2] = 0
+
+
+    #d_error
+    if i%20 == 0 and flag:
         diff = error - error_prev
-        error_prev = error
+
+    error_prev = error
+
 
     if flag:
-        force_vec = error * p_vec + diff * d_vec
+        force_vector = error * p_vector + sum_error * i_vector + diff * d_vector
+
     else:
-        force_vec = error * p_vec
+        force_vector = error * p_vector + sum_error * i_vector
         flag = True
+
+
 
     lift_h = (1/2)*997*1/8*u_val**2
     lift_r = (1/2)*997*1/8*u_val**2*r1_val
@@ -401,11 +425,13 @@ def pid_controller(states_var):
                    [lift_r*S2_val, -lift_r*S2_val, 0],
                    [lift_p*d2_val*S2_val, lift_p*d2_val*S2_val, lift_p*d4_val*S4_val]])
 
-    u = np.linalg.pinv(T) @ force_vec
+    u = np.linalg.pinv(T) @ force_vector
 
     u1 = u[0]
     u2 = u[1]
     u3 = u[2]
+
+
 
     return clamp(u1, -al, al), clamp(u2, -al, al), clamp(u3, -al, al)
 def LQR(states_var):
