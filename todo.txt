@@ -17,6 +17,11 @@ Sæt tickrate
 
 
 
+TAL MED fREDERIK
+* error i pitch er positiv
+
+
+
 HAKIM SPØRGSMÅL:
 * Rapport - gennemgå outline
 * Hardware - pulley rig + motor
@@ -27,6 +32,10 @@ HAKIM SPØRGSMÅL:
 * Bachelor. Is the objective getting good results or understanding the theory behind some area
 * We linearize around 0 thus it should only work around 0 (only works close to 0)
 * Should we linerize around having x1 as 1 since its the goal to have it 1 m above the seabed
+* when we linearize we remove the quadratic term from the damping, right know we have compensated for this
+  by making the linear term larger, however should we stay true to the math and physics and make it as
+  as the articles says. This would mean that we will make the project about if you can make a linear model for
+  a nonlinear drone instead of trying to make the model fit the real world drone best.
 * How to find poles from PID controller
 
 

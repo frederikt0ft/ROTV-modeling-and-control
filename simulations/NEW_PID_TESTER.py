@@ -18,7 +18,7 @@ os.chdir("..")
 #Initial position
 x_i = 0.1
 y_i = -0.1
-z_i = -28.34
+z_i = -28.34 + 7
 
 #initial orientation
 phi_i = 0
@@ -32,10 +32,10 @@ distance = 150 # in meters
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
-tick2 = 600 #int(distance/u_val*tick1 + tick1)
+tick2 = 2600 #int(distance/u_val*tick1 + tick1)
 tick_rate = 200
 
-ref_h = 1
+ref_h = 1 + 7
 Control = "PID"
 logging = True
 
@@ -381,9 +381,9 @@ def clamp(arr, minimum, maximum):
 def pid_controller(states_var):
     global error_prev, diff, flag, sum_error
     state_vector = np.array([states_var[0], states_var[2], states_var[4]]) [:,np.newaxis]
-    p_vector = np.array([1, 1, 1]) [:,np.newaxis]
-    i_vector = np.array([1, 1, 1]) [:,np.newaxis]
-    d_vector = np.array([1, 1, 1]) [:,np.newaxis]
+    p_vector = np.array([1, 0, 1000]) [:,np.newaxis]
+    i_vector = np.array([0, 0, 0]) [:,np.newaxis]
+    d_vector = np.array([1000, 0, 20000]) [:,np.newaxis]
 
     #p_error
     error = ref_pid - state_vector
@@ -489,7 +489,7 @@ def wing_model(da1,da2,da3):
 
 # Make environment
 with holoocean.make(scenario_cfg=scenario) as env:
-    lin_accel = np.array([u_val, 0, 0])   # 5 m/s
+    lin_accel = np.array([0, 0, 0])   # 5 m/s
     rot_accel = np.array([0, 0, 0])
     for i in range(tick1):
         acc = np.array([R@lin_accel,R@rot_accel])
