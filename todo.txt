@@ -39,3 +39,25 @@ HAKIM SPØRGSMÅL:
 * How to find poles from PID controller
 
 
+noter til os:
+tjek PID allocation matrix
+fjern pitch fra lift
+PID: Start LAV og gå op. Og prøv at hold den lav
+pid virker bedst ved høj frekvens
+
+
+Intro:
+Skriv problem og hvorfor det er vigitgt
+
+Modelling: 
+1. sektion til at beskrive "effects"  -> lav en 
+In general follow same structure as PHD-report: "Jon Erling Gorset Refsnes, Nonlinear Model-Based Control of Slender Body AUVs"
+
+Control:
+Følg evt. samme struktur som PHD - hvis det lyster.
+
+Evt. subsection: Pol-plots og stability
+
+
+
+
