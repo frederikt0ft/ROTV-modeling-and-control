@@ -18,7 +18,7 @@ os.chdir("..")
 #Initial position
 x_i = -10
 y_i = -0.1
-z_i = -28.34+0.5
+z_i = -28.34
 
 #initial orientation
 phi_i = 0
@@ -26,8 +26,8 @@ theta_i = 0
 psi_i = 0 #-20
 
 al = 20         # Angle limit
-u_val = 2      # m/s
-distance = 80 # in meters
+u_val = 2       # m/s
+distance = 2  # in meters
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
@@ -36,7 +36,7 @@ tick_rate = 200
 
 ref_h = 1
 
-Control = "PID"
+Control = "LQR"
 logging = False
 logging_name = "A_math"
 
@@ -381,10 +381,9 @@ def clamp(arr, minimum, maximum):
 def pid_controller(states_var):
     global error_prev, diff, flag, sum_error, p_vector, d_vector
     state_vector = np.array([states_var[0], states_var[2], states_var[4]]) [:,np.newaxis]
-    p_vector = np.array([40, 0, 100]) [:,np.newaxis]
+    p_vector = np.array([40, 1, 100]) [:,np.newaxis]
     i_vector = np.array([0, 0, 0]) [:,np.newaxis]
-    d_vector = np.array([1, 0, 40]) [:,np.newaxis]
-
+    d_vector = np.array([220, 0, 40]) [:,np.newaxis]
     #p_error
     error = ref_pid - state_vector
 
