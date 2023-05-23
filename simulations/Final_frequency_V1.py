@@ -26,20 +26,21 @@ theta_i = 0
 psi_i = 0 #-20
 
 al = 20         # Angle limit
-u_val = 2      # m/s
-
-distance = 150 # in meters
+u_val = 3      # m/s
+distance = 10 # in meters
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
-tick2 = 2400 #int(distance/u_val*tick1 + tick1)
+tick2 = int(distance/u_val*tick1 + tick1)
 tick_rate = 200
 
 ref_h = 1
+
 Control = "PID"
 logging = False
+logging_name = ""
 
-frequency = 200
+frequency = 10
 
 motor_model = True
 
@@ -112,8 +113,8 @@ R = np.zeros((3,3))
 u1 = u2 = u3 = x1 = x2 = x3 = x4 = x5 = x6 = 0
 p = d = p_h = d_h = p_r = d_r = p_p = d_p = 0
 
-p_vec = np.array([0,0,0])[:,np.newaxis]
-d_vec = np.array([0,0,0])[:,np.newaxis]
+p_vector = np.array([0,0,0])[:,np.newaxis]
+d_vector = np.array([0,0,0])[:,np.newaxis]
 
 u_list = []
 x_list1 = []
@@ -235,19 +236,19 @@ def log(l, str,u_val_var, df):
 
     if l == True:
         df = df.round(3)
-        df.to_csv(f'Control/logs/{str}/{u_val_var}_{tid}.csv', index = False)
+        df.to_csv(f'Control/logs/{str}/{logging_name}_{u_val_var}_{frequency}.csv', index = False)
 
         # Create a dictionary to hold the data
         data1 = {
             "u_val": u_val,
-            "ticks": tick2,
+            "Distance": distance,
             "Q": Q.tolist(),  # Convert NumPy array to list
             "LQR_R": LQR_R.tolist(),
             "K": K.tolist(),
             "A": A.tolist(),
             "B": B.tolist(),
-            "p_vec": p_vec.tolist(),
-            "d_vec": d_vec.tolist(),
+            "p_vec": p_vector.tolist(),
+            "d_vec": d_vector.tolist(),
             "wing_p": p,
             "wing_d": d,
             "Angle limit": al,
@@ -260,7 +261,7 @@ def log(l, str,u_val_var, df):
         }
 
         # Define the filename for the JSON log file
-        filename = f"Control/logs/{str}/{u_val_var}_{tid}_config.json"
+        filename = f"Control/logs/{str}/{logging_name}_{u_val_var}_{frequency}_config.json"
 
         # Write the data to the JSON file
         with open(filename, "w") as f:
@@ -406,7 +407,7 @@ d4_val = -0.5
 def clamp(arr, minimum, maximum):
     return np.clip(arr, minimum, maximum)
 def pid_controller(states_var):
-    global error_prev, diff, flag, sum_error
+    global error_prev, diff, flag, sum_error, p_vector, d_vector
     state_vector = np.array([states_var[0], states_var[2], states_var[4]]) [:,np.newaxis]
     p_vector = np.array([250, 10, 150]) [:,np.newaxis]
     i_vector = np.array([0, 0, 0]) [:,np.newaxis]
@@ -485,7 +486,7 @@ if Control == "LQR":
     p = 10
     d = 0
 def wing_model(da1,da2,da3):
-    global prev_angles, real_angles, pwm, p, d, p_vec, d_vec
+    global prev_angles, real_angles, pwm, p, d
     desired_angles = np.vstack((da1, da2, da3))
     error_angles = desired_angles - real_angles
 
@@ -519,7 +520,7 @@ def wing_model(da1,da2,da3):
 
 # Make environment
 with holoocean.make(scenario_cfg=scenario) as env:
-    lin_accel = np.array([0, 0, 0])   # 5 m/s
+    lin_accel = np.array([u_val, 0, 0])   # 5 m/s
     rot_accel = np.array([0, 0, 0])
     for i in range(tick1):
         acc = np.array([R@lin_accel,R@rot_accel])
@@ -541,10 +542,8 @@ with holoocean.make(scenario_cfg=scenario) as env:
             u1, u2, u3 = pid_controller(states_frequency)
         if Control == "LQR":
             u1, u2, u3 = LQR(states_frequency)
-
         if motor_model:
             u1,u2,u3 = wing_model(u1,u2,u3)
-git g
 
         R = (sensor_data[-1])
 

@@ -20,12 +20,12 @@ plt.figure(1)
 #------------------------------------------------------------PLOT 2----------------------------------------------------------------------#
 
 
-plt.plot(t1,df["u1_d"], label = "u1_d", color ="r")
-plt.plot(t1,df["u2_d"], label = "u2_d", color ="g")
-plt.plot(t1,df["u3_d"], label = "u3_d", color ="b")
-plt.plot(t1,df["u1"], label = "u1", color ="r")
-plt.plot(t1,df["u2"], label = "u2", color ="g")
-plt.plot(t1,df["u3"], label = "u3", color ="b")
+plt.plot(t1,df["u1_d"], label = "u1_d", color ="g")
+plt.plot(t1,df["u2_d"], label = "u2_d", color ="m")
+plt.plot(t1,df["u3_d"], label = "u3_d", color ="r")
+plt.plot(t1,df["u1"],"--", label = "u1", color ="g")
+plt.plot(t1,df["u2"], "--",label = "u2", color ="m")
+plt.plot(t1,df["u3"], "--",label = "u3", color ="r")
 plt.xlabel ('Time (s)')
 plt.ylabel ('Angle (degree)')
 
@@ -74,15 +74,15 @@ fig2.suptitle('States', fontsize=16)
 
 
 plt.figure(3)
-plt.axhline(y=int(ref), color='yellow', linestyle='-', label = "ref")
+plt.axhline(y=int(ref), color='yellow', linestyle='--', label = "ref")
 plt.plot(t1,df["x1"], label = "x1")
 plt.plot(t1,df["u1"], label = "u1")
-plt.plot(t1,df["u2"], label = "u2")
-plt.plot(t1,df["u3"], label = "u3")
+plt.plot(t1,df["u2"], label = "u2", color = "m")
+plt.plot(t1,df["u3"], label = "u3", color = "r")
 plt.title("Actuator input + depth + ref")
 plt.legend()
 
-
+"""
 plt.figure(4)
 plt.axhline(y=int(ref), color='yellow', linestyle='-', label = "ref")
 plt.plot(t1,df["x1"], label = "x1")
@@ -90,13 +90,7 @@ plt.xlabel ('Time (s)')
 plt.ylabel ('Heigh above seabed (m)')
 plt.title("Depth + ref")
 plt.legend()
-
-plt.figure(5)   
-plt.plot(t1,df["pwm_1"], label = "pwm_1", color ="r")
-plt.plot(t1,df["pwm_2"], label = "pwm_2", color ="g")
-plt.plot(t1,df["pwm_3"], label = "pwm_3", color ="b")
-plt.xlabel ('Time (s)')
-plt.ylabel ('Angle (degree)')
+"""
 
 plt.title("Real and desired angles")
 plt.legend()
