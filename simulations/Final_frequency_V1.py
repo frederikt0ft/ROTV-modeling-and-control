@@ -37,7 +37,7 @@ tick_rate = 200
 ref_h = 1
 
 Control = "LQR"
-logging = True
+logging = False
 logging_name = "A_Hakim"
 
 frequency = 10
@@ -180,7 +180,7 @@ print("A:\n", A)
 print()
 print("B:\n", B)
 print()
-print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s\nMatrice:",logging_name, "\nMotor Model:", motor_model)
+print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s\nMatrice:",logging_name, "\nMotor Model:", motor_model, "\nLogging:", logging)
 
 #--------------------------- LQR --------------------------------#
 Q = np.array([[250.000, 0.000, 0.000, 0.000, 0.000, 0.000],
