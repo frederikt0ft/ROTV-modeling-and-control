@@ -489,7 +489,6 @@ def wing_model(da1,da2,da3):
     real_angles = prev_angles + aps/tick_rate #angle per second -> angles per tick
 
 
-
     #Log Desird angle
     j = 9
     for k in range(3):
