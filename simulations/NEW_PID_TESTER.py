@@ -18,7 +18,7 @@ os.chdir("..")
 #Initial position
 x_i = 0.1
 y_i = -0.1
-z_i = -28.34 + 7
+z_i = -28.34
 
 #initial orientation
 phi_i = 0
@@ -26,18 +26,18 @@ theta_i = 0
 psi_i = 0 #-20
 
 al = 20         # Angle limit
-u_val = 5      # m/s
+u_val = 2      # m/s
 
 distance = 150 # in meters
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
-tick2 = 2600 #int(distance/u_val*tick1 + tick1)
+tick2 = int(distance/u_val*tick1 + tick1)
 tick_rate = 200
 
-ref_h = 1 + 7
+ref_h = 1
 Control = "PID"
-logging = True
+logging = False
 
 scenario = {
     "name": "hovering_dynamics",
@@ -116,15 +116,6 @@ sonar_list = [0]
 acc_list = [u_list,x_list1,x_list2]
 
 
-r1_val = 0.288
-S1_val = 0.0051
-S2_val = 0.095
-S3_val = 0.0693
-S4_val = 0.044
-d1_val = 0.14
-d2_val = 0.055
-d3_val = -0.1
-d4_val = -0.5
 
 #---------------------------------------STATE SPACE -------------------------------------------
 
@@ -156,13 +147,16 @@ A = np.array([[0, 1.00, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 1.00],
               [0, 5.81*u_val, 0, 0.000117, -0.111*u_val**2, -0.250]])
 
-#mathematical correct
-A = np.array([[0, 1.00, 0, 0, 0, 0],
-              [0, -0.370, 0, 0, 0.229*u_val**2, -0.252*u_val],
-              [0, 0, 0, 1.00, 0, 0],
-              [0, -0.0161*u_val, 0, -0.146, 0.000532*u_val**2, 0.00120],
-              [0, 0, 0, 0, 0, 1.00],
-              [0, 2.81*u_val, 0, 0.000277, -0.0928*u_val**2, -0.210]])
+#x2 = heave vel
+#mathematical correct too much dampning
+
+             #x1     x2             x3      x4         x5 x6
+A = np.array([[0,    1.00,           0,     0,         0,                   0],
+       [0,   -0.370,          0,     0,         0.229*u_val**2,  -0.252*u_val],
+              [0,   0,               0,     1.00,      0, 0],
+         [0,    -0.0161*u_val,  0,     -0.146,    0.000532*u_val**2, 0.00120],
+              [0,    0,              0,     0,         0, 1.00],
+         [0,   2.81*u_val,      0,     0.000277, -0.0928*u_val**2, -0.210]])
 print("A:\n", A)
 
 B =  np.array([[0, 0, 0],
@@ -196,17 +190,17 @@ print()
 print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s")
 
 #--------------------------- LQR --------------------------------#
-Q = np.array([[290.000, 0.000, 0.000, 0.000, 0.000, 0.000],
+Q = np.array([[250.000, 0.000, 0.000, 0.000, 0.000, 0.000],
               [0.000,50.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 1, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 5, 0.000, 0.000, 0.000],
               [0.000, 0.000, 0.000, 1, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 45.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 0.000, 300.0]])
+              [0.000, 0.000, 0.000, 0.000, 60.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 0.000, 30.0]])
 
 
-LQR_R = np.array([[0.30, 0.000, 0.000],
-                  [0.000, 0.30, 0.000],
-                  [0.000, 0.000, 1.8]])*23
+LQR_R = np.array([[0.70, 0.000, 0.000],
+                  [0.000, 0.70, 0.000],
+                  [0.000, 0.000, 3.2]])
 
 
 K, S, E = ct.lqr(A, B, Q, LQR_R)
@@ -381,9 +375,9 @@ def clamp(arr, minimum, maximum):
 def pid_controller(states_var):
     global error_prev, diff, flag, sum_error
     state_vector = np.array([states_var[0], states_var[2], states_var[4]]) [:,np.newaxis]
-    p_vector = np.array([1, 0, 1000]) [:,np.newaxis]
+    p_vector = np.array([3000, 250, 500]) [:,np.newaxis]
     i_vector = np.array([0, 0, 0]) [:,np.newaxis]
-    d_vector = np.array([1000, 0, 20000]) [:,np.newaxis]
+    d_vector = np.array([500000, 10000, 10000]) [:,np.newaxis]
 
     #p_error
     error = ref_pid - state_vector
@@ -415,7 +409,15 @@ def pid_controller(states_var):
         force_vector = error * p_vector + sum_error * i_vector
         flag = True
 
-
+    r1_val = 0.288
+    S1_val = 0.0051
+    S2_val = 0.095
+    S3_val = 0.0693
+    S4_val = 0.044
+    d1_val = 0.14
+    d2_val = 0.055
+    d3_val = -0.1
+    d4_val = -0.5
 
     lift_h = (1/2)*997*1/8*u_val**2
     lift_r = (1/2)*997*1/8*u_val**2*r1_val
@@ -489,7 +491,7 @@ def wing_model(da1,da2,da3):
 
 # Make environment
 with holoocean.make(scenario_cfg=scenario) as env:
-    lin_accel = np.array([0, 0, 0])   # 5 m/s
+    lin_accel = np.array([u_val, 0, 0])   # 5 m/s
     rot_accel = np.array([0, 0, 0])
     for i in range(tick1):
         acc = np.array([R@lin_accel,R@rot_accel])
@@ -507,11 +509,11 @@ with holoocean.make(scenario_cfg=scenario) as env:
             states_10 = states
 
 
-        if Control == "PID":
-            u1_d, u2_d, u3_d = pid_controller(states_10)
+        #if Control == "PID":
+        u1, u2, u3 = pid_controller(states)
         if Control == "LQR":
             u1_d, u2_d, u3_d = LQR(states_10)
-        u1,u2,u3 = wing_model(u1_d,u2_d,u3_d)
+        #u1,u2,u3 = wing_model(u1_d,u2_d,u3_d)
 
         R = (sensor_data[-1])
 

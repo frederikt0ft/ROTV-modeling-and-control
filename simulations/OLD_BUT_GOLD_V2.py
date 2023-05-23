@@ -26,13 +26,13 @@ theta_i = 0
 psi_i = 0 #-20
 
 al = 20         # Angle limit
-u_val = 5      # m/s
+u_val = 2      # m/s
 
 distance = 150 # in meters
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
-tick2 = int(distance/u_val*tick1 + tick1)
+tick2 = 1800 # int(distance/u_val*tick1 + tick1)
 tick_rate = 200
 
 ref_h = 1
@@ -163,6 +163,14 @@ A = np.array([[0, 1.00, 0, 0, 0, 0],
              [0, -0.0161*u_val, 0, -0.146, 0.000532*u_val**2, 0.00120],
              [0, 0, 0, 0, 0, 1.00],
              [0, 2.81*u_val, 0, 0.000277, -0.0928*u_val**2, -0.210]])
+
+#Uden lift fra theta
+A = np.array([[0, 0, 0],
+              [-0.0104*u_val**2, -0.0104*u_val**2, -0.0293*u_val**2],
+              [0, 0, 0],
+              [-0.034*u_val**2, 0.034*u_val**2, -0.000315*u_val**2],
+              [0, 0, 0],
+              [-0.00209*u_val**2, -0.00222*u_val**2, 0.055*u_val**2]])
 print("A:\n", A)
 
 B =  np.array([[0, 0, 0],
@@ -190,6 +198,13 @@ B = np.array([[0, 0, 0],
               [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
 
 
+#Uden theta lift
+B = np.array([[0, 0, 0],
+              [-0.0104*u_val**2, -0.0104*u_val**2, -0.0293*u_val**2],
+              [0, 0, 0],
+              [-0.034*u_val**2, 0.034*u_val**2, -0.000315*u_val**2],
+              [0, 0, 0],
+              [-0.00209*u_val**2, -0.00222*u_val**2, 0.055*u_val**2]])
 print()
 print("B:\n", B)
 print()
@@ -379,8 +394,9 @@ def pid_controller(states_var):
     #Error dynamics ()
     global flag, p_h, d_h, p_r, d_r, p_p, d_p, error,error_prev, diff
     state_vec = np.array([states_var[0],states_var[2],states_var[4]])[:,np.newaxis]
-    p_vec = np.array([200, 1, 100]) [:,np.newaxis] #85, 1, 450
-    d_vec = np.array([8200, 1, 450]) [:,np.newaxis] #5500, 1, 700
+                     #H   #R  #P
+    p_vec = np.array([50, 1, 100]) [:,np.newaxis] #85, 1, 450
+    d_vec = np.array([8200, 1, 650]) [:,np.newaxis] #5500, 1, 700
     error = ref_pid - state_vec
 
     if i%20 == 0:

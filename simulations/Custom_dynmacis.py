@@ -121,19 +121,19 @@ r = 0
 x_dot = np.array([u, v, w, p, q, r]) [:,np.newaxis]
 
 A = np.array([[0, 1.00, 0, 0, 0, 0],
-              [0, -0.00499, 0, 0, 0.176*u_val**2 - 0.901, -0.163*u_val],
+              [0, -0.370, 0, 0, 0.229*u_val**2, -0.252*u_val],
               [0, 0, 0, 1.00, 0, 0],
-              [0, -0.0115*u_val, 0, -0.0121, 0.000189*u_val**2, 2.73e-5],
+              [0, -0.0161*u_val, 0, -0.146, 0.000532*u_val**2, 0.00120],
               [0, 0, 0, 0, 0, 1.00],
-              [0, 5.63*u_val, 0, 2.66e-5, -0.093*u_val**2, -0.0134]])
+              [0, 2.81*u_val, 0, 0.000277, -0.0928*u_val**2, -0.210]])
 print(A)
 
 B = np.array([[0, 0, 0],
-              [-0.029*u_val**2, -0.029*u_val**2, -0.0346*u_val**2],
+              [-0.0509*u_val**2, -0.0509*u_val**2, -0.0471*u_val**2],
               [0, 0, 0],
-              [-0.052*u_val**2, 0.052*u_val**2, -0.000237*u_val**2],
+              [-0.165*u_val**2, 0.166*u_val**2, -0.000507*u_val**2],
               [0, 0, 0],
-              [-0.0106*u_val**2, -0.0109*u_val**2, 0.116*u_val**2]])
+              [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
 print(B)
 
 #--------------------------- LQR --------------------------------#
@@ -358,10 +358,34 @@ def LQR(states_var, z_ref):
     return clamp(u1, -30, 30),clamp(u2, -30, 30), clamp(u3, -30, 30)
 
 #ref = np.array([0,0,0])[:,np.newaxis]
-
+prev_angles = np.array([0,0,0])[:,np.newaxis]
+real_angles = np.array([0,0,0])[:,np.newaxis]
 u1_true_prev = 0
 u2_true_prev = 0
 u3_true_prev = 0
+def wing_model(da1,da2,da3):
+    global prev_angles, real_angles, pwm, p, d, p_vec, d_vec
+    desired_angles = np.vstack((da1, da2, da3))
+    error_angles = desired_angles - real_angles
+
+    if i%20 == 0:
+        pwm = error_angles * 10 - (real_angles - prev_angles) * 0
+
+    if np.any(pwm > 100):
+        pwm[pwm > 100] = 100
+    if np.any(pwm < -100):
+        pwm[pwm < -100] = -100
+
+    aps = pwm/10 # assuming linearity with 100 pwm = 10 aps. #aps = angle per second
+
+    prev_angles = real_angles
+    real_angles = prev_angles + aps/tick_rate #angle per second -> angles per tick
+
+
+
+
+
+    return real_angles[0], real_angles[1], real_angles[2]
 
 
 # Make environment
@@ -380,9 +404,11 @@ with holoocean.make(scenario_cfg=scenario) as env:
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
         ref = 1    #Target above seabed
-        #u1, u2, u3 = pid_controller(states,ref)
+        u1_d, u2_d, u3_d = pid_controller(states,ref)
         #u1, u2, u3 = state_feedback_controller(states, 5, 0 ,0)
-        u1, u2, u3 = LQR(states,ref)
+        #u1, u2, u3 = LQR(states,ref)
+
+        u1,u2,u3 = wing_model(u1_d,u2_d,u3_d)
 
         R = (sensor_data[-1])
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
