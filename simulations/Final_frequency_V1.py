@@ -22,12 +22,12 @@ z_i = -28.34+0.5
 
 #initial orientation
 phi_i = 0
-theta_i = -1
+theta_i = 0
 psi_i = 0 #-20
 
 al = 20         # Angle limit
 u_val = 2      # m/s
-distance = 80 # in meters
+distance = 15 # in meters
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
@@ -381,9 +381,9 @@ def clamp(arr, minimum, maximum):
 def pid_controller(states_var):
     global error_prev, diff, flag, sum_error, p_vector, d_vector
     state_vector = np.array([states_var[0], states_var[2], states_var[4]]) [:,np.newaxis]
-    p_vector = np.array([4, 0, 100]) [:,np.newaxis]
+    p_vector = np.array([40, 0, 100]) [:,np.newaxis]
     i_vector = np.array([0, 0, 0]) [:,np.newaxis]
-    d_vector = np.array([0, 0, 40]) [:,np.newaxis]
+    d_vector = np.array([1, 0, 40]) [:,np.newaxis]
 
     #p_error
     error = ref_pid - state_vector
@@ -423,13 +423,28 @@ def pid_controller(states_var):
     lift_h = (1/2)*997*1/8*u_val**2
     lift_r = (1/2)*997*1/8*u_val**2*r1_val
     lift_p = (1/2)*997*1/8*u_val**2
+    print(force_vector)
 
 
     T = -np.array([[lift_h*S2_val, lift_h*S2_val, lift_h*S4_val],
-                   [lift_r*S2_val, -lift_r*S2_val, 0],
+                   [lift_r*S2_val,       -lift_r*S2_val, 0],
                    [lift_p*d2_val*S2_val, lift_p*d2_val*S2_val, lift_p*d4_val*S4_val]])
+    print(np.linalg.pinv(T))
 
+    T_god = np.array([[-0.1, -0.357, -0.195],
+                      [-0.1, 0.357, -0.195],
+                      [-0.014*3, 0.000, 0.165]])
     u = np.linalg.pinv(T) @ force_vector
+    print(u)
+
+    MA = np.array([[-1.7,  -1, -0.8],
+                   [-1.7,   1, -0.8],
+                   [-0.005, 0,  3]]) / 10
+
+    MA = np.linalg.pinv(T)
+
+    u = T_god @ force_vector
+    print(u)
 
     u1 = u[0]
     u2 = u[1]
