@@ -18,11 +18,11 @@ os.chdir("..")
 #Initial position
 x_i = 0.1
 y_i = -0.1
-z_i = -28.34
+z_i = -28.34+0.5
 
 #initial orientation
 phi_i = 0
-theta_i = 0
+theta_i = -1
 psi_i = 0 #-20
 
 al = 20         # Angle limit
@@ -36,9 +36,9 @@ tick_rate = 200
 
 ref_h = 1
 
-Control = "LQR"
+Control = "PID"
 logging = False
-logging_name = "A_Hakim"
+logging_name = "A_math"
 
 frequency = 10
 motor_model = True
@@ -157,6 +157,8 @@ if logging_name == "A_math":
                   [-0.165*u_val**2, 0.166*u_val**2, -0.000507*u_val**2],
                   [0, 0, 0],
                   [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
+
+
 
 if logging_name == "A_Hakim":
     A = np.array([[0, 1.00, 0, 0, 0, 0],
@@ -379,9 +381,9 @@ def clamp(arr, minimum, maximum):
 def pid_controller(states_var):
     global error_prev, diff, flag, sum_error, p_vector, d_vector
     state_vector = np.array([states_var[0], states_var[2], states_var[4]]) [:,np.newaxis]
-    p_vector = np.array([250, 10, 150]) [:,np.newaxis]
+    p_vector = np.array([4, 0, 100]) [:,np.newaxis]
     i_vector = np.array([0, 0, 0]) [:,np.newaxis]
-    d_vector = np.array([27200, 0, 1500]) [:,np.newaxis]
+    d_vector = np.array([0, 0, 40]) [:,np.newaxis]
 
     #p_error
     error = ref_pid - state_vector
@@ -402,6 +404,7 @@ def pid_controller(states_var):
     #d_error
     if i%period == 0 and flag:
         diff = error - error_prev
+        print("pid tjek")
 
     error_prev = error
 
@@ -462,6 +465,7 @@ def wing_model(da1,da2,da3):
 
     if i%period == 0:
         pwm = error_angles * p - (real_angles - prev_angles) * d
+        print("motor tjek")
 
     if np.any(pwm > 100):
         pwm[pwm > 100] = 100
@@ -506,6 +510,7 @@ with holoocean.make(scenario_cfg=scenario) as env:
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
         if i%period == 0:
             states_frequency = states
+            print("state tjek")
 
 
         if Control == "PID":
