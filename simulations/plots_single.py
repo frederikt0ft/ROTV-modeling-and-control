@@ -94,6 +94,7 @@ plt.plot(t1,df["u1"], label = "u1")
 plt.plot(t1,df["u2"], label = "u2", color = "m")
 plt.plot(t1,df["u3"], label = "u3", color = "r")
 plt.title("Actuator + depth + ref")
+plt.xlabel ('Time (s)')
 plt.legend()
 
 """
@@ -107,6 +108,12 @@ plt.legend()
 """
 
 plt.legend()
+# Set the position of the Tkinter window
+window_width = 1920
+window_height = 520
+window_x_pos = 0
+window_y_pos = 0
+root.geometry(f"{window_width}x{window_height}+{window_x_pos}+{window_y_pos}")
 # Create FigureCanvasTkAgg widgets to display the figures in the frame
 canvas1 = FigureCanvasTkAgg(fig1, master=frame)
 canvas1.draw()
