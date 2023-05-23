@@ -39,6 +39,12 @@ ref_h = 1
 Control = "PID"
 logging = False
 
+frequency = 200
+
+motor_model = True
+
+period = tick_rate/frequency
+
 scenario = {
     "name": "hovering_dynamics",
     "package_name": "Ocean",
@@ -411,7 +417,7 @@ def pid_controller(states_var):
 
 
     #i_error
-    if i%20 == 0:
+    if i%period == 0:
         sum_error += error
 
     if error[0] < 0 and error_prev[0] > 0 or error[0] > 0 and error_prev[0] < 0:
@@ -423,7 +429,7 @@ def pid_controller(states_var):
 
 
     #d_error
-    if i%20 == 0 and flag:
+    if i%period == 0 and flag:
         diff = error - error_prev
 
     error_prev = error
@@ -483,7 +489,7 @@ def wing_model(da1,da2,da3):
     desired_angles = np.vstack((da1, da2, da3))
     error_angles = desired_angles - real_angles
 
-    if i%20 == 0:
+    if i%period == 0:
         pwm = error_angles * p - (real_angles - prev_angles) * d
 
     if np.any(pwm > 100):
@@ -527,15 +533,18 @@ with holoocean.make(scenario_cfg=scenario) as env:
         print(i)
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
-        if i%20 == 0:
-            states_10 = states
+        if i%period == 0:
+            states_frequency = states
 
 
         if Control == "PID":
-            u1_d, u2_d, u3_d = pid_controller(states_10)
+            u1, u2, u3 = pid_controller(states_frequency)
         if Control == "LQR":
-            u1_d, u2_d, u3_d = LQR(states_10)
-        u1,u2,u3 = wing_model(u1_d,u2_d,u3_d)
+            u1, u2, u3 = LQR(states_frequency)
+
+        if motor_model:
+            u1,u2,u3 = wing_model(u1,u2,u3)
+git g
 
         R = (sensor_data[-1])
 
