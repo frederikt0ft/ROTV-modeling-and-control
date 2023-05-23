@@ -42,7 +42,7 @@ logging_name = "A_math"
 
 frequency = 10
 motor_model = True
-
+plots_single = True
 period = tick_rate/frequency
 
 scenario = {
@@ -549,4 +549,7 @@ print(f"Ticks: {tick2}")
 arg1_value = ref_h
 arg2_value = tick_rate
 
-subprocess.run(["python", "Simulations/plots.py", str(arg1_value), str(arg2_value)])
+if plots_single == True:
+    subprocess.run(["python", "Simulations/plots_single.py", str(arg1_value), str(arg2_value)])
+else:
+    subprocess.run(["python", "Simulations/plots.py", str(arg1_value), str(arg2_value)])

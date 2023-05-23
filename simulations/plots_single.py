@@ -10,7 +10,7 @@ from tkinter import Tk, Frame
 
 # Create a Tkinter root window
 root = Tk()
-root.title("Figure Window Positions")
+root.title("Single plot")
 
 # Create a frame to hold the figures
 frame = Frame(root)

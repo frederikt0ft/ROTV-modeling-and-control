@@ -431,7 +431,7 @@ print(f"Ticks: {tick2}")
 arg1_value = ref
 arg2_value = tick_rate
 
-subprocess.run(["python", "Simulations/plots.py", str(arg1_value), str(arg2_value)])
+subprocess.run(["python", "Simulations/plots_single.py", str(arg1_value), str(arg2_value)])
 
 
 
