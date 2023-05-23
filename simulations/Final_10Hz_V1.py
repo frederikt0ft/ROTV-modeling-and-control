@@ -35,7 +35,7 @@ tick1 = 200
 tick2 = int(distance/u_val*tick1 + tick1)
 tick_rate = 200
 
-ref_h = 1
+ref_h = 2
 Control = "PID"
 logging = False
 
@@ -150,13 +150,13 @@ A = np.array([[0, 1.00, 0, 0, 0, 0],
 #x2 = heave vel
 #mathematical correct too much dampning
 
-             #x1     x2             x3      x4         x5 x6
+#x1     x2             x3      x4         x5 x6
 A = np.array([[0,    1.00,           0,     0,         0,                   0],
-       [0,   -0.370,          0,     0,         0.229*u_val**2,  -0.252*u_val],
+              [0,   -0.370,          0,     0,         0.229*u_val**2,  -0.252*u_val],
               [0,   0,               0,     1.00,      0, 0],
-         [0,    -0.0161*u_val,  0,     -0.146,    0.000532*u_val**2, 0.00120],
+              [0,    -0.0161*u_val,  0,     -0.146,    0.000532*u_val**2, 0.00120],
               [0,    0,              0,     0,         0, 1.00],
-         [0,   2.81*u_val,      0,     0.000277, -0.0928*u_val**2, -0.210]])
+              [0,   2.81*u_val,      0,     0.000277, -0.0928*u_val**2, -0.210]])
 
 #Uden lift fra theta
 A = np.array([[0, 0, 0],
