@@ -16,7 +16,7 @@ os.chdir("..")
 
 
 #Initial position
-x_i = 0.1
+x_i = -10
 y_i = -0.1
 z_i = -28.34+0.5
 
@@ -27,7 +27,7 @@ psi_i = 0 #-20
 
 al = 20         # Angle limit
 u_val = 2      # m/s
-distance = 15 # in meters
+distance = 80 # in meters
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
@@ -404,10 +404,7 @@ def pid_controller(states_var):
     #d_error
     if i%period == 0 and flag:
         diff = error - error_prev
-        print("pid tjek")
-
     error_prev = error
-
 
     if flag:
         force_vector = error * p_vector + sum_error * i_vector + diff * d_vector
@@ -423,19 +420,19 @@ def pid_controller(states_var):
     lift_h = (1/2)*997*1/8*u_val**2
     lift_r = (1/2)*997*1/8*u_val**2*r1_val
     lift_p = (1/2)*997*1/8*u_val**2
-    print(force_vector)
+
 
 
     T = -np.array([[lift_h*S2_val, lift_h*S2_val, lift_h*S4_val],
                    [lift_r*S2_val,       -lift_r*S2_val, 0],
                    [lift_p*d2_val*S2_val, lift_p*d2_val*S2_val, lift_p*d4_val*S4_val]])
-    print(np.linalg.pinv(T))
+
 
     T_god = np.array([[-0.1, -0.357, -0.195],
                       [-0.1, 0.357, -0.195],
-                      [-0.014*3, 0.000, 0.165]])
-    u = np.linalg.pinv(T) @ force_vector
-    print(u)
+                      [-0.014, 0.000, 0.165]])
+
+
 
     MA = np.array([[-1.7,  -1, -0.8],
                    [-1.7,   1, -0.8],
@@ -444,7 +441,7 @@ def pid_controller(states_var):
     MA = np.linalg.pinv(T)
 
     u = T_god @ force_vector
-    print(u)
+
 
     u1 = u[0]
     u2 = u[1]
@@ -480,7 +477,6 @@ def wing_model(da1,da2,da3):
 
     if i%period == 0:
         pwm = error_angles * p - (real_angles - prev_angles) * d
-        print("motor tjek")
 
     if np.any(pwm > 100):
         pwm[pwm > 100] = 100
@@ -525,8 +521,6 @@ with holoocean.make(scenario_cfg=scenario) as env:
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
         if i%period == 0:
             states_frequency = states
-            print("state tjek")
-
 
         if Control == "PID":
             u1, u2, u3 = pid_controller(states_frequency)
