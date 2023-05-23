@@ -26,8 +26,8 @@ theta_i = 0
 psi_i = 0 #-20
 
 al = 20         # Angle limit
-u_val = 3      # m/s
-distance = 10 # in meters
+u_val = 2      # m/s
+distance = 80 # in meters
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
@@ -36,12 +36,11 @@ tick_rate = 200
 
 ref_h = 1
 
-Control = "PID"
-logging = False
-logging_name = ""
+Control = "LQR"
+logging = True
+logging_name = "A_Hakim"
 
 frequency = 10
-
 motor_model = True
 
 period = tick_rate/frequency
@@ -130,87 +129,58 @@ u = v = w = p = q = r = 0
 # x' = Ax + Bu
 x_dot = np.array([u, v, w, p, q, r]) [:,np.newaxis]
 
-A = np.array([[0, 1.00, 0, 0, 0, 0],
-              [0, -0.0344, 0, 0, 0.249*u_val**2, -0.252*u_val],
-              [0, 0, 0, 1.00, 0, 0],
-              [0, -0.0161*u_val, 0, -0.291, 0.000532*u_val**2, 0.000739],
-              [0, 0, 0, 0, 0, 1.00],
-              [0, 2.81*u_val, 0, 0.000554, -0.0928*u_val**2, -0.129]])
 
-#gammel added mass
+if logging_name == "A_math_split":
+    A = np.array([[0, 1.00, 0, 0, 0, 0],
+                  [0, -0.0344, 0, 0, 0.199*u_val**2, -0.252*u_val],
+                  [0, 0, 0, 1.00, 0, 0],
+                  [0, -0.0161*u_val, 0, -0.291, 0.000589*u_val**2, 0.000739],
+                  [0, 0, 0, 0, 0, 1.00],
+                  [0, 2.81*u_val, 0, 0.000554, -0.103*u_val**2, -0.129]])
+    B = np.array([[0, 0, 0],
+                  [-0.0104*u_val**2, -0.0104*u_val**2, -0.0178*u_val**2],
+                  [0, 0, 0],
+                  [-0.034*u_val**2, 0.034*u_val**2, -0.000364*u_val**2],
+                  [0, 0, 0],
+                  [0.00477*u_val**2, 0.00464*u_val**2, 0.0636*u_val**2]])
 
-A = np.array([[0, 1.00, 0, 0, 0, 0],
-              [0, -0.0222, 0, 0, 0.147*u_val**2, -0.163*u_val],
-              [0, 0, 0, 1.00, 0, 0],
-              [0, -0.0118*u_val, 0, -0.103, 0.000225*u_val**2, 0.000313],
-              [0, 0, 0, 0, 0, 1.00],
-              [0, 5.81*u_val, 0, 0.000235, -0.111*u_val**2, -0.169]])
+if logging_name == "A_math":
+    A = np.array([[0, 1.00, 0, 0, 0, 0],
+                  [0, -0.0344, 0, 0, 0.229*u_val**2, -0.252*u_val],
+                  [0, 0, 0, 1.00, 0, 0],
+                  [0, -0.0161*u_val, 0, -0.291, 0.000532*u_val**2, 0.000739],
+                  [0, 0, 0, 0, 0, 1.00],
+                  [0, 2.81*u_val, 0, 0.000554, -0.0928*u_val**2, -0.129]])
+    B = np.array([[0, 0, 0],
+                  [-0.0509*u_val**2, -0.0509*u_val**2, -0.0471*u_val**2],
+                  [0, 0, 0],
+                  [-0.165*u_val**2, 0.166*u_val**2, -0.000507*u_val**2],
+                  [0, 0, 0],
+                  [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
 
-# HIGH DAMPING:
-A = np.array([[0, 1.00, 0, 0, 0, 0],
-              [0, -0.238, 0, 0, 0.147*u_val**2, -0.163*u_val],
-              [0, 0, 0, 1.00, 0, 0],
-              [0, -0.0118*u_val, 0, -0.0517*2, 0.000225*u_val**2, 0.000509],
-              [0, 0, 0, 0, 0, 1.00],
-              [0, 5.81*u_val, 0, 0.000117, -0.111*u_val**2, -0.250]])
+if logging_name == "A_Hakim":
+    A = np.array([[0, 1.00, 0, 0, 0, 0],
+                  [0, -0.0344, 0, 0, 0, -0.252*u_val],
+                  [0, 0, 0, 1.00, 0, 0],
+                  [0, -0.0161*u_val, 0, -0.291, 2.1e-6*u_val**2, 0.000739],
+                  [0, 0, 0, 0, 0, 1.00],
+                  [0, 2.81*u_val, 0, 0.000554, -0.000367*u_val**2, -0.129]])
+    B = np.array([[0, 0, 0],
+                  [-0.0104*u_val**2, -0.0104*u_val**2, -0.0293*u_val**2],
+                  [0, 0, 0],
+                  [-0.034*u_val**2, 0.034*u_val**2, -0.000364*u_val**2],
+                  [0, 0, 0],
+                  [0.00477*u_val**2, 0.00464*u_val**2, 0.0636*u_val**2]])
 
-#x2 = heave vel
-#mathematical correct too much dampning
 
-#x1     x2             x3      x4         x5 x6
-A = np.array([[0,    1.00,           0,     0,         0,                   0],
-              [0,   -0.370,          0,     0,         0.229*u_val**2,  -0.252*u_val],
-              [0,   0,               0,     1.00,      0, 0],
-              [0,    -0.0161*u_val,  0,     -0.146,    0.000532*u_val**2, 0.00120],
-              [0,    0,              0,     0,         0, 1.00],
-              [0,   2.81*u_val,      0,     0.000277, -0.0928*u_val**2, -0.210]])
 
-#Uden lift fra theta
-A = np.array([[0, 1.00, 0, 0, 0, 0],
-              [0, -0.0344, 0, 0, 0, -0.252*u_val],
-              [0, 0, 0, 1.00, 0, 0],
-              [0, -0.0161*u_val, 0, -0.291, 2.1e-6*u_val**2, 0.000739],
-              [0, 0, 0, 0, 0, 1.00],
-              [0, 2.81*u_val, 0, 0.000554, -0.000367*u_val**2, -0.129]])
+
+
 print("A:\n", A)
-
-B =  np.array([[0, 0, 0],
-               [-0.0509*u_val**2, -0.0509*u_val**2, -0.0471*u_val**2],
-               [0, 0, 0],
-               [-0.165*u_val**2, 0.166*u_val**2, -0.000507*u_val**2],
-               [0, 0, 0],
-               [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
-
-#gammel added mass
-B =  np.array([[0, 0, 0],
-               [-0.0328*u_val**2, -0.0328*u_val**2, -0.0304*u_val**2],
-               [0, 0, 0],
-               [-0.0588*u_val**2, 0.0588*u_val**2, -0.000215*u_val**2],
-               [0, 0, 0],
-               [-0.0124*u_val**2, -0.0127*u_val**2, 0.105*u_val**2]])
-
-#mathematical correct
-
-B = np.array([[0, 0, 0],
-              [-0.0509*u_val**2, -0.0509*u_val**2, -0.0471*u_val**2],
-              [0, 0, 0],
-              [-0.165*u_val**2, 0.166*u_val**2, -0.000507*u_val**2],
-              [0, 0, 0],
-              [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
-
-#Uden theta lift
-B = np.array([[0, 0, 0],
-              [-0.0104*u_val**2, -0.0104*u_val**2, -0.0293*u_val**2],
-              [0, 0, 0],
-              [-0.034*u_val**2, 0.034*u_val**2, -0.000315*u_val**2],
-              [0, 0, 0],
-              [-0.00209*u_val**2, -0.00222*u_val**2, 0.055*u_val**2]])
-
-
 print()
 print("B:\n", B)
 print()
-print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s")
+print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s\nMatrice:",logging_name, "\nMotor Model:", motor_model)
 
 #--------------------------- LQR --------------------------------#
 Q = np.array([[250.000, 0.000, 0.000, 0.000, 0.000, 0.000],
@@ -236,7 +206,7 @@ def log(l, str,u_val_var, df):
 
     if l == True:
         df = df.round(3)
-        df.to_csv(f'Control/logs/{str}/{logging_name}_{u_val_var}_{frequency}.csv', index = False)
+        df.to_csv(f'Control/logs/{str}/{logging_name}_{motor_model}_{u_val_var}_{frequency}.csv', index = False)
 
         # Create a dictionary to hold the data
         data1 = {
@@ -261,7 +231,7 @@ def log(l, str,u_val_var, df):
         }
 
         # Define the filename for the JSON log file
-        filename = f"Control/logs/{str}/{logging_name}_{u_val_var}_{frequency}_config.json"
+        filename = f"Control/logs/{str}/{logging_name}_{motor_model}_{u_val_var}_{frequency}_config.json"
 
         # Write the data to the JSON file
         with open(filename, "w") as f:
