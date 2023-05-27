@@ -22,8 +22,8 @@ hall_data = 0
 var_l = []
 data = 0
 def encode_output():
-    #num = int(input("Val: "))
-    num = 100
+    num = int(input("Val: "))
+    #num = 100
     num_str = "{:03d}".format(num)
     return num_str
 def read_hall_sensor():
@@ -36,7 +36,7 @@ while True:
     val1 = encode_output()
     val2 = encode_output()
     val3 = "000"
-    num_str = val1+val2 +val3
+    num_str = val1 + val2 + val3
     num_bytes = num_str.encode()
     ser.write(num_bytes)
     i += 1

@@ -92,6 +92,14 @@ plt.title("Depth + ref")
 plt.legend()
 """
 
-plt.title("Real and desired angles")
+plt.figure(4)
+plt.plot(t1,df["pwm_1"], label = "pwm_1", color ="r")
+plt.plot(t1,df["pwm_2"], label = "pwm_2", color ="g")
+plt.plot(t1,df["pwm_3"], label = "pwm_3", color ="b")
+plt.xlabel ('Time (s)')
+plt.ylabel ('PWM(-100 to 100)')
+
+
+
 plt.legend()
 plt.show()

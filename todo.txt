@@ -61,3 +61,42 @@ Evt. subsection: Pol-plots og stability
 
 
 
+
+
+TODO: 25-05-2023
+
+*Snak om hardware
+*Møde med Hakim
+*Præsentation klar til i morgen
+*Samlet rigget
+*Forberede test(Hør evt. Hakim)
+*Forbered Script, hvor vi kan putte manulle theta, row og depth ind. (1.5 time) 
+*Gå til Henrik hvis der ikke er svaret ind 13
+* Vinkler som funktion af Analog hall signal (Kan først laves fredag)
+
+##### skal laves idag #####
+præsentation
+samle rigget
+møde med hakim (forberede test)
+* Hør Hakim om PWM singaler og motor og simulated¨
+
+
+#Dry test:
+Mål sensor feedback
+Få sensor input
+Sonar
+Kalibrering
+Giv rigtig input og på rigtigt output
+sørg for vi kan holde den rigtige vinkel på flaps
+HUSK AT HAVE SCRIPT TIL AT SAMLE ALT DATA
+
+#Real test
+offset in heave¨
+maintain the desired depth and roll and pitch
+Step_input og se respons
+HUSK AT HAVE SCRIPT TIL AT SAMLE ALT DATA
+
+
+
+
+

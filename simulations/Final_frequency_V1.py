@@ -26,7 +26,7 @@ theta_i = 0
 psi_i = 0 #-20
 
 al = 20         # Angle limit
-u_val = 5      # m/s
+u_val = 2      # m/s
 distance = 100  # in meters
 
 #Simulation specifications 1 sec = 200 ticks
@@ -36,13 +36,13 @@ tick_rate = 200
 
 ref_h = 1
 
-Control = "LQR"
+Control = "PID"
 logging = False
 logging_name = "A_math"
 
 frequency = 10
 motor_model = True
-plots_single = True
+plots_single = False
 period = tick_rate/frequency
 
 scenario = {
@@ -481,6 +481,7 @@ def wing_model(da1,da2,da3):
         pwm[pwm > 100] = 100
     if np.any(pwm < -100):
         pwm[pwm < -100] = -100
+
 
     aps = pwm/10 # assuming linearity with 100 pwm = 10 aps. #aps = angle per second
 
