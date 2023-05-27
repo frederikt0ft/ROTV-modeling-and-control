@@ -73,6 +73,7 @@ void loop() {
 
 
                 // Do something with the values
+                /*
                 Serial.print("Values: ");
                 Serial.print(val1);
                 Serial.print(", ");
@@ -83,7 +84,7 @@ void loop() {
                 Serial.print(dir1);
                 Serial.print(dir2);
                 Serial.println(dir3);
-                
+                */
 
 
                 analogWrite(6, val1);          //Left PWM
@@ -95,11 +96,25 @@ void loop() {
                 digitalWrite(7,dir2);     //Right DIR
                 digitalWrite(8,dir3);     //Tail DIR
 
-            } else {
+            }/* else {
                 Serial.println("Invalid input");
-            }
+            */}/*
         } else {
             Serial.println("Invalid input");
-        }
+        }*/
     }
+  int Hall_left1 = analogRead(A0);
+  int Hall_left2 = analogRead(A1);
+  int Hall_right1 = analogRead(A2);
+  int Hall_right2 = analogRead(A3);
+  int Hall_back1 = analogRead(A4);
+  int Hall_back2 = analogRead(A5);
+  //Serial.println(Hall_left1);
+  //Serial.println(Hall_left2);
+  Serial.println();
+  Serial.println(Hall_right1);
+  Serial.println(Hall_right2);
+  //Serial.println(Hall_back1);
+  //Serial.println(Hall_back2);
+  delay(500);
 }

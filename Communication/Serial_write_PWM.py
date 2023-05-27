@@ -22,7 +22,7 @@ def encode_output_2(x):
 a = 0
 while True:
     val1 = encode_output()
-    val2 = encode_output()
+    val2 = encode_output_2(0)
     val3 = encode_output()
     val4 = encode_output()
     num_str = val1+val2+val3+val4
