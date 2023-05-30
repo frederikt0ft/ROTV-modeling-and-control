@@ -27,7 +27,7 @@ psi_i = 0 #-20
 
 al = 20         # Angle limit
 u_val = 2      # m/s
-distance = 100  # in meters
+distance = 20  # in meters
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
@@ -36,11 +36,11 @@ tick_rate = 200
 
 ref_h = 1
 
-Control = "PID"
+Control = "LQR"
 logging = False
-logging_name = "A_math"
+logging_name = "Final"
 
-frequency = 10
+frequency = 50
 motor_model = True
 plots_single = False
 period = tick_rate/frequency
@@ -130,52 +130,33 @@ u = v = w = p = q = r = 0
 x_dot = np.array([u, v, w, p, q, r]) [:,np.newaxis]
 
 
-if logging_name == "A_math_split":
+
+if logging_name == "Final":
     A = np.array([[0, 1.00, 0, 0, 0, 0],
-                  [0, -0.0344, 0, 0, 0.199*u_val**2, -0.252*u_val],
+                  [0, -0.0344, 0, 0, 0.228*u_val**2, -0.252*u_val],
                   [0, 0, 0, 1.00, 0, 0],
-                  [0, -0.0161*u_val, 0, -0.291, 0.000589*u_val**2, 0.000739],
+                  [0, -0.0161*u_val, 0, -0.291, 0.000577*u_val**2, 0.000739],
                   [0, 0, 0, 0, 0, 1.00],
-                  [0, 2.81*u_val, 0, 0.000554, -0.103*u_val**2, -0.129]])
+                  [0, 2.81*u_val, 0, 0.000554, -0.101*u_val**2, -0.129]])
     B = np.array([[0, 0, 0],
-                  [-0.0104*u_val**2, -0.0104*u_val**2, -0.0178*u_val**2],
+                  [-0.0506*u_val**2, -0.0506*u_val**2, -0.0471*u_val**2],
                   [0, 0, 0],
-                  [-0.034*u_val**2, 0.034*u_val**2, -0.000364*u_val**2],
+                  [-0.165*u_val**2, 0.165*u_val**2, -0.000519*u_val**2],
                   [0, 0, 0],
-                  [0.00477*u_val**2, 0.00464*u_val**2, 0.0636*u_val**2]])
-
-if logging_name == "A_math":
+                  [-0.00729*u_val**2, -0.00791*u_val**2, 0.0906*u_val**2]])
+if logging_name == "Final_split":
     A = np.array([[0, 1.00, 0, 0, 0, 0],
-                  [0, -0.0344, 0, 0, 0.229*u_val**2, -0.252*u_val],
+                  [0, -0.0344, 0, 0, 0.228*u_val**2, -0.252*u_val],
                   [0, 0, 0, 1.00, 0, 0],
-                  [0, -0.0161*u_val, 0, -0.291, 0.000532*u_val**2, 0.000739],
+                  [0, -0.0161*u_val, 0, -0.291, 0.000431*u_val**2, 0.000739],
                   [0, 0, 0, 0, 0, 1.00],
-                  [0, 2.81*u_val, 0, 0.000554, -0.0928*u_val**2, -0.129]])
-    B = np.array([[0, 0, 0],
-                  [-0.0509*u_val**2, -0.0509*u_val**2, -0.0471*u_val**2],
-                  [0, 0, 0],
-                  [-0.165*u_val**2, 0.166*u_val**2, -0.000507*u_val**2],
-                  [0, 0, 0],
-                  [-0.0102*u_val**2, -0.0108*u_val**2, 0.0884*u_val**2]])
-
-
-
-if logging_name == "A_Hakim":
-    A = np.array([[0, 1.00, 0, 0, 0, 0],
-                  [0, -0.0344, 0, 0, 0, -0.252*u_val],
-                  [0, 0, 0, 1.00, 0, 0],
-                  [0, -0.0161*u_val, 0, -0.291, 2.1e-6*u_val**2, 0.000739],
-                  [0, 0, 0, 0, 0, 1.00],
-                  [0, 2.81*u_val, 0, 0.000554, -0.000367*u_val**2, -0.129]])
+                  [0, 2.81*u_val, 0, 0.000554, -0.0752*u_val**2, -0.129]])
     B = np.array([[0, 0, 0],
                   [-0.0104*u_val**2, -0.0104*u_val**2, -0.0293*u_val**2],
                   [0, 0, 0],
-                  [-0.034*u_val**2, 0.034*u_val**2, -0.000364*u_val**2],
+                  [-0.034*u_val**2, 0.034*u_val**2, -0.000299*u_val**2],
                   [0, 0, 0],
-                  [0.00477*u_val**2, 0.00464*u_val**2, 0.0636*u_val**2]])
-
-
-
+                  [-0.00346*u_val**2, -0.00359*u_val**2, 0.0522*u_val**2]])
 
 
 print("A:\n", A)
@@ -185,17 +166,17 @@ print()
 print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s\nMatrice:",logging_name, "\nMotor Model:", motor_model, "\nLogging:", logging)
 
 #--------------------------- LQR --------------------------------#
-Q = np.array([[360.000, 0.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000,100.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 1, 0.000, 0.000, 0.000],
+Q = np.array([[250.000, 0.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000,50.000, 0.000, 0.000, 0.000, 0.000],
+              [0.000, 0.000, 5, 0.000, 0.000, 0.000],
               [0.000, 0.000, 0.000, 1, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 85.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 0.000, 145.0]])
+              [0.000, 0.000, 0.000, 0.000, 60.000, 0.000],
+              [0.000, 0.000, 0.000, 0.000, 0.000, 30.0]])
 
 
-LQR_R = np.array([[6.90, 0.000, 0.000],
-                  [0.000, 6.90, 0.000],
-                  [0.000, 0.000, 41.4]])*0.9
+LQR_R = np.array([[0.70, 0.000, 0.000],
+                  [0.000, 0.70, 0.000],
+                  [0.000, 0.000, 3.2]])
 
 
 K, S, E = ct.lqr(A, B, Q, LQR_R)
@@ -422,7 +403,7 @@ def pid_controller(states_var):
 
 
 
-    T = -np.array([[lift_h*S2_val, lift_h*S2_val, lift_h*S4_val],
+    T = -np.array([[lift_h*S2_val,        lift_h*S2_val, lift_h*S4_val],
                    [lift_r*S2_val,       -lift_r*S2_val, 0],
                    [lift_p*d2_val*S2_val, lift_p*d2_val*S2_val, lift_p*d4_val*S4_val]])
 
@@ -463,24 +444,28 @@ prev_angles = np.array([0,0,0])[:,np.newaxis]
 real_angles = np.array([0,0,0])[:,np.newaxis]
 
 if Control == "PID":
-    p = 10
+    p = 7
     d = 0
 
 if Control == "LQR":
-    p = 10
+    p = 7
     d = 0
 
-aps = np.array([0,0,0])[:,np.newaxis]
+aps = np.array([0.0,0.0,0.0])[:,np.newaxis]
 #def APS(pwm_var):
 
+lowest_error_angle = 0.2
+b = lowest_error_angle*p
 
+slope = (100-17)/(100-b)
+intersection = 17- b * slope
 
 def wing_model(da1,da2,da3):
     global prev_angles, real_angles, pwm, p, d
     desired_angles = np.vstack((da1, da2, da3))
     error_angles = desired_angles - real_angles
 
-    p_f = 0.2
+    p_f = 0.000005 # tjekkes om
     for o in range(len(error_angles)):
         if error_angles[o] > 0 and error_angles[o] < p_f:
             error_angles[o] = 0
@@ -489,9 +474,6 @@ def wing_model(da1,da2,da3):
 
     if i%period == 0:
         pwm = error_angles * p - (real_angles - prev_angles) * d
-
-
-
         if np.any(pwm > 100):
             pwm[pwm > 100] = 100
         if np.any(pwm < -100):
@@ -500,26 +482,27 @@ def wing_model(da1,da2,da3):
         print(pwm)
 
         if np.any(pwm < 0):
-            pwm[pwm < 0] = pwm[pwm < 0] *55/98 - 2150/49
+            pwm[pwm < 0] = pwm[pwm < 0] * slope - intersection #
         if np.any(pwm > 0):
-            pwm[pwm > 0] = pwm[pwm > 0] *55/98 + 2150/49
+            pwm[pwm > 0] = pwm[pwm > 0] * slope + intersection #
 
 
         print(pwm)
 
         for o in range(len(pwm)):
-            if pwm[o] > 0 and pwm[o] < 45:
+            if pwm[o] > 0 and pwm[o] < 17: #
                 pwm[o] = 0
-            if pwm[o] < 0 and pwm[o] > -45:
+            if pwm[o] < 0 and pwm[o] > -17: #
                 pwm[o] = 0
 
         for o in range(len(pwm)):
             if pwm[o] == 0:
                 aps[o] = 0
             if pwm[o] < 0:
-                aps[o] = 9/55 * pwm[o] + 70/11
+                aps[o] = 0.135 * pwm[o] + 1.5147 # laves om
             if pwm[o] > 0:
-                aps[o] = 9/55 * pwm[o] - 70/11
+                aps[o] = 0.135 * pwm[o] - 1.5147 # laves om
+
 
     print(aps)
 
