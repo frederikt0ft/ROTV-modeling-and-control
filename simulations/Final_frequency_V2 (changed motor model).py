@@ -36,7 +36,7 @@ tick_rate = 200
 
 ref_h = 1
 
-Control = "LQR"
+Control = "PID"
 logging = False
 logging_name = "Final"
 
@@ -166,22 +166,54 @@ print()
 print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s\nMatrice:",logging_name, "\nMotor Model:", motor_model, "\nLogging:", logging)
 
 #--------------------------- LQR --------------------------------#
-Q = np.array([[250.000, 0.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000,50.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 5, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 1, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 60.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 0.000, 30.0]])
+Q_05 = np.diag([250,50,5,1,60,30])
+LQR_R_05 = np.diag([0.7,0.7,3.2])
 
+Q_10 = np.diag([250,50,5,1,60,30])
+LQR_R_10 = np.diag([0.7,0.7,3.2])
 
-LQR_R = np.array([[0.70, 0.000, 0.000],
-                  [0.000, 0.70, 0.000],
-                  [0.000, 0.000, 3.2]])
+Q_15 = np.diag([250,50,5,1,60,30])
+LQR_R_15 = np.diag([0.7,0.7,3.2])
 
+Q_20 = np.diag([250,50,5,1,60,30])
+LQR_R_20 = np.diag([0.7,0.7,3.2])
 
-K, S, E = ct.lqr(A, B, Q, LQR_R)
+Q_25 = np.diag([250,50,5,1,60,30])
+LQR_R_25 = np.diag([0.7,0.7,3.2])
+
+Q_30 = np.diag([250,50,5,1,60,30])
+LQR_R_30 = np.diag([0.7,0.7,3.2])
+
+Q_35 = np.diag([250,50,5,1,60,30])
+LQR_R_35 = np.diag([0.7,0.7,3.2])
+
+Q_40 = np.diag([250,50,5,1,60,30])
+LQR_R_40 = np.diag([0.7,0.7,3.2])
+
+Q_45 = np.diag([250,50,5,1,60,30])
+LQR_R_45 = np.diag([0.7,0.7,3.2])
+
+Q_50 = np.diag([250,50,5,1,60,30])
+LQR_R_50 = np.diag([0.7,0.7,6])
+
+Q_list = [Q_05,Q_10,Q_15,Q_20,Q_25,Q_30,Q_35,Q_40,Q_45,Q_50]
+R_list = [LQR_R_05,LQR_R_10,LQR_R_15,LQR_R_20,LQR_R_25,LQR_R_30,LQR_R_35,LQR_R_40,LQR_R_45,LQR_R_50]
+
+K_list = []
+
+for x in range(10):
+    K, S, E = ct.lqr(A, B, Q_list[x], R_list[x])
+    K_list.append(K)
+
 
 #-------------------Functions------------------------------------#
+def map_argument_to_output(argument):
+    ranges = [(0, 0.75), (0.75, 1.25), (1.25, 1.75), (1.75, 2.25), (2.25, 2.75), (2.75, 3.25),(3.25, 3.75),(3.75,4.25),(4.25,4.75),(4.75,100000)]
+    for index, (lower, upper) in enumerate(ranges):
+        if lower <= argument < upper:
+            return index
+
+
 def log(l, str,u_val_var, df):
     now = datetime.datetime.now()
     tid = now.strftime("%Y-%d-%m-%H-%M-%S")
@@ -359,12 +391,62 @@ d4_val = -0.5
 
 def clamp(arr, minimum, maximum):
     return np.clip(arr, minimum, maximum)
-def pid_controller(states_var):
+
+for x in range(1,11):
+
+
+
+
+p_vector_05 = np.array([40, 1, 100]) [:,np.newaxis]
+i_vector_05 = np.array([0, 0, 0]) [:,np.newaxis]
+d_vector_05 = np.array([220, 0, 40]) [:,np.newaxis]
+
+p_vector_10 = np.array([40, 1, 100]) [:,np.newaxis]
+i_vector_10 = np.array([0, 0, 0]) [:,np.newaxis]
+d_vector_10 = np.array([220, 0, 40]) [:,np.newaxis]
+
+p_vector_15 = np.array([40, 1, 100]) [:,np.newaxis]
+i_vector_15 = np.array([0, 0, 0]) [:,np.newaxis]
+d_vector_15 = np.array([220, 0, 40]) [:,np.newaxis]
+
+p_vector_20 = np.array([40, 1, 100]) [:,np.newaxis]
+i_vector_20 = np.array([0, 0, 0]) [:,np.newaxis]
+d_vector_20 = np.array([220, 0, 40]) [:,np.newaxis]
+
+p_vector_25 = np.array([40, 1, 100]) [:,np.newaxis]
+i_vector_25 = np.array([0, 0, 0]) [:,np.newaxis]
+d_vector_25 = np.array([220, 0, 40]) [:,np.newaxis]
+
+p_vector_30 = np.array([40, 1, 100]) [:,np.newaxis]
+i_vector_30 = np.array([0, 0, 0]) [:,np.newaxis]
+d_vector_30 = np.array([220, 0, 40]) [:,np.newaxis]
+
+p_vector_35 = np.array([40, 1, 100]) [:,np.newaxis]
+i_vector_35 = np.array([0, 0, 0]) [:,np.newaxis]
+d_vector_35 = np.array([220, 0, 40]) [:,np.newaxis]
+
+p_vector_40 = np.array([40, 1, 100]) [:,np.newaxis]
+i_vector_40 = np.array([0, 0, 0]) [:,np.newaxis]
+d_vector_40 = np.array([220, 0, 40]) [:,np.newaxis]
+
+p_vector_45 = np.array([40, 1, 100]) [:,np.newaxis]
+i_vector_45 = np.array([0, 0, 0]) [:,np.newaxis]
+d_vector_45 = np.array([220, 0, 40]) [:,np.newaxis]
+
+p_vector_50 = np.array([40, 1, 100]) [:,np.newaxis]
+i_vector_50 = np.array([0, 0, 0]) [:,np.newaxis]
+d_vector_50 = np.array([220, 0, 40]) [:,np.newaxis]
+
+p_vector_list = [p_vector_05,p_vector_10,p_vector_15,p_vector_20,p_vector_25,p_vector_30,p_vector_35,p_vector_40,p_vector_45,p_vector_50]
+i_vector_list = [i_vector_05,i_vector_10,i_vector_15,i_vector_20,i_vector_25,i_vector_30,i_vector_35,i_vector_40,i_vector_45,i_vector_50]
+d_vector_list = [d_vector_05,d_vector_10,d_vector_15,d_vector_20,d_vector_25,d_vector_30,d_vector_35,d_vector_40,d_vector_45,d_vector_50]
+def pid_controller(states_var, u_val_var):
     global error_prev, diff, flag, sum_error, p_vector, d_vector
+    l = map_argument_to_output(u_val_var)
     state_vector = np.array([states_var[0], states_var[2], states_var[4]]) [:,np.newaxis]
-    p_vector = np.array([40, 1, 100]) [:,np.newaxis]
-    i_vector = np.array([0, 0, 0]) [:,np.newaxis]
-    d_vector = np.array([220, 0, 40]) [:,np.newaxis]
+    p_vector = p_vector_list[l]
+    i_vector = i_vector_list[l]
+    d_vector = d_vector_list[l]
     #p_error
     error = ref_pid - state_vector
 
@@ -430,10 +512,13 @@ def pid_controller(states_var):
 
 
     return clamp(u1, -al, al), clamp(u2, -al, al), clamp(u3, -al, al)
-def LQR(states_var):
+def LQR(states_var, u_val_var):
+    l = map_argument_to_output(u_val_var)
     state_vector = np.array([states_var[0],states_var[1],states_var[2],states_var[3],states_var[4],states_var[5]])[:,np.newaxis]
     ref_vec = np.array([ref_h, 0, 0, 0, 0, 0])[:,np.newaxis]
-    u = - K @ (state_vector - ref_vec)
+
+
+    u = - K_list[l] @ (state_vector - ref_vec)
 
     u1 = u[0]
     u2 = u[1]
@@ -479,7 +564,7 @@ def wing_model(da1,da2,da3):
         if np.any(pwm < -100):
             pwm[pwm < -100] = -100
 
-        print(pwm)
+        #print(pwm)
 
         if np.any(pwm < 0):
             pwm[pwm < 0] = pwm[pwm < 0] * slope - intersection #
@@ -487,7 +572,7 @@ def wing_model(da1,da2,da3):
             pwm[pwm > 0] = pwm[pwm > 0] * slope + intersection #
 
 
-        print(pwm)
+        #print(pwm)
 
         for o in range(len(pwm)):
             if pwm[o] > 0 and pwm[o] < 17: #
@@ -504,7 +589,7 @@ def wing_model(da1,da2,da3):
                 aps[o] = 0.135 * pwm[o] - 1.5147 # laves om
 
 
-    print(aps)
+    #print(aps)
 
     #aps = pwm/10 # assuming linearity with 100 pwm = 10 aps. #aps = angle per second
 
@@ -545,9 +630,9 @@ with holoocean.make(scenario_cfg=scenario) as env:
             states_frequency = states
 
         if Control == "PID":
-            u1, u2, u3 = pid_controller(states_frequency)
+            u1, u2, u3 = pid_controller(states_frequency, u_val)
         if Control == "LQR":
-            u1, u2, u3 = LQR(states_frequency)
+            u1, u2, u3 = LQR(states_frequency, u_val)
         if motor_model:
             u1,u2,u3 = wing_model(u1,u2,u3)
 
