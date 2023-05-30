@@ -1,9 +1,12 @@
-def map_argument_to_output(argument):
-    ranges = [(0, 0.75), (0.75, 1.25), (1.25, 1.75), (1.75, 2.25), (2.25, 2.75), (2.75, 3.25),(3.25, 3.75),(3.75,4.25),(4.25,4.75),(4.75,100000)]
-    for index, (lower, upper) in enumerate(ranges):
-        if lower <= argument < upper:
-            print(lower,upper)
-            print(index)
-            return index
+import numpy as np
+mu, sigma = 0, 0.4 # mean and standard deviation
+s = np.random.normal(mu, sigma)
+print(s)
+"""
 
-map_argument_to_output(1)
+import matplotlib.pyplot as plt
+count, bins, ignored = plt.hist(s, 30, density=True)
+plt.plot(bins, 1/(sigma * np.sqrt(2 * np.pi)) *
+         np.exp( - (bins - mu)**2 / (2 * sigma**2) ),
+         linewidth=2, color='r')
+plt.show()"""

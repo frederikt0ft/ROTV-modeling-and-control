@@ -9,6 +9,7 @@ import subprocess
 import scipy as sp
 import datetime
 import json
+import random
 
 np.set_printoptions(formatter={'float': lambda x: "{0:0.3f}".format(x)})
 os.chdir("..")
@@ -16,7 +17,7 @@ os.chdir("..")
 
 
 #Initial position
-x_i = -10
+x_i = -20
 y_i = -0.1
 z_i = -28.34
 
@@ -26,8 +27,8 @@ theta_i = 0
 psi_i = 0 #-20
 
 al = 20         # Angle limit
-u_val = 2      # m/s
-distance = 20  # in meters
+u_val = 5      # m/s
+distance = 120  # in meters
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
@@ -36,13 +37,16 @@ tick_rate = 200
 
 ref_h = 1
 
-Control = "PID"
+Control = "LQR"
 logging = False
 logging_name = "Final"
 
-frequency = 50
+frequency = 10
+noise_frequency = 1/2
+noise = False
 motor_model = True
 plots_single = False
+noise_period = tick_rate/noise_frequency
 period = tick_rate/frequency
 
 scenario = {
@@ -144,6 +148,7 @@ if logging_name == "Final":
                   [-0.165*u_val**2, 0.165*u_val**2, -0.000519*u_val**2],
                   [0, 0, 0],
                   [-0.00729*u_val**2, -0.00791*u_val**2, 0.0906*u_val**2]])
+
 if logging_name == "Final_split":
     A = np.array([[0, 1.00, 0, 0, 0, 0],
                   [0, -0.0344, 0, 0, 0.228*u_val**2, -0.252*u_val],
@@ -169,32 +174,33 @@ print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s\nMatri
 Q_05 = np.diag([250,50,5,1,60,30])
 LQR_R_05 = np.diag([0.7,0.7,3.2])
 
-Q_10 = np.diag([250,50,5,1,60,30])
+Q_10 = np.diag([240,50,10,2,60,30])
 LQR_R_10 = np.diag([0.7,0.7,3.2])
 
 Q_15 = np.diag([250,50,5,1,60,30])
-LQR_R_15 = np.diag([0.7,0.7,3.2])
+LQR_R_15 = np.diag([0.7,0.7,3.2])*1.6
+
 
 Q_20 = np.diag([250,50,5,1,60,30])
-LQR_R_20 = np.diag([0.7,0.7,3.2])
+LQR_R_20 = np.diag([1,1,3.2])*2
 
 Q_25 = np.diag([250,50,5,1,60,30])
-LQR_R_25 = np.diag([0.7,0.7,3.2])
+LQR_R_25 = np.diag([1.5,1.5,3.2])*2.3
 
-Q_30 = np.diag([250,50,5,1,60,30])
-LQR_R_30 = np.diag([0.7,0.7,3.2])
+Q_30 = np.diag([280,70,5,1,60,30])
+LQR_R_30 = np.diag([1.7,1.7,2])*3
 
-Q_35 = np.diag([250,50,5,1,60,30])
-LQR_R_35 = np.diag([0.7,0.7,3.2])
+Q_35 = np.diag([270,50,5,1,80,30])
+LQR_R_35 = np.diag([1.7,1.7,4.2])*3**2
 
 Q_40 = np.diag([250,50,5,1,60,30])
-LQR_R_40 = np.diag([0.7,0.7,3.2])
+LQR_R_40 = np.diag([0.7,0.7,3.2])*4
 
 Q_45 = np.diag([250,50,5,1,60,30])
 LQR_R_45 = np.diag([0.7,0.7,3.2])
 
 Q_50 = np.diag([250,50,5,1,60,30])
-LQR_R_50 = np.diag([0.7,0.7,6])
+LQR_R_50 = np.diag([0.7,0.7,3.2])*3.7
 
 Q_list = [Q_05,Q_10,Q_15,Q_20,Q_25,Q_30,Q_35,Q_40,Q_45,Q_50]
 R_list = [LQR_R_05,LQR_R_10,LQR_R_15,LQR_R_20,LQR_R_25,LQR_R_30,LQR_R_35,LQR_R_40,LQR_R_45,LQR_R_50]
@@ -233,6 +239,7 @@ def log(l, str,u_val_var, df):
             "A": A.tolist(),
             "B": B.tolist(),
             "p_vec": p_vector.tolist(),
+            "i_vec": i_vector.tolist(),
             "d_vec": d_vector.tolist(),
             "wing_p": p,
             "wing_d": d,
@@ -353,13 +360,30 @@ def compute_x_dot(x_states_var, u1_var, u2_var, u3_var):
     u_input = np.array([u1_var, u2_var, u3_var]) #[:,np.newaxis]
     x_dot = A @ x_states1 + B @ u_input
     return x_dot
+
+mu, sigma = 0, 0.4 # mean and standard deviation
+s_h = 0
+s_r = 0
+s_p = 0
 def compute_acc(x_dot_var):
+    global s_h, s_r, s_p
+    if noise:
+        if i%noise_period == 0:
+            s_h = np.random.normal(mu, sigma) * 0.2
+            s_r = np.random.normal(mu, sigma) * 0.2
+            s_p = np.random.normal(mu, sigma) * 0.2
+
+    else:
+        s_h = 0
+        s_r = 0
+        s_p = 0
+    print(s_h,s_r, s_p)
     heave_vel1   = x_dot_var[0][0] # positiv er frem
-    heave_acc1   = x_dot_var[1][0] # positiv er til venstre
+    heave_acc1   = x_dot_var[1][0] + s_h # positiv er til venstre
     roll_vel1    = x_dot_var[2][0] # positiv er op
-    roll_acc1    = x_dot_var[3][0] # positiv er clockwise
+    roll_acc1    = x_dot_var[3][0] + s_r# positiv er clockwise
     pitch_vel1   = x_dot_var[4][0] # positiv er snuden kører nedad
-    pitch_acc1   = -x_dot_var[5][0] # positiv er anticlockwise fra toppen
+    pitch_acc1   = -x_dot_var[5][0] + s_p # positiv er anticlockwise fra toppen
 
     lin_accel = R@np.array([[0], [0], [heave_acc1]])
     rot_accel = R@np.array([[roll_acc1], [pitch_acc1], [0]])
@@ -392,9 +416,6 @@ d4_val = -0.5
 def clamp(arr, minimum, maximum):
     return np.clip(arr, minimum, maximum)
 
-for x in range(1,11):
-
-
 
 
 p_vector_05 = np.array([40, 1, 100]) [:,np.newaxis]
@@ -409,9 +430,9 @@ p_vector_15 = np.array([40, 1, 100]) [:,np.newaxis]
 i_vector_15 = np.array([0, 0, 0]) [:,np.newaxis]
 d_vector_15 = np.array([220, 0, 40]) [:,np.newaxis]
 
-p_vector_20 = np.array([40, 1, 100]) [:,np.newaxis]
+p_vector_20 = np.array([40, 1, 200]) [:,np.newaxis]
 i_vector_20 = np.array([0, 0, 0]) [:,np.newaxis]
-d_vector_20 = np.array([220, 0, 40]) [:,np.newaxis]
+d_vector_20 = np.array([220, 0, 80]) [:,np.newaxis]
 
 p_vector_25 = np.array([40, 1, 100]) [:,np.newaxis]
 i_vector_25 = np.array([0, 0, 0]) [:,np.newaxis]
@@ -441,7 +462,7 @@ p_vector_list = [p_vector_05,p_vector_10,p_vector_15,p_vector_20,p_vector_25,p_v
 i_vector_list = [i_vector_05,i_vector_10,i_vector_15,i_vector_20,i_vector_25,i_vector_30,i_vector_35,i_vector_40,i_vector_45,i_vector_50]
 d_vector_list = [d_vector_05,d_vector_10,d_vector_15,d_vector_20,d_vector_25,d_vector_30,d_vector_35,d_vector_40,d_vector_45,d_vector_50]
 def pid_controller(states_var, u_val_var):
-    global error_prev, diff, flag, sum_error, p_vector, d_vector
+    global error_prev, diff, flag, sum_error, p_vector, d_vector, i_vector
     l = map_argument_to_output(u_val_var)
     state_vector = np.array([states_var[0], states_var[2], states_var[4]]) [:,np.newaxis]
     p_vector = p_vector_list[l]
@@ -495,6 +516,9 @@ def pid_controller(states_var, u_val_var):
                       [-0.014, 0.000, 0.165]])
 
 
+    T_god = np.array([[-0.05, -0.357, -0.095],
+                   [-0.05, 0.357, -0.095],
+                   [-0.014, 0.000, 0.365]])
 
     MA = np.array([[-1.7,  -1, -0.8],
                    [-1.7,   1, -0.8],
@@ -529,11 +553,11 @@ prev_angles = np.array([0,0,0])[:,np.newaxis]
 real_angles = np.array([0,0,0])[:,np.newaxis]
 
 if Control == "PID":
-    p = 7
+    p = 12
     d = 0
 
 if Control == "LQR":
-    p = 7
+    p = 10
     d = 0
 
 aps = np.array([0.0,0.0,0.0])[:,np.newaxis]
@@ -550,7 +574,7 @@ def wing_model(da1,da2,da3):
     desired_angles = np.vstack((da1, da2, da3))
     error_angles = desired_angles - real_angles
 
-    p_f = 0.000005 # tjekkes om
+    p_f = 0.2 # tjekkes om
     for o in range(len(error_angles)):
         if error_angles[o] > 0 and error_angles[o] < p_f:
             error_angles[o] = 0
