@@ -19,7 +19,7 @@ os.chdir("..")
 #Initial position
 x_i = -20
 y_i = -0.1
-z_i = -28.34
+z_i = -28.34 +0.5 #+8.5
 
 #initial orientation
 phi_i = 0
@@ -27,8 +27,8 @@ theta_i = 0
 psi_i = 0 #-20
 
 al = 20         # Angle limit
-u_val = 5      # m/s
-distance = 120  # in meters
+u_val = 3      # m/s
+distance = 20  # in meters
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
@@ -210,6 +210,7 @@ K_list = []
 for x in range(10):
     K, S, E = ct.lqr(A, B, Q_list[x], R_list[x])
     K_list.append(K)
+
 
 
 #-------------------Functions------------------------------------#
@@ -417,47 +418,45 @@ def clamp(arr, minimum, maximum):
     return np.clip(arr, minimum, maximum)
 
 
-
-p_vector_05 = np.array([40, 1, 100]) [:,np.newaxis]
+p_vector_05 = np.array([40, 5, 100]) [:,np.newaxis]
 i_vector_05 = np.array([0, 0, 0]) [:,np.newaxis]
-d_vector_05 = np.array([220, 0, 40]) [:,np.newaxis]
+d_vector_05 = np.array([220, 10, 30]) [:,np.newaxis]
 
-p_vector_10 = np.array([40, 1, 100]) [:,np.newaxis]
-i_vector_10 = np.array([0, 0, 0]) [:,np.newaxis]
-d_vector_10 = np.array([220, 0, 40]) [:,np.newaxis]
+p_vector_10 = np.array([40, 5, 100]) [:,np.newaxis]
+i_vector_10 = np.array([0.2, 0, 0]) [:,np.newaxis]
+d_vector_10 = np.array([220, 10, 30]) [:,np.newaxis]
 
-p_vector_15 = np.array([40, 1, 100]) [:,np.newaxis]
-i_vector_15 = np.array([0, 0, 0]) [:,np.newaxis]
-d_vector_15 = np.array([220, 0, 40]) [:,np.newaxis]
+p_vector_15 = np.array([40, 5, 100]) [:,np.newaxis]
+i_vector_15 = np.array([0.2, 0, 0]) [:,np.newaxis]
+d_vector_15 = np.array([220, 10, 30]) [:,np.newaxis]
 
-p_vector_20 = np.array([40, 1, 200]) [:,np.newaxis]
-i_vector_20 = np.array([0, 0, 0]) [:,np.newaxis]
-d_vector_20 = np.array([220, 0, 80]) [:,np.newaxis]
+p_vector_20 = np.array([40, 5, 100]) [:,np.newaxis]
+i_vector_20 = np.array([0.2, 0, 0]) [:,np.newaxis]
+d_vector_20 = np.array([220, 10, 30]) [:,np.newaxis]
 
-p_vector_25 = np.array([40, 1, 100]) [:,np.newaxis]
+p_vector_25 = np.array([40, 5, 100]) [:,np.newaxis]
 i_vector_25 = np.array([0, 0, 0]) [:,np.newaxis]
-d_vector_25 = np.array([220, 0, 40]) [:,np.newaxis]
+d_vector_25 = np.array([220, 10, 20]) [:,np.newaxis]
 
-p_vector_30 = np.array([40, 1, 100]) [:,np.newaxis]
-i_vector_30 = np.array([0, 0, 0]) [:,np.newaxis]
-d_vector_30 = np.array([220, 0, 40]) [:,np.newaxis]
+p_vector_30 = np.array([30, 3, 115]) [:,np.newaxis]
+i_vector_30 = np.array([0.2, 0, 0]) [:,np.newaxis]
+d_vector_30 = np.array([40, 7, 15]) [:,np.newaxis]
 
-p_vector_35 = np.array([40, 1, 100]) [:,np.newaxis]
+p_vector_35 = np.array([25, 3, 80]) [:,np.newaxis]
 i_vector_35 = np.array([0, 0, 0]) [:,np.newaxis]
-d_vector_35 = np.array([220, 0, 40]) [:,np.newaxis]
+d_vector_35 = np.array([20, 6, 70]) [:,np.newaxis]
 
-p_vector_40 = np.array([40, 1, 100]) [:,np.newaxis]
+p_vector_40 = np.array([22, 1, 90]) [:,np.newaxis]
 i_vector_40 = np.array([0, 0, 0]) [:,np.newaxis]
-d_vector_40 = np.array([220, 0, 40]) [:,np.newaxis]
+d_vector_40 = np.array([20, 4,85]) [:,np.newaxis]
 
-p_vector_45 = np.array([40, 1, 100]) [:,np.newaxis]
+p_vector_45 = np.array([25, 1, 90]) [:,np.newaxis]
 i_vector_45 = np.array([0, 0, 0]) [:,np.newaxis]
-d_vector_45 = np.array([220, 0, 40]) [:,np.newaxis]
+d_vector_45 = np.array([20, 4, 110]) [:,np.newaxis]
 
-p_vector_50 = np.array([40, 1, 100]) [:,np.newaxis]
+p_vector_50 = np.array([20, 1, 90]) [:,np.newaxis]
 i_vector_50 = np.array([0, 0, 0]) [:,np.newaxis]
-d_vector_50 = np.array([220, 0, 40]) [:,np.newaxis]
-
+d_vector_50 = np.array([20, 4, 110]) [:,np.newaxis]
 p_vector_list = [p_vector_05,p_vector_10,p_vector_15,p_vector_20,p_vector_25,p_vector_30,p_vector_35,p_vector_40,p_vector_45,p_vector_50]
 i_vector_list = [i_vector_05,i_vector_10,i_vector_15,i_vector_20,i_vector_25,i_vector_30,i_vector_35,i_vector_40,i_vector_45,i_vector_50]
 d_vector_list = [d_vector_05,d_vector_10,d_vector_15,d_vector_20,d_vector_25,d_vector_30,d_vector_35,d_vector_40,d_vector_45,d_vector_50]
@@ -468,6 +467,8 @@ def pid_controller(states_var, u_val_var):
     p_vector = p_vector_list[l]
     i_vector = i_vector_list[l]
     d_vector = d_vector_list[l]
+
+
     #p_error
     error = ref_pid - state_vector
 
@@ -516,10 +517,6 @@ def pid_controller(states_var, u_val_var):
                       [-0.014, 0.000, 0.165]])
 
 
-    T_god = np.array([[-0.05, -0.357, -0.095],
-                   [-0.05, 0.357, -0.095],
-                   [-0.014, 0.000, 0.365]])
-
     MA = np.array([[-1.7,  -1, -0.8],
                    [-1.7,   1, -0.8],
                    [-0.005, 0,  3]]) / 10
@@ -553,11 +550,11 @@ prev_angles = np.array([0,0,0])[:,np.newaxis]
 real_angles = np.array([0,0,0])[:,np.newaxis]
 
 if Control == "PID":
-    p = 12
+    p = 7
     d = 0
 
 if Control == "LQR":
-    p = 10
+    p = 20
     d = 0
 
 aps = np.array([0.0,0.0,0.0])[:,np.newaxis]
@@ -660,6 +657,7 @@ with holoocean.make(scenario_cfg=scenario) as env:
         if motor_model:
             u1,u2,u3 = wing_model(u1,u2,u3)
 
+       # u1= u2 =  u3 = np.array([0])
         R = (sensor_data[-1])
 
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3

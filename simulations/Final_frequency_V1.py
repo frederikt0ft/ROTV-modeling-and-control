@@ -26,8 +26,8 @@ theta_i = 0
 psi_i = 0 #-20
 
 al = 20         # Angle limit
-u_val = 2      # m/s
-distance = 10  # in meters
+u_val = 3      # m/s
+distance = 20  # in meters
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
@@ -36,7 +36,7 @@ tick_rate = 200
 
 ref_h = 1
 
-Control = "PID"
+Control = "LQR"
 logging = False
 logging_name = "Final"
 
@@ -168,17 +168,10 @@ print()
 print(f"Control: ", Control, "\nTicks: ", tick2, "\nSpeed: ", u_val, "m/s\nMatrice:",logging_name, "\nMotor Model:", motor_model, "\nLogging:", logging)
 
 #--------------------------- LQR --------------------------------#
-Q = np.array([[360.000, 0.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000,100.000, 0.000, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 1, 0.000, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 1, 0.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 85.000, 0.000],
-              [0.000, 0.000, 0.000, 0.000, 0.000, 145.0]])
 
+Q = np.diag([280,70,5,1,60,30])
+LQR_R = np.diag([1.7,1.7,3])*5
 
-LQR_R = np.array([[6.90, 0.000, 0.000],
-                  [0.000, 6.90, 0.000],
-                  [0.000, 0.000, 41.4]])*0.9
 
 
 K, S, E = ct.lqr(A, B, Q, LQR_R)
