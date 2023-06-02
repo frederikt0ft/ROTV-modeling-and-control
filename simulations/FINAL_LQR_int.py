@@ -17,9 +17,9 @@ os.chdir("..")
 
 
 #Initial position
-x_i = 5+52
+x_i = 5
 y_i = -0.1
-z_i = -28.34 - 0.5 + 1+0.48 #+8.5
+z_i = -28.34 -0.5 #+8.5
 
 #initial orientation
 phi_i = 0
@@ -27,7 +27,7 @@ theta_i = 0
 psi_i = 0      #-20
 
 al = 20        # Angle limit
-u_val = 5      # m/s
+u_val = 2      # m/s
 distance = 95  #95  # in meters
 
 #Simulation specifications 1 sec = 200 ticks
@@ -42,9 +42,9 @@ logging = False
 
 
 frequency = 50
-logging_name = f"p_6_{frequency}Hz_{u_val}_V3"
-noise_frequency = 1
-noise = True
+logging_name = f"Benchmark_Noise_{frequency}Hz_{u_val}"
+noise_frequency = 1/2
+noise = False
 
 motor_model = True
 plots_single = False
@@ -146,15 +146,29 @@ A = np.array([[0, 1.00, 0, 0, 0, 0],
               [0, 0, 0, 0, 0, 1.00],
               [0, 2.81*u_val, 0, 0.000554, -0.101*u_val**2, -0.129]])
 
+A = np.array([[0, 1.00, 0, 0, 0, 0, 0],
+              [0, -0.0344, 0, 0, 0.228*u_val**2, -0.252*u_val, 0],
+              [0, 0, 0, 1.00, 0, 0, 0],
+              [0, -0.019*u_val, 0, -0.345, 0.000683*u_val**2, 0.000875, 0],
+              [0, 0, 0, 0, 0, 1.00, 0],
+              [0, 2.81*u_val, 0, 0.000554, -0.101*u_val**2, -0.129, 0],
+              [1, 0, 0, 0, 0, 0, 0]])
 
+#print(A_aug)
 
 B = np.array([[0, 0, 0],
-             [-0.0506*u_val**2, -0.0506*u_val**2, -0.0471*u_val**2],
-             [0, 0, 0],
-             [-0.195*u_val**2, 0.195*u_val**2, -0.000614*u_val**2],
-             [0, 0, 0],
-             [-0.00723*u_val**2, -0.00797*u_val**2, 0.0906*u_val**2]])
-
+              [-0.0506*u_val**2, -0.0506*u_val**2, -0.0471*u_val**2],
+              [0, 0, 0],
+              [-0.195*u_val**2, 0.195*u_val**2, -0.000614*u_val**2],
+              [0, 0, 0],
+              [-0.00723*u_val**2, -0.00797*u_val**2, 0.0906*u_val**2]])
+B = np.array([[0, 0, 0],
+              [-0.0506*u_val**2, -0.0506*u_val**2, -0.0471*u_val**2],
+              [0, 0, 0],
+              [-0.195*u_val**2, 0.195*u_val**2, -0.000614*u_val**2],
+              [0, 0, 0],
+              [-0.00723*u_val**2, -0.00797*u_val**2, 0.0906*u_val**2],
+              [0, 0 ,0]])
 
 
 
@@ -217,36 +231,39 @@ if frequency == 10:
 
 #--------------------------50 HZ---------------------------------#
 if frequency == 50:
-    Q_05 = np.diag([250,50,5,1,60,30])
+    Q_05 = np.diag([250,50,5,1,60,30,1])
     LQR_R_05 = np.diag([0.7,0.7,3.2])
 
-    Q_10 = np.diag([240,50,10,2,60,30])
+    Q_10 = np.diag([240,50,10,2,60,30,1])
     LQR_R_10 = np.diag([0.7,0.7,3.2])
 
-    Q_15 = np.diag([350,50,50,10,60,30])
+    Q_15 = np.diag([350,50,50,10,60,30, 1])
     LQR_R_15 = np.diag([0.7,0.7,3.2])
 
-    Q_20 = np.diag([350,50,30,10,60,5])
+    Q_20 = np.diag([350,50,30,10,60,5, 1])
     LQR_R_20 = np.diag([0.7,0.7,3.2])*3
+    #----------------SLET-----------
+    Q_20 = np.diag([400,150,20,10,60,52, 0.01])
+    LQR_R_20 = np.diag([0.7,0.7,3.2])*3
+    #----------------SLET-----------
 
-
-    Q_25 = np.diag([280,50,30,10,60,30])
+    Q_25 = np.diag([280,50,30,10,60,30,1])
     LQR_R_25 = np.diag([1.2,1.2,3.2])*2
 
-    Q_30 = np.diag([250,70,20,10,60,30])
+    Q_30 = np.diag([250,70,20,10,60,30,1])
     LQR_R_30 = np.diag([1.2,1.2,3.2])*2.7
 
-    Q_35 = np.diag([250,50,20,10,30,15])
+    Q_35 = np.diag([250,50,20,10,30,15,1])
     LQR_R_35 = np.diag([1.2,1.2,7.2])
 
-    Q_40 = np.diag([250,50,20,10,30,15])
+    Q_40 = np.diag([250,50,20,10,30,15,1])
     LQR_R_40 = np.diag([0.7,0.7,3.2])*4
-    
-    Q_45 = np.diag([240,40,20,10,30,20])
+
+    Q_45 = np.diag([240,40,20,10,30,20,1])
     LQR_R_45 = np.diag([1.3,1.3,3.2])*4.4
 
-    Q_50 = np.diag([500,30,20,10,50,30])
-    LQR_R_50 = np.diag([1.1,1.1,1.9])*10
+    Q_50 = np.diag([280,30,20,10,20,25,1])
+    LQR_R_50 = np.diag([1.3,1.3,1.9])*9
 
 Q_list = [Q_05,Q_10,Q_15,Q_20,Q_25,Q_30,Q_35,Q_40,Q_45,Q_50]
 R_list = [LQR_R_05,LQR_R_10,LQR_R_15,LQR_R_20,LQR_R_25,LQR_R_30,LQR_R_35,LQR_R_40,LQR_R_45,LQR_R_50]
@@ -254,7 +271,7 @@ R_list = [LQR_R_05,LQR_R_10,LQR_R_15,LQR_R_20,LQR_R_25,LQR_R_30,LQR_R_35,LQR_R_4
 K_list = []
 
 for x in range(10):
-    print(A,B,Q_list[x], R_list[x])
+
     K, S, E = ct.lqr(A, B, Q_list[x], R_list[x])
     K_list.append(K)
 
@@ -391,7 +408,9 @@ def extract_sensor_info(x, a):
     data[11,i,2] =  - rpy[1]
 
     return sensor_data
-def extract_acc_terms(sensor_data_var, u1_var,u2_var,u3_var, tick, sonar_sensor, imu_sensor_var):
+x7 =0.0
+def extract_acc_terms(sensor_data_var, u1_var,u2_var,u3_var, tick, sonar_sensor, imu_sensor_var,x_dot_var):
+    global x7
     if sonar_sensor[0] == 80:
         sonar_sensor[0] = sonar_list[-1]
 
@@ -402,8 +421,9 @@ def extract_acc_terms(sensor_data_var, u1_var,u2_var,u3_var, tick, sonar_sensor,
     x_list1.append(x_list1_temp)
     x_list2.append(x_list2_temp)
     sonar_list.append(sonar_sensor[0])
-
-
+    if i%period == 0:
+        x7 += x_dot_var[6]
+    print(x7)
     for j in range(6,9):
         for k in range(3):
             if (float(acc_list[j-6][i][k]) <= 0.001 and float(acc_list[j-6][i][k]) >= 0) or (float(acc_list[j-6][i][k]) >= -0.001 and float(acc_list[j-6][i][k]) <= 0):
@@ -411,14 +431,16 @@ def extract_acc_terms(sensor_data_var, u1_var,u2_var,u3_var, tick, sonar_sensor,
             else:
                 data[j,i,k] = float(acc_list[j-6][i][k])
 
-    print(x_list1_temp[0])
-    print(type(x_list1_temp[0]))
-    return [x_list1_temp[0],x_list1_temp[1],x_list1_temp[2],x_list2_temp[0],x_list2_temp[1],x_list2_temp[2]]
+    return [x_list1_temp[0],x_list1_temp[1],x_list1_temp[2],x_list2_temp[0],x_list2_temp[1],x_list2_temp[2], x7[0]]
 def compute_x_dot(x_states_var, u1_var, u2_var, u3_var):
 
-    x_states1 = np.array([x_states_var[0],x_states_var[1],x_states_var[2],x_states_var[3],x_states_var[4],x_states_var[5]]) [:,np.newaxis]
+    x_states1 = np.array([x_states_var[0],x_states_var[1],x_states_var[2],x_states_var[3],x_states_var[4],x_states_var[5],x_states_var[6]]) [:,np.newaxis]
     u_input = np.array([u1_var, u2_var, u3_var]) #[:,np.newaxis]
+    #print(x_states1)
     x_dot = A @ x_states1 + B @ u_input
+
+
+    x_dot[6] = A[6,:] @ (x_states1 - ref_vec)
     return x_dot
 
 mu, sigma = 0, 0.4 # mean and standard deviation
@@ -429,9 +451,9 @@ def compute_acc(x_dot_var):
     global s_h, s_r, s_p
     if noise:
         if i%noise_period == 0:
-            s_h = np.random.normal(mu, sigma) *      0.5
-            s_r = np.random.normal(mu, sigma) *      10  *3.14/180
-            s_p = np.random.normal(mu, sigma) *      5  *3.14/180
+            s_h = np.random.normal(mu, sigma) * 1 # 0.08
+            s_r = np.random.normal(mu, sigma) * 0.5 # 0.25
+            s_p = np.random.normal(mu, sigma) * 0.2 #0.1
 
     else:
         s_h = 0
@@ -531,9 +553,9 @@ if frequency == 50:
     i_vector_15 = np.array([0, 0, 0]) [:,np.newaxis]
     d_vector_15 = np.array([4.4, 0.2, 0.6]) [:,np.newaxis] #10 Hz: 4.4 0.2 0.6 50 Hz: 4.4 0.2 0.6
 
-    p_vector_20 = np.array([80, 5, 100]) [:,np.newaxis] #10 Hz: 40 5 100 50 Hz: 40 5 100
-    i_vector_20 = np.array([4, 0, 0]) [:,np.newaxis]
-    d_vector_20 = np.array([14.8, 0.2, 0.6]) [:,np.newaxis] #10 Hz: 4.4 0.2 0.6 50 Hz: 4.4 0.2 0.6
+    p_vector_20 = np.array([40, 5, 100]) [:,np.newaxis] #10 Hz: 40 5 100 50 Hz: 40 5 100
+    i_vector_20 = np.array([0, 0, 0]) [:,np.newaxis]
+    d_vector_20 = np.array([4.4, 0.2, 0.6]) [:,np.newaxis] #10 Hz: 4.4 0.2 0.6 50 Hz: 4.4 0.2 0.6
 
     p_vector_25 = np.array([40, 5, 100]) [:,np.newaxis] #10 Hz: 40 5 100 50 Hz: 40 5 100
     i_vector_25 = np.array([0, 0, 0]) [:,np.newaxis]
@@ -555,9 +577,9 @@ if frequency == 50:
     i_vector_45 = np.array([0, 0, 0]) [:,np.newaxis]
     d_vector_45 = np.array([0.4, 0.08, 1.5]) [:,np.newaxis] #10 Hz: 0.4 0.08 2.2 50 Hz: 0.4 0.08 1.5
 
-    p_vector_50 = np.array([39, 1.6, 94]) [:,np.newaxis] #10 Hz: 20 1 90 50 Hz: 25 1 90 med I: 39 1 95
-    i_vector_50 = np.array([3.1, 0, 0]) [:,np.newaxis] #med I: 3.1 0 0
-    d_vector_50 = np.array([10.9, 0.125, 0.6]) [:,np.newaxis] #10 Hz: 0.4 0.08 2.2 50 Hz: 0.4 0.08 0.9 med i:10.9 0.065 0.5
+    p_vector_50 = np.array([25, 1, 90]) [:,np.newaxis] #10 Hz: 20 1 90 50 Hz: 25 1 90
+    i_vector_50 = np.array([0, 0, 0]) [:,np.newaxis]
+    d_vector_50 = np.array([0.4, 0.08, 0.9]) [:,np.newaxis] #10 Hz: 0.4 0.08 2.2 50 Hz: 0.4 0.08 0.9
 
 
 p_vector_list = [p_vector_05,p_vector_10,p_vector_15,p_vector_20,p_vector_25,p_vector_30,p_vector_35,p_vector_40,p_vector_45,p_vector_50]
@@ -570,7 +592,6 @@ def pid_controller(states_var, u_val_var):
     p_vector = p_vector_list[l]
     i_vector = i_vector_list[l]
     d_vector = d_vector_list[l]
-    print(d_vector)
 
 
     #p_error
@@ -639,9 +660,11 @@ def pid_controller(states_var, u_val_var):
 
     return clamp(u1, -al, al), clamp(u2, -al, al), clamp(u3, -al, al)
 def LQR(states_var, u_val_var):
+    global ref_vec
     l = map_argument_to_output(u_val_var)
-    state_vector = np.array([states_var[0],states_var[1],states_var[2],states_var[3],states_var[4],states_var[5]])[:,np.newaxis]
-    ref_vec = np.array([ref_h, 0, 0, 0, 0, 0])[:,np.newaxis]
+
+    state_vector = np.array([states_var[0],states_var[1],states_var[2],states_var[3],states_var[4],states_var[5],states_var[6]])[:,np.newaxis]
+    ref_vec = np.array([ref_h, 0, 0, 0, 0, 0, 0])[:,np.newaxis]
 
 
     u = - K_list[l] @ (state_vector - ref_vec)
@@ -736,6 +759,7 @@ def wing_model(da1,da2,da3):
     return real_angles[0], real_angles[1], real_angles[2]
 
 
+x_dot = np.array([0,0,0,0,0,0,0])[:,np.newaxis]
 # Make environment
 with holoocean.make(scenario_cfg=scenario) as env:
     lin_accel = np.array([u_val, 0, 0])   # 5 m/s
@@ -745,13 +769,13 @@ with holoocean.make(scenario_cfg=scenario) as env:
         # Step simulation
         state = env.step(acc)
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
-        states = extract_acc_terms(sensor_data,u1,u2,u3, 0, state["RangeFinderSensor"], state["IMUSensor"])
+        states = extract_acc_terms(sensor_data,u1,u2,u3, 0, state["RangeFinderSensor"], state["IMUSensor"],x_dot)
         R = (sensor_data[-1])
     print()
     for i in range(tick1,tick2):
         print(i)
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
-        states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
+        states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"],x_dot)
         if i%period == 0:
             states_frequency = states
 
@@ -762,7 +786,7 @@ with holoocean.make(scenario_cfg=scenario) as env:
         if motor_model:
             u1,u2,u3 = wing_model(u1,u2,u3)
 
-       # u1= u2 =  u3 = np.array([0])
+        # u1= u2 =  u3 = np.array([0])
         R = (sensor_data[-1])
 
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3

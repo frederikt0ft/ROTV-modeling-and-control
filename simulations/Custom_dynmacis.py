@@ -390,8 +390,8 @@ def wing_model(da1,da2,da3):
 
 # Make environment
 with holoocean.make(scenario_cfg=scenario) as env:
-    lin_accel = np.array([u_val, 0, 0])   # 5 m/s
-    rot_accel = np.array([0, 0, 0])
+    lin_accel = np.array([0, 0, 0])   # 5 m/s
+    rot_accel = np.array([1, 0, 0])
     for i in range(tick1):
         acc = np.array([R@lin_accel,R@rot_accel])
         # Step simulation
@@ -401,6 +401,7 @@ with holoocean.make(scenario_cfg=scenario) as env:
         R = (sensor_data[-1])
 
     for i in range(tick1,tick2):
+        print(i)
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
         ref = 1    #Target above seabed
@@ -409,12 +410,15 @@ with holoocean.make(scenario_cfg=scenario) as env:
         #u1, u2, u3 = LQR(states,ref)
 
         u1,u2,u3 = wing_model(u1_d,u2_d,u3_d)
-
+        u1 = u2 =u3 = np.array([0])
         R = (sensor_data[-1])
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
         acc = compute_acc(x_dot)
 
         print()
+        lin_accel = np.array([0, 0, 0])   # 5 m/s
+        rot_accel = np.array([0, 0, 0])
+        acc = np.array([R@lin_accel,R@rot_accel])
         # Step simulation
         state = env.step(acc)
     print("Finished Simulation!")

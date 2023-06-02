@@ -19,7 +19,7 @@ os.chdir("..")
 #Initial position
 x_i = 5+52
 y_i = -0.1
-z_i = -28.34 - 0.5 + 1+0.48 #+8.5
+z_i = -28.36 +4 #+8.5
 
 #initial orientation
 phi_i = 0
@@ -27,24 +27,24 @@ theta_i = 0
 psi_i = 0      #-20
 
 al = 20        # Angle limit
-u_val = 5      # m/s
-distance = 95  #95  # in meters
+u_val = 2      # m/s
+distance = 0#10000  #95  # in meters
 
 #Simulation specifications 1 sec = 200 ticks
 tick1 = 200
-tick2 = int(distance/u_val*tick1 + tick1)
+tick2 = 10202#int(distance/u_val*tick1 + tick1)
 tick_rate = 200
 
 ref_h = 1
 
-Control = "LQR"
+Control = "PID"
 logging = False
 
 
 frequency = 50
-logging_name = f"p_6_{frequency}Hz_{u_val}_V3"
-noise_frequency = 1
-noise = True
+logging_name = f"Gain_scheduling_{frequency}Hz_{u_val}_V4"
+noise_frequency = 1/3
+noise = False
 
 motor_model = True
 plots_single = False
@@ -77,6 +77,9 @@ scenario = {
                     "socket": "RotationSocket"
 
                 },
+                {
+                    "sensor_type": "DepthSensor",
+                    "socket": "RotationSocket"},
                 {
                     "sensor_type": "IMUSensor",
                     "socket": "RotationSocket"
@@ -112,7 +115,7 @@ rpy_d = np.array([])
 
 
 # List of lists
-data = np.zeros((12, tick2, 3))   #Data matrix for logging all data in simulation
+data = np.zeros((13, tick2, 3))   #Data matrix for logging all data in simulation
 R = np.zeros((3,3))
 
 #Initial conditions:
@@ -149,11 +152,11 @@ A = np.array([[0, 1.00, 0, 0, 0, 0],
 
 
 B = np.array([[0, 0, 0],
-             [-0.0506*u_val**2, -0.0506*u_val**2, -0.0471*u_val**2],
-             [0, 0, 0],
-             [-0.195*u_val**2, 0.195*u_val**2, -0.000614*u_val**2],
-             [0, 0, 0],
-             [-0.00723*u_val**2, -0.00797*u_val**2, 0.0906*u_val**2]])
+              [-0.0506*u_val**2, -0.0506*u_val**2, -0.0471*u_val**2],
+              [0, 0, 0],
+              [-0.195*u_val**2, 0.195*u_val**2, -0.000614*u_val**2],
+              [0, 0, 0],
+              [-0.00723*u_val**2, -0.00797*u_val**2, 0.0906*u_val**2]])
 
 
 
@@ -217,35 +220,34 @@ if frequency == 10:
 
 #--------------------------50 HZ---------------------------------#
 if frequency == 50:
-    Q_05 = np.diag([250,50,5,1,60,30])
+    Q_05 = np.diag([550,50,5,1,100,30])
     LQR_R_05 = np.diag([0.7,0.7,3.2])
 
-    Q_10 = np.diag([240,50,10,2,60,30])
+    Q_10 = np.diag([450,50,10,2,100,10])
     LQR_R_10 = np.diag([0.7,0.7,3.2])
 
-    Q_15 = np.diag([350,50,50,10,60,30])
+    Q_15 = np.diag([450,50,50,10,60,10])
     LQR_R_15 = np.diag([0.7,0.7,3.2])
 
-    Q_20 = np.diag([350,50,30,10,60,5])
+    Q_20 = np.diag([450,50,30,10,80, 10])
     LQR_R_20 = np.diag([0.7,0.7,3.2])*3
 
-
-    Q_25 = np.diag([280,50,30,10,60,30])
+    Q_25 = np.diag([360,50,30,10,80,10])
     LQR_R_25 = np.diag([1.2,1.2,3.2])*2
 
-    Q_30 = np.diag([250,70,20,10,60,30])
-    LQR_R_30 = np.diag([1.2,1.2,3.2])*2.7
+    Q_30 = np.diag([380,70,20,10,80,10])
+    LQR_R_30 = np.diag([1.2,1.2,3.2])*2.9
 
-    Q_35 = np.diag([250,50,20,10,30,15])
-    LQR_R_35 = np.diag([1.2,1.2,7.2])
+    Q_35 = np.diag([400,50,5,5,80,10])
+    LQR_R_35 = np.diag([1.2,1.2,3.2])*3.2
 
-    Q_40 = np.diag([250,50,20,10,30,15])
-    LQR_R_40 = np.diag([0.7,0.7,3.2])*4
-    
-    Q_45 = np.diag([240,40,20,10,30,20])
-    LQR_R_45 = np.diag([1.3,1.3,3.2])*4.4
+    Q_40 = np.diag([440,50,12,3,20,6])
+    LQR_R_40 = np.diag([1.2,1.2,3.2])*3.6
 
-    Q_50 = np.diag([500,30,20,10,50,30])
+    Q_45 = np.diag([460,50,3,1,20,15])
+    LQR_R_45 = np.diag([0.7,0.7,3.2])*6
+
+    Q_50 = np.diag([500,30,20,10,20,30])
     LQR_R_50 = np.diag([1.1,1.1,1.9])*10
 
 Q_list = [Q_05,Q_10,Q_15,Q_20,Q_25,Q_30,Q_35,Q_40,Q_45,Q_50]
@@ -254,7 +256,6 @@ R_list = [LQR_R_05,LQR_R_10,LQR_R_15,LQR_R_20,LQR_R_25,LQR_R_30,LQR_R_35,LQR_R_4
 K_list = []
 
 for x in range(10):
-    print(A,B,Q_list[x], R_list[x])
     K, S, E = ct.lqr(A, B, Q_list[x], R_list[x])
     K_list.append(K)
 
@@ -309,7 +310,7 @@ def log(l, str,u_val_var, df):
 def build_df(data):
 
     global df
-    columns = ["acc_x", "acc_y", "acc_z","vel_x", "vel_y", "vel_z","ang_acc_roll", "ang_acc_pitch", "ang_acc_yaw","ang_vel_roll", "ang_vel_pitch", "ang_vel_yaw","x","y","z","roll","pitch","yaw","u1","u2","u3","x1","x2","x3","x4","x5","x6", "u1_d","u2_d","u3_d", "pwm_1", "pwm_2", "pwm_3", "error_h", "error_r", "error_p"]
+    columns = ["acc_x", "acc_y", "acc_z","vel_x", "vel_y", "vel_z","ang_acc_roll", "ang_acc_pitch", "ang_acc_yaw","ang_vel_roll", "ang_vel_pitch", "ang_vel_yaw","x","y","z","roll","pitch","yaw","u1","u2","u3","x1","x2","x3","x4","x5","x6", "u1_d","u2_d","u3_d", "pwm_1", "pwm_2", "pwm_3", "error_h", "error_r", "error_p", "ref"]
     lst1 = data[0][:,0]     #acc_x
     lst2 = data[0][:,1]     #acc_y
     lst3 = data[0][:,2]     #acc_z
@@ -343,10 +344,11 @@ def build_df(data):
     lst31 = data[10][:,0]    #u1_d
     lst32 = data[10][:,1]    #u2_d
     lst33 = data[10][:,2]    #u3_d
-    lst34 = data[11][:,0]    #u3_d
-    lst35 = data[11][:,1]    #u3_d
-    lst36 = data[11][:,2]    #u3_d
-    df = pd.DataFrame(list(zip(lst1, lst2, lst3, lst4, lst5, lst6, lst7, lst8, lst9, lst10, lst11, lst12, lst13, lst14, lst15, lst16, lst17, lst18, lst19, lst20, lst21, lst22, lst23, lst24, lst25, lst26, lst27, lst28, lst29,lst30, lst31, lst32,lst33, lst34, lst35,lst36)),
+    lst34 = data[11][:,0]    #e_h
+    lst35 = data[11][:,1]    #e_r
+    lst36 = data[11][:,2]    #e_p
+    lst37 = data[12][:,0]    #ref
+    df = pd.DataFrame(list(zip(lst1, lst2, lst3, lst4, lst5, lst6, lst7, lst8, lst9, lst10, lst11, lst12, lst13, lst14, lst15, lst16, lst17, lst18, lst19, lst20, lst21, lst22, lst23, lst24, lst25, lst26, lst27, lst28, lst29,lst30, lst31, lst32,lst33, lst34, lst35,lst36,lst37)),
                       columns =columns)
     print(len(df["x"]))
 
@@ -394,7 +396,7 @@ def extract_sensor_info(x, a):
 def extract_acc_terms(sensor_data_var, u1_var,u2_var,u3_var, tick, sonar_sensor, imu_sensor_var):
     if sonar_sensor[0] == 80:
         sonar_sensor[0] = sonar_list[-1]
-
+    print(4-(-1*state["DepthSensor"]-24.361))
     u_list_temp = [float(u1_var),float(u2_var),float(u3_var)]
     x_list1_temp = [sonar_sensor[0],float(sensor_data_var[1][2]),float(sensor_data_var[5][0])]
     x_list2_temp = [float(imu_sensor_var[1,0])*57.3, float(sensor_data_var[5][1]), -float(sensor_data_var[3][1])*57.3]
@@ -411,8 +413,7 @@ def extract_acc_terms(sensor_data_var, u1_var,u2_var,u3_var, tick, sonar_sensor,
             else:
                 data[j,i,k] = float(acc_list[j-6][i][k])
 
-    print(x_list1_temp[0])
-    print(type(x_list1_temp[0]))
+
     return [x_list1_temp[0],x_list1_temp[1],x_list1_temp[2],x_list2_temp[0],x_list2_temp[1],x_list2_temp[2]]
 def compute_x_dot(x_states_var, u1_var, u2_var, u3_var):
 
@@ -429,9 +430,9 @@ def compute_acc(x_dot_var):
     global s_h, s_r, s_p
     if noise:
         if i%noise_period == 0:
-            s_h = np.random.normal(mu, sigma) *      0.5
-            s_r = np.random.normal(mu, sigma) *      10  *3.14/180
-            s_p = np.random.normal(mu, sigma) *      5  *3.14/180
+            s_h = np.random.normal(mu, sigma) *  0.8
+            s_r = np.random.normal(mu, sigma) *  0.5
+            s_p = np.random.normal(mu, sigma) *  0.2
 
     else:
         s_h = 0
@@ -563,14 +564,14 @@ if frequency == 50:
 p_vector_list = [p_vector_05,p_vector_10,p_vector_15,p_vector_20,p_vector_25,p_vector_30,p_vector_35,p_vector_40,p_vector_45,p_vector_50]
 i_vector_list = [i_vector_05,i_vector_10,i_vector_15,i_vector_20,i_vector_25,i_vector_30,i_vector_35,i_vector_40,i_vector_45,i_vector_50]
 d_vector_list = [d_vector_05,d_vector_10,d_vector_15,d_vector_20,d_vector_25,d_vector_30,d_vector_35,d_vector_40,d_vector_45,d_vector_50]
-def pid_controller(states_var, u_val_var):
+def pid_controller(states_var, u_val_var, ref_pid_val):
     global error_prev, diff, flag, sum_error, p_vector, d_vector, i_vector
+    ref_pid = np.array([ref_pid_val, 0, 0]) [:,np.newaxis]
     l = map_argument_to_output(u_val_var)
     state_vector = np.array([states_var[0], states_var[2], states_var[4]]) [:,np.newaxis]
     p_vector = p_vector_list[l]
     i_vector = i_vector_list[l]
     d_vector = d_vector_list[l]
-    print(d_vector)
 
 
     #p_error
@@ -638,10 +639,11 @@ def pid_controller(states_var, u_val_var):
 
 
     return clamp(u1, -al, al), clamp(u2, -al, al), clamp(u3, -al, al)
-def LQR(states_var, u_val_var):
+def LQR(states_var, u_val_var, ref_h_var):
+    print(f"dum_val = {u_val_var}")
     l = map_argument_to_output(u_val_var)
     state_vector = np.array([states_var[0],states_var[1],states_var[2],states_var[3],states_var[4],states_var[5]])[:,np.newaxis]
-    ref_vec = np.array([ref_h, 0, 0, 0, 0, 0])[:,np.newaxis]
+    ref_vec = np.array([ref_h_var, 0, 0, 0, 0, 0])[:,np.newaxis]
 
 
     u = - K_list[l] @ (state_vector - ref_vec)
@@ -649,6 +651,11 @@ def LQR(states_var, u_val_var):
     u1 = u[0]
     u2 = u[1]
     u3 = u[2]
+
+    #LOG ref
+    print(i)
+    print(ref_h_var)
+    data[12,i,0] = ref_h_var
     return clamp(u1, -al, al),clamp(u2, -al, al), clamp(u3, -al, al)
 
 prev_angles = np.array([0,0,0])[:,np.newaxis]
@@ -735,12 +742,61 @@ def wing_model(da1,da2,da3):
 
     return real_angles[0], real_angles[1], real_angles[2]
 
+tick = np.linspace(0,10000+200,10001+200)/200
+dum_val = 1/7*tick
+for x in range(1,5):
+    dum_val[x*1400:x*2000-600*(x-1)] = 1*x
 
+for x in range(1,7):
+    dum_val[x*2000:x*2000+1400] = tick[x*2000:x*2000+1400]*1/7-0.43*x
+    dum_val[1400+2000*x:3400+1400*x+600] = x+1
+
+dum_val[9400:9400+600] = 5
+zeros_array = np.zeros(200)
+dum_val = np.concatenate((zeros_array, dum_val[:-1]))
+# Remove the last 200 elements
+dum_val = dum_val[:-199]
+
+
+
+tick1 = 200
+tick2 = 7*tick_rate+tick1  #0-1
+tick3 = 3*tick_rate+tick2  #pause 1
+tick4 = 7*tick_rate+tick3  #1-2
+tick5 = 3*tick_rate+tick4  #pause 2
+tick6 = 7*tick_rate+tick5  #2-3
+tick7 = 3*tick_rate+tick6  #pause 3
+tick8 = 7*tick_rate+tick7  #3-4
+tick9 = 3*tick_rate+tick8  #pause 4
+tick10 = 7*tick_rate+tick9  #4-5
+tick11 = 3*tick_rate+tick10  #pause 5
+tick12 = 7*tick_rate+tick11  #0-1
+print(tick11)
+
+def compute_A_B(u_val_var):
+    A = np.array([[0, 1.00, 0, 0, 0, 0],
+                  [0, -0.0344, 0, 0, 0.228*u_val_var**2, -0.252*u_val_var],
+                  [0, 0, 0, 1.00, 0, 0],
+                  [0, -0.019*u_val_var, 0, -0.345, 0.000683*u_val_var**2, 0.000875],
+                  [0, 0, 0, 0, 0, 1.00],
+                  [0, 2.81*u_val_var, 0, 0.000554, -0.101*u_val_var**2, -0.129]])
+
+
+
+    B = np.array([[0, 0, 0],
+              [-0.0506*u_val_var**2, -0.0506*u_val_var**2, -0.0471*u_val_var**2],
+              [0, 0, 0],
+              [-0.195*u_val_var**2, 0.195*u_val_var**2, -0.000614*u_val_var**2],
+              [0, 0, 0],
+              [-0.00723*u_val_var**2, -0.00797*u_val_var**2, 0.0906*u_val_var**2]])
+
+    return A, B
 # Make environment
 with holoocean.make(scenario_cfg=scenario) as env:
-    lin_accel = np.array([u_val, 0, 0])   # 5 m/s
+    lin_accel = np.array([0, 0, 0])   # 5 m/s
     rot_accel = np.array([0, 0, 0])
     for i in range(tick1):
+
         acc = np.array([R@lin_accel,R@rot_accel])
         # Step simulation
         state = env.step(acc)
@@ -749,22 +805,206 @@ with holoocean.make(scenario_cfg=scenario) as env:
         R = (sensor_data[-1])
     print()
     for i in range(tick1,tick2):
+        A, B = compute_A_B(dum_val[i])
         print(i)
         sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
         states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
         if i%period == 0:
             states_frequency = states
-
         if Control == "PID":
-            u1, u2, u3 = pid_controller(states_frequency, u_val)
+            u1, u2, u3 = pid_controller(states_frequency, dum_val[i],3.5)
         if Control == "LQR":
-            u1, u2, u3 = LQR(states_frequency, u_val)
+            u1, u2, u3 = LQR(states_frequency, dum_val[i], 3.5)
         if motor_model:
             u1,u2,u3 = wing_model(u1,u2,u3)
-
-       # u1= u2 =  u3 = np.array([0])
+        # u1= u2 =  u3 = np.array([0])
         R = (sensor_data[-1])
+        x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
+        acc = compute_acc(x_dot)
+        # Step simulation
+        state = env.step(acc)
+        print()
+    for i in range(tick2,tick3):
+        A, B = compute_A_B(dum_val[i])
+        print(i)
+        sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
+        states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
+        if i%period == 0:
+            states_frequency = states
+        if Control == "PID":
+            u1, u2, u3 = pid_controller(states_frequency,  dum_val[i],3.5)
+        if Control == "LQR":
+            u1, u2, u3 = LQR(states_frequency,  dum_val[i], 3.5)
+        if motor_model:
+            u1,u2,u3 = wing_model(u1,u2,u3)
+        # u1= u2 =  u3 = np.array([0])
+        R = (sensor_data[-1])
+        x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
+        acc = compute_acc(x_dot)
+        # Step simulation
+        state = env.step(acc)
+        print()
+    for i in range(tick3,tick4):
+        A, B = compute_A_B(dum_val[i])
+        print(i)
+        sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
+        states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
+        if i%period == 0:
+            states_frequency = states
+        if Control == "PID":
+            u1, u2, u3 = pid_controller(states_frequency,  dum_val[i],3)
+        if Control == "LQR":
+            u1, u2, u3 = LQR(states_frequency,  dum_val[i], 3)
+        if motor_model:
+            u1,u2,u3 = wing_model(u1,u2,u3)
+        # u1= u2 =  u3 = np.array([0])
+        R = (sensor_data[-1])
+        x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
+        acc = compute_acc(x_dot)
+        # Step simulation
+        state = env.step(acc)
+        print()
+    for i in range(tick4,tick5):
+        A, B = compute_A_B(dum_val[i])
+        print(i)
+        sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
+        states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
+        if i%period == 0:
+            states_frequency = states
+        if Control == "PID":
+            u1, u2, u3 = pid_controller(states_frequency,  dum_val[i],3)
+        if Control == "LQR":
+            u1, u2, u3 = LQR(states_frequency,  dum_val[i], 3)
+        if motor_model:
+            u1,u2,u3 = wing_model(u1,u2,u3)
+        # u1= u2 =  u3 = np.array([0])
+        R = (sensor_data[-1])
+        x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
+        acc = compute_acc(x_dot)
+        # Step simulation
+        state = env.step(acc)
+        print()
+    for i in range(tick5,tick6):
+        A, B = compute_A_B(dum_val[i])
+        print(i)
+        sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
+        states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
+        if i%period == 0:
+            states_frequency = states
+        if Control == "PID":
+            u1, u2, u3 = pid_controller(states_frequency,  dum_val[i],2.5)
+        if Control == "LQR":
+            u1, u2, u3 = LQR(states_frequency,  dum_val[i], 2.5)
+        if motor_model:
+            u1,u2,u3 = wing_model(u1,u2,u3)
+        # u1= u2 =  u3 = np.array([0])
+        R = (sensor_data[-1])
+        x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
+        acc = compute_acc(x_dot)
+        # Step simulation
+        state = env.step(acc)
+        print()
 
+    for i in range(tick6,tick7):
+        A, B = compute_A_B(dum_val[i])
+        print(i)
+        sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
+        states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
+        if i%period == 0:
+            states_frequency = states
+        if Control == "PID":
+            u1, u2, u3 = pid_controller(states_frequency,  dum_val[i],2.5)
+        if Control == "LQR":
+            u1, u2, u3 = LQR(states_frequency,  dum_val[i], 2.5)
+        if motor_model:
+            u1,u2,u3 = wing_model(u1,u2,u3)
+        # u1= u2 =  u3 = np.array([0])
+        R = (sensor_data[-1])
+        x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
+        acc = compute_acc(x_dot)
+        # Step simulation
+        state = env.step(acc)
+        print()
+
+    for i in range(tick7,tick8):
+        A, B = compute_A_B(dum_val[i])
+        print(i)
+        sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
+        states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
+        if i%period == 0:
+            states_frequency = states
+        if Control == "PID":
+            u1, u2, u3 = pid_controller(states_frequency,  dum_val[i],2)
+        if Control == "LQR":
+            u1, u2, u3 = LQR(states_frequency,  dum_val[i], 2)
+        if motor_model:
+            u1,u2,u3 = wing_model(u1,u2,u3)
+        # u1= u2 =  u3 = np.array([0])
+        R = (sensor_data[-1])
+        x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
+        acc = compute_acc(x_dot)
+        # Step simulation
+        state = env.step(acc)
+        print()
+
+    for i in range(tick8,tick9):
+        A, B = compute_A_B(dum_val[i])
+
+        print(i)
+        sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
+        states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
+        if i%period == 0:
+            states_frequency = states
+        if Control == "PID":
+            u1, u2, u3 = pid_controller(states_frequency,  dum_val[i],2)
+        if Control == "LQR":
+            u1, u2, u3 = LQR(states_frequency,  dum_val[i], 2)
+        if motor_model:
+            u1,u2,u3 = wing_model(u1,u2,u3)
+        # u1= u2 =  u3 = np.array([0])
+        R = (sensor_data[-1])
+        x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
+        acc = compute_acc(x_dot)
+        # Step simulation
+        state = env.step(acc)
+        print()
+
+    for i in range(tick9,tick10):
+        A, B = compute_A_B(dum_val[i])
+
+        print(i)
+        sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
+        states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
+        if i%period == 0:
+            states_frequency = states
+        if Control == "PID":
+            u1, u2, u3 = pid_controller(states_frequency,  dum_val[i],1.5)
+        if Control == "LQR":
+            u1, u2, u3 = LQR(states_frequency,  dum_val[i], 1.5)
+        if motor_model:
+            u1,u2,u3 = wing_model(u1,u2,u3)
+        # u1= u2 =  u3 = np.array([0])
+        R = (sensor_data[-1])
+        x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
+        acc = compute_acc(x_dot)
+        # Step simulation
+        state = env.step(acc)
+        print()
+    for i in range(tick10,tick11):
+        print(i)
+        A, B = compute_A_B(dum_val[i])
+        sensor_data = extract_sensor_info(state["DynamicsSensor"], state["RotationSensor"])
+        states = extract_acc_terms(sensor_data,u1,u2,u3, tick1, state["RangeFinderSensor"], state["IMUSensor"])
+        if i%period == 0:
+            states_frequency = states
+        if Control == "PID":
+            u1, u2, u3 = pid_controller(states_frequency,  dum_val[i],1.5)
+        if Control == "LQR":
+            u1, u2, u3 = LQR(states_frequency,  dum_val[i],1.5)
+        if motor_model:
+            u1,u2,u3 = wing_model(u1,u2,u3)
+        # u1= u2 =  u3 = np.array([0])
+        R = (sensor_data[-1])
         x_dot = compute_x_dot(states, u1, u2,u3)   #u1 u2 u3
         acc = compute_acc(x_dot)
         # Step simulation
